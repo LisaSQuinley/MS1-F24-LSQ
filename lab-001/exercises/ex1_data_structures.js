@@ -72,7 +72,8 @@ for (var i = 0; i < names.length; i++) {
 console.log('museums', museums)
 
 var museums2 = {};
-names.forEach(function(n,i) => {  // n is iterator object, i is index (just counting)
+names.forEach(function(n,i) => {  
+  // n is iterator object, i is index (just counting)
   // forEach foes from beginning to end in an array
   museums2[n] = {};
 

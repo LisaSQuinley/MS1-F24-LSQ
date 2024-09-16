@@ -3,7 +3,7 @@
 
 
 // put your API key here;
-const apiKey = "";  
+const apiKey = "Y0bBBDfCDaKsmacu3xCwovv3siYoMB4ECR0tRzok";  
 
 // Access to individual objects by ID
 const objectBaseURL = "https://api.si.edu/openaccess/api/v1.0/content/";
@@ -22,7 +22,7 @@ function fetchContentDataById(id) {
   })
 }
 
-fetchContentDataById("ld1-1643399887910-1643399901614-0");
+fetchContentDataById("ld1-1643411558713-1643411604483-0");
 
 // Task 1: Find a different object on https://collections.si.edu/search/ and retrieve the data with the code above
 // Make sure to check the box "Only return results with CC0 media" when searching

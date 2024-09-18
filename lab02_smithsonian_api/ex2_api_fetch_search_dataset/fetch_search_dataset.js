@@ -3,7 +3,7 @@
 // Using this data set https://collections.si.edu/search/results.htm?q=Flowers&view=grid&fq=data_source%3A%22Cooper+Hewitt%2C+Smithsonian+Design+Museum%22&fq=online_media_type%3A%22Images%22&media.CC0=true&fq=object_type:%22Embroidery+%28visual+works%29%22
 
 // put your API key here;
-const apiKey = "";  
+const apiKey = "Y0bBBDfCDaKsmacu3xCwovv3siYoMB4ECR0tRzok";  
 
 // search base URL
 const searchBaseURL = "https://api.si.edu/openaccess/api/v1.0/search";
@@ -14,7 +14,7 @@ const search =  `nudibranchia AND unit_code:"NMNHINV" AND tax_order:"Nudibranchi
 
 
 // array that we will write into
-let myArray = [];
+let myNudies = [];
 
 // string that will hold the stringified JSON data
 let jsonString = '';
@@ -62,8 +62,8 @@ function fetchAllData(url) {
     data.response.rows.forEach(function(n) {
       addObject(n);
     });
-    jsonString += JSON.stringify(myArray);
-    console.log(myArray);
+    jsonString += JSON.stringify(myNudies);
+    console.log(myNudies);
   })
   .catch(error => {
     console.log(error)
@@ -75,17 +75,40 @@ function fetchAllData(url) {
 function addObject(objectData) {  
   
   // we've encountered that some places have data others don't
-  let currentPlace = "";
-  if(objectData.content.indexedStructured.place) {
+  let currentPlace = "";   
+  if(objectData.content.indexedStructured.place) { 
     currentPlace = objectData.content.indexedStructured.place[0];
   }
 
-  myArray.push({
+  let depthData = "";
+  if(objectData.content.freetext.physicalDescription) {
+    depthData = objectData.content.freetext.physicalDescription[0].content;
+  }
+
+  let image_url = "";
+  if(objectData.content.descriptiveNonRepeating.online_media) {
+    image_url = objectData.content.descriptiveNonRepeating.online_media.media[0];
+  }
+
+
+console.log(objectData);
+
+  myNudies.push({
     id: objectData.id,
     title: objectData.title,
     link: objectData.content.descriptiveNonRepeating.record_link,
-    place: currentPlace
-  })
+    place: currentPlace,
+    depth: depthData,
+    sci_name: objectData.content.indexedStructured.scientific_name,
+    tax_class: objectData.content.indexedStructured.tax_class,
+    tax_family: objectData.content.indexedStructured.tax_family,
+    tax_kingdom: objectData.content.indexedStructured.tax_kingdom,
+    tax_order: objectData.content.indexedStructured.tax_order,
+    tax_phylum: objectData.content.indexedStructured.tax_phylum,
+    latitude: objectData.content.indexedStructured.geoLocation[0].points.point.latitude,
+    longitude: objectData.content.indexedStructured.geoLocation[0].points.point.longitude,
+    image: image_url
+    })
 }
 
 

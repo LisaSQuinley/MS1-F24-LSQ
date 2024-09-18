@@ -1,8 +1,9 @@
 // Smithsonian API example code
 // check API documentation for terms here: http://edan.si.edu/openaccess/apidocs/#api-search-terms
 
+import { API_Key } from "../secrets.js";
 // put your API key here;
-const apiKey = "";  
+const apiKey = API_Key;  
 
 // Access to terms by term category (I.e. online_media_type > Images)
 const termBaseURL = "https://api.si.edu/openaccess/api/v1.0/terms/";

@@ -27,6 +27,9 @@
 }
 
 
+svg {
+    overflow: visible; // Or 'auto' if you want scrollbars
+}
 
 
 /*

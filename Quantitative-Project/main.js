@@ -20,51 +20,73 @@
 
 */
 
+let myNudies;
 
 // Load the data from the JSON file
 d3.json('data.json').then(data => {
-    myNudies = data;
-    displayTaxonomy();
+    myNudies = data; // Assign fetched data to myNudies
+    console.log(myNudies.length);
+    displayTaxonomy(); // Call displayTaxonomy after data is loaded
 });
+
+const Nudiprojection = d3.geoEquirectangular();
+const Nudipath = d3.geoPath(Nudiprojection);
 
 
 // Set up margins and dimensions for the SVG
 const margin = { top: 20, right: 50, bottom: 20, left: 80 };
 const width = 1920 - margin.left - margin.right;
-const height = 1080 - margin.top - margin.bottom;
+const rectangleHeight = 30; // Height of each rectangle
 
 
 // Define taxonomic levels to be displayed
 const taxonomicLevels = ['tax_kingdom', 'tax_phylum', 'tax_class', 'tax_subclass', 'tax_order', 'tax_family', 'title'];
 
+
+const xScale = d3.scaleLinear()
+    .domain([0, taxonomicLevels.length - 1]) // Corrected domain
+    .range([0, width]);
+
 function displayTaxonomy() {
+    if (!myNudies) return; // Ensure myNudies is defined
+    const totalHeight = myNudies.length * rectangleHeight + margin.top + margin.bottom // Move this here to use the latest myNudies length
     const svg = d3.select('body')
         .append('svg')
         .attr('width', width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('height', totalHeight)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const columnWidth = width / taxonomicLevels.length; // Calculate column width
-    const rectangleHeight = 30; // Height of each rectangle
+//    const columnWidth = width / taxonomicLevels.length; // Calculate column width
     const RectMargin = { top: 3, right: 3, bottom: 3, left: 3 }; // Margin for rectangles
 
     // Create rectangles for each taxonomic level
     taxonomicLevels.forEach((level, index) => {
+        const textWidths = myNudies.map(d => {
+            const textValueSubclass = level === 'tax_subclass' ? 'Heterobranchia ' : d[level]; // if level is tax_subclass, display 'Heterobranchia' instead
+            const textElement = svg.append('text')
+                .attr('class', `${level}-label`)
+                .style('font-size', '12px')
+                .style('font-family', '"Kodchasan", sans-serif')
+                .style('font-weight', '600')
+                .text(textValueSubclass); // if level is tax_subclass, display 'Heterobranchia' instead
+            const width = textElement.node().getBBox().width; // Get the width of the text
+            textElement.remove(); // Remove the temporary text element
+            return width;
+        });
+
+        // Create rectangles based on calculated text widths
         svg.selectAll(`.${level}`)
             .data(myNudies)
             .enter()
             .append('rect')
             .attr('class', level)
-            .attr('x', index * columnWidth - RectMargin.left)
+            .attr('x', xScale(index)) // Use xScale to determine x position
             .attr('y', (d, i) => i * rectangleHeight - RectMargin.top)
-            .attr('width', columnWidth - RectMargin.left - RectMargin.right)
+            .attr('width', (d, i) => textWidths[i] + (RectMargin.left*4) + (RectMargin.right*4)) // Set width based on text
             .attr('height', rectangleHeight - RectMargin.top - RectMargin.bottom)
             .on('click', function (event, d) {
-                // Show the image when the rectangle is clicked
-                showNudi(d.image)
-               // showNudi(d.sci_name)
-                ;
+                showNudi(d.image);
             });
     });
 
@@ -75,14 +97,14 @@ function displayTaxonomy() {
             .enter()
             .append('text')
             .attr('class', `${level}-label`)
-            .attr('x', (index * columnWidth + 5) + RectMargin.left + RectMargin.right)
+            .attr('x', xScale(index) + 5 + RectMargin.left + RectMargin.right) // Use xScale for label x position
             .attr('y', (d, i) => (i * rectangleHeight + 2) + RectMargin.top + RectMargin.bottom)
             .attr('dy', '0.35em')
             .style('font-size', '12px')
             .style('fill', 'white')
             .style('font-family', '"Kodchasan", sans-serif')
             .style('font-weight', '600')
-            .text(d => level === 'tax_subclass' ? 'Heterobranchia' : d[level]);
+            .text(d => level === 'tax_subclass' ? 'Heterobranchia ' : d[level]); // if level is tax_subclass, display 'Heterobranchia' instead
     });
 }
 
@@ -107,14 +129,16 @@ function showNudi(image) {
         .style('height', 'auto')
         .style('border', '2px solid white');
 
-/* 
-    NudiContainer.append('p')
-        .text(sci_name)
-        .style('color', 'black')
-        .style('font-size', '12px')
-        .style('font-family', '"Kodchasan", sans-serif')
-        .style('font-weight', '600');
- */
+    //    if NudiContainer.image.content.onerror = function() {
+
+    /* 
+        NudiContainer.append('p')
+            .text(sci_name)
+            .style('color', 'black')
+            .style('font-size', '12px')
+            .style('font-family', '"Kodchasan", sans-serif')
+            .style('font-weight', '600');
+     */
 
     /*         
         // Optional: Add a close button

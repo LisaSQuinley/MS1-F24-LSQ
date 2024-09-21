@@ -1,0 +1,3525 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-31.9688"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "39.366"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1679947473480-1679947537392-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.817"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4617"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411381973-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.512"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9046"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411366842-1",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.83"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4837"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411499303-1",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.83"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4837"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411499136-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.842"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4754"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497644-1",
+                "title": "Dexiarchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411870951-1",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-122.508"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "47.8662"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411858353-0",
+                "title": "Flabellina sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411870952-1",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6501"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.5935"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411871569-0",
+                "title": "Tenellia sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370551-0",
+                "title": "Ancula gibbosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.048"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5775"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370640-0",
+                "title": "Acanthodoris nanaimoensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.012"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5453"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370418-0",
+                "title": "Dirona pellucida"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.032"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.461"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370572-1",
+                "title": "Doris montereyensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.032"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.461"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370585-0",
+                "title": "Doris montereyensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.168"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5708"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370417-1",
+                "title": "Onchidoris bilamellata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.012"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5453"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370439-1",
+                "title": "Dirona pellucida"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.012"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.546"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370561-0",
+                "title": "Triopha catalinae"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6501"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.5935"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411861026-1",
+                "title": "Tenellia sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411860130-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.9882"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.1676"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411860977-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.9882"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.1676"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411861451-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411861250-1",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411860133-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-132.538"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "54.7226"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1708429392878-1708429432493-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.837"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4851"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497584-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.83"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4837"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498073-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.758"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5044"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498698-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-151.354"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-16.8339"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411499083-1",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.831"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4761"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497493-1",
+                "title": "Dexiarchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.512"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9046"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411366778-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.512"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9046"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411366431-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411870952-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6267"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6039"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411871570-0",
+                "title": "Tenellia sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.874"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5567"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412432380-0",
+                "title": "Paradoris sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-80.3112"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.473"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411856839-0",
+                "title": "Flabellina verta"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-80.3112"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.473"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411859164-1",
+                "title": "Flabellina verta"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-80.3036"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.4655"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411859145-0",
+                "title": "Cuthona perca"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-80.3036"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.4655"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411856854-0",
+                "title": "Cuthona perca"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.665"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6152"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411530723-1",
+                "title": "Corambe obscura"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.9882"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.1676"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411871150-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390561-0",
+                "title": "Marionia hawaiiensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.791"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4324"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391408-0",
+                "title": "Glossodoris rufomarginata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.787"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390208-0",
+                "title": "Verconia simplex"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390562-0",
+                "title": "Melibe pilosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.791"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4324"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390268-1",
+                "title": "Hypselodoris infucata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391753-0",
+                "title": "Marionia hawaiiensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.779"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4149"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390925-1",
+                "title": "Baeolidia salaamica"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390768-0",
+                "title": "Spurilla braziliana"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391292-0",
+                "title": "Caloria sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391576-0",
+                "title": "Miamira sinuata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.776"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4768"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391227-0",
+                "title": "Goniobranchus sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391402-1",
+                "title": "Marianina rosea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.79"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4336"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390962-0",
+                "title": "Hypselodoris infucata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.801"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.453"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390417-0",
+                "title": "Goniobranchus vibratus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390899-1",
+                "title": "Melibe pilosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.787"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391253-0",
+                "title": "Verconia simplex"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390435-0",
+                "title": "Miamira sinuata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.819"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4699"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390060-1",
+                "title": "Hypselodoris infucata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.776"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4768"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390196-0",
+                "title": "Goniobranchus sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391390-0",
+                "title": "Ardeadoris angustolutea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.828"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.509"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390909-1",
+                "title": "Melibe pilosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.795"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4775"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391133-1",
+                "title": "Hypselodoris imperialis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390563-0",
+                "title": "Marionia hawaiiensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.791"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4324"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391309-1",
+                "title": "Hypselodoris infucata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.819"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4699"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390993-1",
+                "title": "Hypselodoris infucata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.79"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4336"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411389996-0",
+                "title": "Hypselodoris infucata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.799"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.475"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391127-0",
+                "title": "Limenandra rosanae"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.764"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.466"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391562-0",
+                "title": "Ardeadoris angustolutea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.828"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.509"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390188-0",
+                "title": "Melibe pilosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391750-1",
+                "title": "Marionia hawaiiensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.801"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.453"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391541-1",
+                "title": "Goniobranchus vibratus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.776"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4615"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390913-0",
+                "title": "Gymnodoris alba"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.865"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4961"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497705-1",
+                "title": "Euctenidiacea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.862"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4941"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497640-0",
+                "title": "Euctenidiacea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.832"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4764"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498011-0",
+                "title": "Tayuva lilacina"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494479-1",
+                "title": "Diversidoris flava"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494466-1",
+                "title": "Goniobranchus setoensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494546-0",
+                "title": "Polycera japonica"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494706-0",
+                "title": "Janolus mirabilis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4908"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495057-1",
+                "title": "Polycera japonica"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494585-0",
+                "title": "Polycera japonica"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.841"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4753"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495524-0",
+                "title": "Goniobranchus albonares"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494109-0",
+                "title": "Gymnodoris inornata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494469-0",
+                "title": "Gymnodoris alba"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494479-0",
+                "title": "Vayssierea felis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494501-0",
+                "title": "Limenandra nodosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495075-0",
+                "title": "Gymnodoris alba"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494464-0",
+                "title": "Janolus mirabilis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494769-1",
+                "title": "Goniodoris joubini"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411861200-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6267"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6039"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411860725-0",
+                "title": "Tenellia sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-75.6869"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "37.6045"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411860132-0",
+                "title": "Cariopsilla pharpa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.775"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4726"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412427523-0",
+                "title": "Roboastra gracilis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.824"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.478"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412432561-0",
+                "title": "Doriprismatica sibogae"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412432416-0",
+                "title": "Chromodoris aspersa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.775"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4726"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412431711-0",
+                "title": "Roboastra gracilis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.752"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4915"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411493502-0",
+                "title": "Flabellina delicata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.048"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5775"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370605-1",
+                "title": "Tochuina gigantea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.354"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9897"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411364777-0",
+                "title": "Janolus fuscus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-123.012"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5453"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370587-0",
+                "title": "Janolus fuscus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-122.981"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5418"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411370540-1",
+                "title": "Flabellina verrucosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.586"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9584"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411364708-0",
+                "title": "Diaulula odonoghuei"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.786"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4797"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391257-1",
+                "title": "Thorunna kahuna"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.802"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4745"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391593-0",
+                "title": "Samla bicolor"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.828"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.509"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390167-0",
+                "title": "Marionia hawaiiensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391576-1",
+                "title": "Carminodoris grandiflora"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.802"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4745"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391568-0",
+                "title": "Samla bicolor"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390763-1",
+                "title": "Hallaxa fuscescens"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.786"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4797"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390275-0",
+                "title": "Hexabranchus pulchellus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390431-0",
+                "title": "Phyllodesmium sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.801"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4566"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390834-0",
+                "title": "Phyllodesmium sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.829"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.5085"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390435-1",
+                "title": "Carminodoris grandiflora"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.828"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.509"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391190-0",
+                "title": "Marionia hawaiiensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.786"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4797"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391325-0",
+                "title": "Hexabranchus pulchellus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390945-1",
+                "title": "Doris pecten"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.819"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4699"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391048-0",
+                "title": "Spurilla braziliana"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4356"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391567-1",
+                "title": "Phyllodesmium sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.862"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4941"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497599-0",
+                "title": "Hypselodoris maculosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.862"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4941"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497295-1",
+                "title": "Hypselodoris maculosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.851"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4915"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497714-0",
+                "title": "Gymnodoris alba"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.831"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4761"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497790-1",
+                "title": "Tambja morosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.851"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5101"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497376-0",
+                "title": "Thordisa albomacula"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.832"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4764"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498590-0",
+                "title": "Platydoris cinereobranchiata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.862"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4941"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497877-1",
+                "title": "Marianina rosea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.832"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4764"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498374-0",
+                "title": "Dermatobranchus fortunatus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.842"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4759"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498866-0",
+                "title": "Kaloplocamus ramosus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.851"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5101"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497308-0",
+                "title": "Goniobranchus sinensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.846"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5957"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495620-0",
+                "title": "Euctenidiacea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.842"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4756"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495204-0",
+                "title": "Goniodoridella sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.788"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5725"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495597-0",
+                "title": "Tambja morosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.845"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4767"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411496265-0",
+                "title": "Kaloplocamus acutus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.884"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4913"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494402-0",
+                "title": "Gymnodoris inornata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.837"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.6041"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495778-0",
+                "title": "Dendrodoris coronata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.779"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5496"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494320-0",
+                "title": "Glossodoris rufomarginata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.481"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495250-0",
+                "title": "Tayuva lilacina"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.84"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5903"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494396-0",
+                "title": "Limenandra nodosa"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.904"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.533"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494142-0",
+                "title": "Thordisa tahala"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.826"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4901"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495074-0",
+                "title": "Noumea simplex"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.788"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5725"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495745-1",
+                "title": "Polycera japonica"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.851"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5097"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494176-0",
+                "title": "Thordisa albomacula"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.832"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4764"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498732-1",
+                "title": "Tayuva lilacina"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.758"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5044"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411498325-1",
+                "title": "Gymnodoris alba"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.825"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4815"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497450-1",
+                "title": "Vayssierea felis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.884"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.568"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411492397-0",
+                "title": "Glossodoris cincta"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.784"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5489"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412432406-0",
+                "title": "Cuthona poritophages"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.762"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5145"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412364509-1643412432511-0",
+                "title": "Glossodoris cincta"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-117.247"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "32.7618"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643412545911-1643412565955-1",
+                "title": "Janolus barbarensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.778"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4521"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411391632-1",
+                "title": "Tayuva lilacina"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.778"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4521"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411390480-0",
+                "title": "Tayuva lilacina"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.862"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.4941"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411497704-0",
+                "title": "Noumea simplex"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.842"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5978"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495618-0",
+                "title": "Halgerda albocristata"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.842"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5978"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411495764-0",
+                "title": "Roboastra gracilis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-149.797"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "-17.5749"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411491844-1643411494165-0",
+                "title": "Doris pecten"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-145.137"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "56.3543"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1708429392878-1708429432453-1",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.512"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9046"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411366663-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.556"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.8688"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411353012-1",
+                "title": "Doris montereyensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.556"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.8688"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411353037-1",
+                "title": "Doris montereyensis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.512"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9046"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411366453-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.503"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.915"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411364625-1",
+                "title": "Triopha catalinae"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-166.586"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "53.9584"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411353189-0",
+                "title": "Doris odhneri"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-122.623"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5189"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411388178-0",
+                "title": "Janolus fuscus"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.776"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4768"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411839251-0",
+                "title": "Pseudovermis sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-122.604"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "48.5044"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411388162-0",
+                "title": "Peltodoris nobilis"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-144.306"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "56.0865"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1708429392878-1708429432461-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-79.9"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.43"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1644863123585-1644863187925-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.78"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4149"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411382028-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411839291-0",
+                "title": "Euctenidiacea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411839249-0",
+                "title": "Euctenidiacea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-79.9"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.43"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1644863123585-1644863187862-0",
+                "title": "Phylliroe sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.789"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4902"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411839270-0",
+                "title": "Euctenidiacea"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.776"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4768"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411839284-0",
+                "title": "Pseudovermis sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.78"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4149"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411381876-0",
+                "title": "Nudibranchia"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-79.9"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "27.43"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1644863123585-1644863187863-0",
+                "title": "Phylliroe sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.776"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4768"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411832772-1643411839278-0",
+                "title": "Pseudovermis sp."
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    {
+                        "type": "decimal",
+                        "content": "-157.802"
+                    },
+                    {
+                        "type": "decimal",
+                        "content": "21.4456"
+                    }
+                ]
+            },
+            "properties": {
+                "Nudi_id": "ld1-1643411352667-1643411382020-0",
+                "title": "Hypselodoris infucata"
+            }
+        }
+    ]
+}

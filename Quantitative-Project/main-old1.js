@@ -21,9 +21,6 @@
 */
 
 let myNudies;
-const Nudiprojection = d3.geoEquirectangular();
-const Nudipath = d3.geoPath(Nudiprojection);
-projection = d3.geoEquirectangular()
 
 // Load the data from the JSON file
 d3.json('data.json').then(data => {
@@ -32,29 +29,14 @@ d3.json('data.json').then(data => {
     displayTaxonomy(); // Call displayTaxonomy after data is loaded
 });
 
-d3.json('data.geojson').then(data => {
-    const svg = d3.select('svg');
-
-    // Draw the features
-    svg.selectAll('path')
-        .data(data.features)
-        .enter().append('path')
-        .attr('class', 'feature')
-        .attr('d', Nudipath)
-        .attr('transform', d => `translate(${Nudiprojection(d.geometry.coordinates)})`);
-}).catch(error => {
-    console.error('Error loading the GeoJSON data:', error);
-});
-
-
-
+const Nudiprojection = d3.geoEquirectangular();
+const Nudipath = d3.geoPath(Nudiprojection);
 
 
 // Set up margins and dimensions for the SVG
 const margin = { top: 20, right: 50, bottom: 20, left: 80 };
 const width = 1920 - margin.left - margin.right;
 const rectangleHeight = 30; // Height of each rectangle
-const labelSpacing = 20;
 
 
 // Define taxonomic levels to be displayed
@@ -75,7 +57,7 @@ function displayTaxonomy() {
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    //    const columnWidth = width / taxonomicLevels.length; // Calculate column width
+//    const columnWidth = width / taxonomicLevels.length; // Calculate column width
     const RectMargin = { top: 3, right: 3, bottom: 3, left: 3 }; // Margin for rectangles
 
     // Create rectangles for each taxonomic level
@@ -99,16 +81,15 @@ function displayTaxonomy() {
             .enter()
             .append('rect')
             .attr('class', level)
-            .attr('x', (xScale(index)))
-//            .attr('x', xScale(index)) // Use xScale to determine x position
+            .attr('x', xScale(index)) // Use xScale to determine x position
             .attr('y', (d, i) => i * rectangleHeight - RectMargin.top)
-            .attr('width', (d, i) => textWidths[i] + (RectMargin.left * 4) + (RectMargin.right * 4)) // Set width based on text
+            .attr('width', (d, i) => textWidths[i] + (RectMargin.left*4) + (RectMargin.right*4)) // Set width based on text
             .attr('height', rectangleHeight - RectMargin.top - RectMargin.bottom)
             .on('click', function (event, d) {
                 showNudi(d.image);
             });
-
     });
+
     // Create labels for each taxonomic level
     taxonomicLevels.forEach((level, index) => {
         svg.selectAll(`.${level}-label`)
@@ -117,8 +98,6 @@ function displayTaxonomy() {
             .append('text')
             .attr('class', `${level}-label`)
             .attr('x', xScale(index) + 5 + RectMargin.left + RectMargin.right) // Use xScale for label x position
-            //                .attr('x', (d, i) => xScale(index) + (textWidths[i] + (RectMargin.left * 4) + (RectMargin.right * 4)) + labelSpacing)
-            // Use xScale for label x position
             .attr('y', (d, i) => (i * rectangleHeight + 2) + RectMargin.top + RectMargin.bottom)
             .attr('dy', '0.35em')
             .style('font-size', '12px')
@@ -127,7 +106,6 @@ function displayTaxonomy() {
             .style('font-weight', '600')
             .text(d => level === 'tax_subclass' ? 'Heterobranchia ' : d[level]); // if level is tax_subclass, display 'Heterobranchia' instead
     });
-
 }
 
 function showNudi(image) {
@@ -150,5 +128,24 @@ function showNudi(image) {
         .style('max-width', '500px') // Adjust size as needed
         .style('height', 'auto')
         .style('border', '2px solid white');
-    }
 
+    //    if NudiContainer.image.content.onerror = function() {
+
+    /* 
+        NudiContainer.append('p')
+            .text(sci_name)
+            .style('color', 'black')
+            .style('font-size', '12px')
+            .style('font-family', '"Kodchasan", sans-serif')
+            .style('font-weight', '600');
+     */
+
+    /*         
+        // Optional: Add a close button
+        NudiContainer.append('button')
+            .text('Close')
+            .on('click', function () {
+                NudiContainer.remove(); // Remove image container on close
+            });
+     */
+}

@@ -1,8 +1,8 @@
 # Know Your Nudibrachs: A Scuba Diver's Guide to Sea Slugs (Mock)
-## Figma Frames
-
-## Current Code Status
-
+### Figma Frames
+[Know-Your-Nudibranchs_FigmaFrames_small.pdf](https://github.com/user-attachments/files/17088160/Know-Your-Nudibranchs_FigmaFrames_small.pdf)
+### Current Code Status
+![127 0 0 1_5501_Quantitative-Project_index html](https://github.com/user-attachments/assets/42e308fa-ff78-4b82-8373-c9272a5c8df4)
 # Know Your Nudibranchs (A Scuba Diver’s Guide to Sea Slugs) (Sketch 1)
 ### NMNHINV+nudibranchia | Invertebrate Zoology (NMNHINV) | 177 entries (too few?)
 Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They’re a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian’s invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for nudibranchia includes location, taxonomic name, depth found - these are the aspects that would be explored in the data visualization. Four viewboxes would highlight these various aspects depending on what was selected–a geographical map for location, a dot plot for illustrating depth, taxonomic name, and the image itself with some of its details.

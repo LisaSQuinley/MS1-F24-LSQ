@@ -19,11 +19,54 @@
 // https://observablehq.com/@d3/equirectangular?intent=fork
 
 */
+const mapwidth = 1920; // Set the width for your SVG
+const mapheight = 800; // Set the height for your SVG
 
 let myNudies;
-const Nudiprojection = d3.geoEquirectangular();
+const Nudiprojection = d3.geoEquirectangular()
+    .scale(250)
+    .translate([mapwidth / 2, mapheight / 2]);
 const Nudipath = d3.geoPath(Nudiprojection);
-projection = d3.geoEquirectangular()
+
+
+// Create a single SVG element
+const svg = d3.select('body').append('svg')
+    .attr('width', mapwidth)
+    .attr('height', mapheight);
+
+
+// Load and render the map
+d3.json('ne_110m_admin_0_countries.json').then(data => {
+    // Draw the map features
+    svg.selectAll('path')
+        .data(data.features)
+        .enter().append('path')
+        .attr('class', 'feature')
+        .attr('d', Nudipath) // Use the path generator
+        .attr('fill', 'white') // Set a fill color
+        .attr('stroke', '#262262') // Set a stroke color
+        .attr('stroke-width', 0.5); // Set stroke width for countries
+}).catch(error => {
+    console.error('Error loading the GeoJSON data:', error);
+});
+
+// Load and render the GeoJSON data with dots
+d3.json('data.geojson').then(data => {
+    // Draw the points on the same SVG
+    svg.selectAll('circle')
+        .data(data.features)
+        .enter().append('circle')
+        .attr('cx', d => Nudiprojection(d.geometry.coordinates)[0]) // Get x coordinate
+        .attr('cy', d => Nudiprojection(d.geometry.coordinates)[1]) // Get y coordinate
+        .attr('r', 5) // Set radius for the dots
+        .attr('fill', '#FF0000') // Set a fill color for the dots
+        .attr('stroke', 'white') // Optional: set a stroke color for visibility
+        .attr('stroke-width', 1); // Optional: set stroke width for circles
+}).catch(error => {
+    console.error('Error loading the GeoJSON data:', error);
+});
+
+
 
 // Load the data from the JSON file
 d3.json('data.json').then(data => {
@@ -32,19 +75,8 @@ d3.json('data.json').then(data => {
     displayTaxonomy(); // Call displayTaxonomy after data is loaded
 });
 
-d3.json('data.geojson').then(data => {
-    const svg = d3.select('svg');
 
-    // Draw the features
-    svg.selectAll('path')
-        .data(data.features)
-        .enter().append('path')
-        .attr('class', 'feature')
-        .attr('d', Nudipath)
-        .attr('transform', d => `translate(${Nudiprojection(d.geometry.coordinates)})`);
-}).catch(error => {
-    console.error('Error loading the GeoJSON data:', error);
-});
+
 
 
 
@@ -63,7 +95,7 @@ const taxonomicLevels = ['tax_kingdom', 'tax_phylum', 'tax_class', 'tax_subclass
 
 const xScale = d3.scaleLinear()
     .domain([0, taxonomicLevels.length - 1]) // Corrected domain
-    .range([0, width]);
+    .range([0, (width - margin.left - margin.right)-500]); // Adjust range to fit the width
 
 function displayTaxonomy() {
     if (!myNudies) return; // Ensure myNudies is defined
@@ -100,7 +132,7 @@ function displayTaxonomy() {
             .append('rect')
             .attr('class', level)
             .attr('x', (xScale(index)))
-//            .attr('x', xScale(index)) // Use xScale to determine x position
+            //            .attr('x', xScale(index)) // Use xScale to determine x position
             .attr('y', (d, i) => i * rectangleHeight - RectMargin.top)
             .attr('width', (d, i) => textWidths[i] + (RectMargin.left * 4) + (RectMargin.right * 4)) // Set width based on text
             .attr('height', rectangleHeight - RectMargin.top - RectMargin.bottom)
@@ -150,5 +182,5 @@ function showNudi(image) {
         .style('max-width', '500px') // Adjust size as needed
         .style('height', 'auto')
         .style('border', '2px solid white');
-    }
+}
 

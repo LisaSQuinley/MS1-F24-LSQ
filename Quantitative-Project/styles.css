@@ -1,6 +1,18 @@
 body {
   background-color: #DFE5F4;
 }
+body {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically if you want */
+    margin: 0; /* Remove default margin */
+}
+
+#section {
+  margin: 10px 0; /* Space between sections */
+}
+
 .tax_kingdom {
     fill: #1C75BC;
 }
@@ -29,30 +41,36 @@ body {
     fill: #FF0000;
 }
 
+
 h1, h2, h3, h4, h5, h6, p {
   font-family: "Kodchasan", sans-serif;
   color: #262262;
-}
-
-h1, h2 {
-  display: inline-block;
-  padding-left: 6px;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 0;
+  width: 1920px;
 }
 
 h1 {
   font-weight: 700;
+  font-size: 24pt;
 }
 
 h2 {
+  margin-top: 0;
   font-weight: 400;
+  font-size: 16pt;
 }
 
 h3 {
-
+  font-weight: 600;
+  font-size: 14pt;
 }
 
 p {
-
+  font-weight: 300;
+  font-size: 10pt;
+  width: 50%;
 }
 
 

@@ -1,3 +1,9 @@
+# Know Your Nudibrachs: A Scuba Diver's Guide to Sea Slugs
+### GitHub Pages: https://lisasquinley.github.io/MS1-F24-LSQ/
+![lisasquinley github io_MS1-F24-LSQ_0](https://github.com/user-attachments/assets/d091536f-b032-4d45-87f2-63c63d5ef730)
+![lisasquinley github io_MS1-F24-LSQ_1](https://github.com/user-attachments/assets/e4055456-b345-4f45-8a5c-fbba3386ca61)
+![lisasquinley github io_MS1-F24-LSQ_2](https://github.com/user-attachments/assets/114d6b36-3940-4c53-a8b0-d263305c6886)
+
 # Know Your Nudibrachs: A Scuba Diver's Guide to Sea Slugs (Mock)
 ### Figma Frames
 [Know-Your-Nudibranchs_FigmaFrames_small.pdf](https://github.com/user-attachments/files/17088160/Know-Your-Nudibranchs_FigmaFrames_small.pdf)

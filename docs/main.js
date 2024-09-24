@@ -158,6 +158,41 @@ const columnPositions = [
   733, // Seventh column
 ];
 
+const TaxonomicHeaders = d3.select("body").append("div")
+  .attr("id", "TaxHeaders")
+  .attr("width", width + margin.left + margin.right)
+  .style("margin-left", "40px")  // Margin to the left
+  .style("margin-bottom", "0px")
+  .style("margin-top", "0px")
+  .style("display", "flex") // Use flex to arrange items in a row
+  .style("justify-content", "flex-start") // Align items to the start
+  .style("align-items", "center"); // Align items vertically in the center
+
+// Define specific widths for each Tax Header
+const headerWidths = [
+  "83.1328px", // Kingdom
+  "95.6406px",  // Phylum
+  "105.6797px",  // Class
+  "137.438px",  // Subclass
+  "112.82px",  // Order
+  "193.016px",  // Family
+  "148.367px",   // Genus & Species
+  "1043.94px"  // Empty column
+];
+
+// Append headers with specific widths
+["Kingdom", "Phylum", "Class", "Subclass", "Order", "Family", "Genus & Species", ""].forEach((text, index) => {
+  TaxonomicHeaders.append("h4")
+    .style("margin", "0") // Remove margin to prevent spacing issues
+    .style("width", headerWidths[index]) // Set specific width for each header
+    .style("text-align", "center") // Center text within the header
+    .text(text);
+});
+
+
+
+
+
 /* 
 // only keep this if I want the xScale even
 const xScale = d3

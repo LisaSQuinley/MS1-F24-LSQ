@@ -1,6 +1,7 @@
 body {
   background-color: #DFE5F4;
 }
+
 body {
     display: flex;
     flex-direction: column; /* Stack elements vertically */
@@ -8,6 +9,7 @@ body {
     justify-content: center; /* Center vertically if you want */
     margin: 0; /* Remove default margin */
 }
+
 
 #section {
   margin: 10px 0; /* Space between sections */

@@ -21,13 +21,16 @@
 */
 const ProjectTitle = d3.select("body").append("div");
 ProjectTitle.attr("id", "section")
+  .style("margin-left", "50px")
   .append("h1")
   .text("Know Your Nudibranchs")
+  .style("margin-top", "0px")
   .append("h2")
   .text("A Scuba Diver's Guide to Sea Slugs");
 
 const ProjectOverview = d3.select("body").append("div");
 ProjectOverview.attr("id", "section")
+.style("margin-left", "50px")
   .append("h3")
   .text("Project Overview")
   .append("p")
@@ -112,6 +115,7 @@ d3.json("data.geojson")
 const descriptionTaxonomy = d3.select("body").append("div");
 descriptionTaxonomy
   .attr("id", "section")
+  .style("margin-left", "50px")
   .append("h3")
   .text("Taxonomy")
   .append("p")
@@ -143,10 +147,24 @@ const taxonomicLevels = [
   "title",
 ];
 
+// Define custom x-coordinates for each column
+const columnPositions = [
+  0, // First column
+  90, // Second column (adjust as needed)
+  184, // Third column
+  295, // Fourth column
+  428, // Fifth column
+  547, // Sixth column
+  733, // Seventh column
+];
+
+/* 
+// only keep this if I want the xScale even
 const xScale = d3
   .scaleLinear()
   .domain([0, taxonomicLevels.length - 1]) // Corrected domain
   .range([0, width - margin.left - margin.right - 15 * taxonomicLevels.length]); // Account for spacing
+ */
 
 function displayTaxonomy() {
   if (!myNudies) return; // Ensure myNudies is defined
@@ -158,7 +176,7 @@ function displayTaxonomy() {
     .attr("width", width + margin.left + margin.right)
     .attr("height", totalHeight)
     .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+    .attr("transform", `translate(25,${margin.top})`);
 
   //    const columnWidth = width / taxonomicLevels.length; // Calculate column width
   const RectMargin = { top: 3, right: 3, bottom: 3, left: 3 }; // Margin for rectangles
@@ -191,7 +209,8 @@ function displayTaxonomy() {
       .enter()
       .append("rect")
       .attr("class", level)
-      .attr("x", xScale(index) + index * 5) // Add spacing for each rectangle
+      .attr("x", columnPositions[index]) // Use custom column positions
+      //      .attr("x", xScale(index) + index * 5) // Add spacing for each rectangle
       //            .attr('x', xScale(index)) // Use xScale to determine x position
       .attr(
         "y",
@@ -224,9 +243,10 @@ function displayTaxonomy() {
       .attr("class", `${level}-label`)
       .attr(
         "x",
-        (d, i) =>
-          xScale(index) + index * 5 + 5 + RectMargin.left + RectMargin.right
-      ) // Adjust label position with spacing
+        columnPositions[index] + 5 + RectMargin.left + RectMargin.right
+      ) // Use custom column positions
+
+      //      .attr("x",(d, i) =>xScale(index) + index * 5 + 5 + RectMargin.left + RectMargin.right) // Adjust label position with spacing
       //                .attr('x', (d, i) => xScale(index) + (textWidths[i] + (RectMargin.left * 4) + (RectMargin.right * 4)) + labelSpacing)
       // Use xScale for label x position
       .attr(
@@ -247,6 +267,8 @@ function displayTaxonomy() {
   });
 }
 
+
+
 function showNudi(nudi) {
   // Remove any existing image
   d3.select("#nudi-dish").remove();
@@ -259,7 +281,11 @@ function showNudi(nudi) {
     .style("position", "fixed")
     .style("top", "50%")
     .style("right", "50%")
-    .style("transform", "translate(50%, -50%)")
+    .style("transform", "translate(95%, -50%)")
+    .style("display", "flex") // Use flexbox
+    .style("flex-direction", "column") // Stack items vertically
+    .style("align-items", "flex-end") // Align items to the right
+
     .style("z-index", 1000);
 
   // Append the image
@@ -267,7 +293,7 @@ function showNudi(nudi) {
     .attr("src", nudi.image.content) // Adjust as needed for the image path
     .attr("alt", "Taxonomic Image")
     .style("font-family", '"Kodchasan", sans-serif')
-    .style("max-width", "1000px")
+    .style("max-width", "950px")
     .style("height", "auto")
     .style("border", "2px solid white")
     .on("load", function () {
@@ -293,42 +319,69 @@ function showNudi(nudi) {
 
   // Append the info div
   const infoDiv = NudiContainer.append("div")
-    .attr("id", "nudi-info")
-    .style("border", "2px solid white")
-    .style("padding-top", "5px")
-    .style("padding-bottom", "25px")
-    .style("background-color", "black")
-    .style("width", image.node().width + "px"); // Set the width to match the image
+  .attr("id", "nudi-info")
+  .style("border", "2px solid white")
+  .style("padding-top", "5px")
+  .style("padding-bottom", "25px")
+  .style("background-color", "black")
+  .attr("display", "flex")
+  .style("width", image.node().width + "px"); // Set the width to match the image
 
-  // Add text elements to the info div
-  infoDiv
-    .append("h2")
-    .style("color", "white")
-    .style("padding-top", "15px")
-    .text(nudi.sci_name || "Scientific Name Not Available");
+// Add the scientific name
+infoDiv.append("h2")
+  .style("color", "white")
+  .style("padding-top", "15px")
+  .text(nudi.sci_name || "Scientific Name Not Available");
 
-  infoDiv
-    .append("p")
-    .style("color", "white")
-    .text("Image and information courtesy of the Smithsonian Institution");
+// Create a new div for extra info
+const extraNudiInfo = infoDiv.append("div") // Correctly reference the new div
+.attr("id", "extra_nudi_info");
 
-  NudiContainer.append("button")
-    .text("Close")
-    .style("position", "absolute")
-    .style("top", "0")
-    .style("right", "0")
-    .style("z-index", 1001)
-    .style("background-color", "white")
-    .style("color", "black")
-    .style("border", "none")
-    .style("padding", "10px")
-    .style("cursor", "pointer")
-    .style("border-radius", "5px")
-    .style("font-size", "16px")
-    .style("font-family", '"Kodchasan", sans-serif')
-    .style("font-weight", "600")
-    .style("margin", "20px")
-    .on("click", function () {
-      d3.select("#nudi-dish").remove();
-    });
+extraNudiInfo.append("h3")
+  .style("color", "white")
+  .style("padding-top", "0")
+  .text("Depth");
+
+// Add depth information
+extraNudiInfo.append("p")
+  .style("color", "white")
+  .style("padding-top", "0")
+  .text(`${nudi.depth ? nudi.depth + " meters" : "Not Available"}`);
+
+extraNudiInfo.append("h3")
+  .style("color", "white")
+  .style("padding-top", "0")
+  .text("Coordinates");
+
+// Add the latitude and longitude coordinates
+extraNudiInfo.append("p")
+  .style("color", "white")
+  .style("padding-top", "0")
+  .text(`Latitude: ${nudi.latitude.content || "Not Available"} | Longitude: ${nudi.longitude.content || "Not Available"}`);
+
+// Add the image source credit
+infoDiv.append("p")
+  .style("color", "white")
+  .text("Image and information courtesy of the Smithsonian Institution");
+
+// Create close button
+NudiContainer.append("button")
+  .text("Close")
+  .style("position", "absolute")
+  .style("top", "0")
+  .style("right", "0")
+  .style("z-index", 1001)
+  .style("background-color", "white")
+  .style("color", "black")
+  .style("border", "none")
+  .style("padding", "10px")
+  .style("cursor", "pointer")
+  .style("border-radius", "5px")
+  .style("font-size", "16px")
+  .style("font-family", '"Kodchasan", sans-serif')
+  .style("font-weight", "600")
+  .style("margin", "20px")
+  .on("click", function () {
+    d3.select("#nudi-dish").remove();
+  });
 }

@@ -171,13 +171,13 @@ const TaxonomicHeaders = d3.select("body").append("div")
 // Define specific widths for each Tax Header
 const headerWidths = [
   "83.1328px", // Kingdom
-  "95.6406px",  // Phylum
+  "100.6406px",  // Phylum
   "105.6797px",  // Class
   "137.438px",  // Subclass
   "112.82px",  // Order
-  "193.016px",  // Family
-  "148.367px",   // Genus & Species
-  "1043.94px"  // Empty column
+  "173.016px",  // Family
+  "160.367px",   // Genus & Species
+  "1040.94px"  // Empty column
 ];
 
 // Append headers with specific widths
@@ -186,6 +186,7 @@ const headerWidths = [
     .style("margin", "0") // Remove margin to prevent spacing issues
     .style("width", headerWidths[index]) // Set specific width for each header
     .style("text-align", "center") // Center text within the header
+    .style("text-transform", "uppercase") // Convert text to uppercase
     .text(text);
 });
 

@@ -69,6 +69,11 @@ h3 {
   font-size: 14pt;
 }
 
+h4 {
+  font-weight: 700;
+  font-size: 10pt;
+}
+
 p {
   font-weight: 300;
   font-size: 10pt;

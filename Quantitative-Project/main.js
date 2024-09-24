@@ -52,58 +52,58 @@ const svg = d3
   .attr("width", mapwidth)
   .attr("height", mapheight);
 
-// Load and render the ocean map
-d3.json("ne_10m_ocean.json")
-  .then((data) => {
-    svg
-      .selectAll("path.ocean") // Use a specific class for oceans
-      .data(data.features)
-      .enter()
-      .append("path")
-      .attr("class", "ocean") // Set class for oceans
-      .attr("d", Nudipath) // Use the path generator
-      .attr("fill", "#1C75BC"); // Set a fill color
-  })
-  .catch((error) => {
-    console.error("Error loading the GeoJSON data:", error);
-  });
-
-
 // Load and render the countries map
 d3.json("ne_110m_admin_0_countries.json")
   .then((data) => {
     svg
-      .selectAll("path.country") // Use a specific class for countries
+      .selectAll("path.country")
       .data(data.features)
       .enter()
       .append("path")
-      .attr("class", "country") // Set class for countries
-      .attr("d", Nudipath) // Use the path generator
-      .attr("fill", "white") // Set a fill color
-      .attr("stroke", "#262262") // Set a stroke color
-      .attr("z-index", 1001) // Optional: set z-index for countries
-      .attr("stroke-width", 0.5); // Set stroke width for countries
+      .attr("class", "country")
+      .attr("d", Nudipath)
+      .attr("fill", "white")
+      .attr("stroke", "#262262")
+      .attr("stroke-width", 0.5)
+      .attr("z-index", 6);
   })
   .catch((error) => {
     console.error("Error loading the GeoJSON data:", error);
   });
 
-// Load and render the GeoJSON data with dots
+// Load and render the ocean map
+d3.json("ne_10m_ocean.json")
+  .then((data) => {
+    svg
+      .selectAll("path.ocean")
+      .data(data.features)
+      .enter()
+      .append("path")
+      .attr("class", "ocean")
+      .attr("d", Nudipath)
+      .attr("fill", "#1C75BC")
+      .attr("opacity", 0.2)
+      .attr("z-index", 2);
+  })
+  .catch((error) => {
+    console.error("Error loading the GeoJSON data:", error);
+  });
+
+// Load and render the GeoJSON data with dots (circles) - this should be last
 d3.json("data.geojson")
   .then((data) => {
-    // Draw the points on the same SVG
     svg
       .selectAll("circle")
       .data(data.features)
       .enter()
       .append("circle")
-      .attr("cx", (d) => Nudiprojection(d.geometry.coordinates)[0]) // Get x coordinate
-      .attr("cy", (d) => Nudiprojection(d.geometry.coordinates)[1]) // Get y coordinate
-      .attr("r", 5) // Set radius for the dots
-      .attr("fill", "#FF0000") // Set a fill color for the dots
-      .attr("stroke", "white") // Optional: set a stroke color for visibility
-      .attr("stroke-width", 1) // Optional: set stroke width for circles
-      .attr("z-index", 1005); // Optional: set z-index for circles
+      .attr("cx", (d) => Nudiprojection(d.geometry.coordinates)[0])
+      .attr("cy", (d) => Nudiprojection(d.geometry.coordinates)[1])
+      .attr("r", 5)
+      .attr("fill", "#FF0000")
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .attr("z-index", 3);
   })
   .catch((error) => {
     console.error("Error loading the GeoJSON data:", error);
@@ -129,7 +129,7 @@ d3.json("data.json").then((data) => {
 // Set up margins and dimensions for the SVG
 const margin = { top: 20, right: 50, bottom: 20, left: 80 };
 const width = 1920 - margin.left - margin.right;
-const rectangleHeight = 30; // Height of each rectangle
+const rectangleHeight = 40; // Height of each rectangle
 // const labelSpacing = 20;
 
 // Define taxonomic levels to be displayed
@@ -146,7 +146,7 @@ const taxonomicLevels = [
 const xScale = d3
   .scaleLinear()
   .domain([0, taxonomicLevels.length - 1]) // Corrected domain
-  .range([0, width - margin.left - margin.right - (15 * taxonomicLevels.length)]); // Account for spacing
+  .range([0, width - margin.left - margin.right - 15 * taxonomicLevels.length]); // Account for spacing
 
 function displayTaxonomy() {
   if (!myNudies) return; // Ensure myNudies is defined
@@ -166,12 +166,12 @@ function displayTaxonomy() {
   // Create rectangles for each taxonomic level
   taxonomicLevels.forEach((level, index) => {
     const textWidths = myNudies.map((d) => {
-        let textValueSubclass = d[level]; // Default to the value of the current level
-        if (level === "tax_subclass") {
-            textValueSubclass = "Heterobranchia "; // Special case for tax_subclass
-        } else if (level === "tax_family" && !d[level]) {
-            textValueSubclass = "No information available"; // Special case for tax_family
-        }; 
+      let textValueSubclass = d[level]; // Default to the value of the current level
+      if (level === "tax_subclass") {
+        textValueSubclass = "Heterobranchia "; // Special case for tax_subclass
+      } else if (level === "tax_family" && !d[level]) {
+        textValueSubclass = "No information available"; // Special case for tax_family
+      }
       const textElement = svg
         .append("text")
         .attr("class", `${level}-label`)
@@ -193,14 +193,25 @@ function displayTaxonomy() {
       .attr("class", level)
       .attr("x", xScale(index) + index * 5) // Add spacing for each rectangle
       //            .attr('x', xScale(index)) // Use xScale to determine x position
-      .attr("y", (d, i) => i * rectangleHeight - RectMargin.top)
+      .attr(
+        "y",
+        (d, i) => i * rectangleHeight - RectMargin.top - RectMargin.bottom - 2
+      )
       .attr(
         "width",
         (d, i) => textWidths[i] + RectMargin.left * 4 + RectMargin.right * 4
       ) // Set width based on text
       .attr("height", rectangleHeight - RectMargin.top - RectMargin.bottom)
+      .on("mouseover", function () {
+        d3.select(this)
+          .attr("stroke-width", 3) // Change stroke-width on mouseover
+          .attr("stroke", "white"); // Change stroke color on mouseover
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("stroke-width", 0); // Reset stroke-width on mouseout
+      })
       .on("click", function (event, d) {
-        showNudi(d.image);
+        showNudi(d); // Pass the whole object instead of just d.image
       });
   });
   // Create labels for each taxonomic level
@@ -211,7 +222,11 @@ function displayTaxonomy() {
       .enter()
       .append("text")
       .attr("class", `${level}-label`)
-      .attr("x", (d, i) => xScale(index) + index * 5 + 5 + RectMargin.left + RectMargin.right) // Adjust label position with spacing
+      .attr(
+        "x",
+        (d, i) =>
+          xScale(index) + index * 5 + 5 + RectMargin.left + RectMargin.right
+      ) // Adjust label position with spacing
       //                .attr('x', (d, i) => xScale(index) + (textWidths[i] + (RectMargin.left * 4) + (RectMargin.right * 4)) + labelSpacing)
       // Use xScale for label x position
       .attr(
@@ -225,16 +240,17 @@ function displayTaxonomy() {
       .style("font-weight", "600")
       .text((d) => {
         if (level === "tax_family" && !d[level]) {
-            return "No information available"; // Display this if tax_family is blank
+          return "No information available"; // Display this if tax_family is blank
         }
         return level === "tax_subclass" ? "Heterobranchia " : d[level]; // For other levels
-    });
+      });
   });
 }
 
-function showNudi(image) {
+function showNudi(nudi) {
   // Remove any existing image
   d3.select("#nudi-dish").remove();
+
   // Append a new div for the image
   const NudiContainer = d3
     .select("body")
@@ -247,26 +263,54 @@ function showNudi(image) {
     .style("z-index", 1000);
 
   // Append the image
-  NudiContainer.append("img")
-    .attr("src", image.content)
+  const image = NudiContainer.append("img")
+    .attr("src", nudi.image.content) // Adjust as needed for the image path
     .attr("alt", "Taxonomic Image")
     .style("font-family", '"Kodchasan", sans-serif')
-    .style("max-width", "1000px") // Adjust size as needed
+    .style("max-width", "1000px")
     .style("height", "auto")
     .style("border", "2px solid white")
-    .on('error', function() {
-        d3.select(this)
-          .attr('src', '')
-          .style('width', '500px')
-          .style('height', '75px')
-          .attr("alt", "No available image")
-          .style('background-color', 'gray')
-          .style('display', 'flex')
-          .style('align-items', 'center')
-          .style('justify-content', 'center')
-          .text('No available image')
-          .style('color', 'white');
+    .on("load", function () {
+      const imageWidth = this.width; // Get the width of the loaded image
+      infoDiv.style("width", imageWidth + "px"); // Set the info div width
+    })
+    .on("error", function () {
+      d3.select(this)
+        .attr("src", "")
+        .style("width", "500px")
+        .style("height", "75px")
+        .attr("alt", "No available image")
+        .style("background-color", "gray")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("justify-content", "center")
+        .text("No available image")
+        .style("color", "white");
+
+      // Set the width of infoDiv even if the image fails to load
+      infoDiv.style("width", "500px"); // Set a default width or match the failed image dimensions
     });
+
+  // Append the info div
+  const infoDiv = NudiContainer.append("div")
+    .attr("id", "nudi-info")
+    .style("border", "2px solid white")
+    .style("padding-top", "5px")
+    .style("padding-bottom", "25px")
+    .style("background-color", "black")
+    .style("width", image.node().width + "px"); // Set the width to match the image
+
+  // Add text elements to the info div
+  infoDiv
+    .append("h2")
+    .style("color", "white")
+    .style("padding-top", "15px")
+    .text(nudi.sci_name || "Scientific Name Not Available");
+
+  infoDiv
+    .append("p")
+    .style("color", "white")
+    .text("Image and information courtesy of the Smithsonian Institution");
 
   NudiContainer.append("button")
     .text("Close")

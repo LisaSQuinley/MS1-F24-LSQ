@@ -30,7 +30,7 @@ ProjectTitle.attr("id", "section")
 
 const ProjectOverview = d3.select("body").append("div");
 ProjectOverview.attr("id", "section")
-.style("margin-left", "50px")
+  .style("margin-left", "50px")
   .append("h3")
   .text("Project Overview")
   .append("p")
@@ -265,9 +265,29 @@ function displayTaxonomy() {
         return level === "tax_subclass" ? "Heterobranchia " : d[level]; // For other levels
       });
   });
+
+
+  const Credits = d3.select("body").append("div");
+  Credits.attr("id", "section")
+    .style("margin-left", "50px");
+  
+  Credits.append("h3")
+    .text("Credits")
+    .style("margin-top", "0px");
+  
+  // Append the first paragraph
+  Credits.append("p")
+    .text("Images and Nudibranch Data from the Smithsonian Institution");
+  
+  // Append the second paragraph
+  Credits.append("p")
+    .text("Map polygons from Natural Earth");
+
+    Credits.append("p")
+    .text("Visualization created by Lisa Sakai Quinley");
+  
+
 }
-
-
 
 function showNudi(nudi) {
   // Remove any existing image
@@ -285,7 +305,6 @@ function showNudi(nudi) {
     .style("display", "flex") // Use flexbox
     .style("flex-direction", "column") // Stack items vertically
     .style("align-items", "flex-end") // Align items to the right
-
     .style("z-index", 1000);
 
   // Append the image
@@ -294,6 +313,7 @@ function showNudi(nudi) {
     .attr("alt", "Taxonomic Image")
     .style("font-family", '"Kodchasan", sans-serif')
     .style("max-width", "950px")
+    .style("max-height", "900px")
     .style("height", "auto")
     .style("border", "2px solid white")
     .on("load", function () {
@@ -319,69 +339,74 @@ function showNudi(nudi) {
 
   // Append the info div
   const infoDiv = NudiContainer.append("div")
-  .attr("id", "nudi-info")
-  .style("border", "2px solid white")
-  .style("padding-top", "5px")
-  .style("padding-bottom", "25px")
-  .style("background-color", "black")
-  .attr("display", "flex")
-  .style("width", image.node().width + "px"); // Set the width to match the image
+    .attr("id", "nudi-info")
+    .style("border", "2px solid white")
+    .style("padding-top", "5px")
+    .style("padding-bottom", "25px")
+    .style("background-color", "black")
+    .attr("display", "flex")
+    .style("width", image.node().width + "px"); // Set the width to match the image
 
-// Add the scientific name
-infoDiv.append("h2")
-  .style("color", "white")
-  .style("padding-top", "15px")
-  .text(nudi.sci_name || "Scientific Name Not Available");
+  // Add the scientific name
+  infoDiv
+    .append("h2")
+    .style("color", "white")
+    .style("padding-top", "15px")
+    .text(nudi.sci_name || "Scientific Name Not Available");
 
-// Create a new div for extra info
-const extraNudiInfo = infoDiv.append("div") // Correctly reference the new div
-.attr("id", "extra_nudi_info");
+  // Create a new div for extra info
+  const extraNudiInfo = infoDiv
+    .append("div") // Correctly reference the new div
+    .attr("id", "extra_nudi_info");
 
-extraNudiInfo.append("h3")
-  .style("color", "white")
-  .style("padding-top", "0")
-  .text("Depth");
+  extraNudiInfo
+    .append("h3")
+    .style("color", "white")
+    .style("padding-top", "0")
+    .text("Depth");
 
-// Add depth information
-extraNudiInfo.append("p")
-  .style("color", "white")
-  .style("padding-top", "0")
-  .text(`${nudi.depth ? nudi.depth + " meters" : "Not Available"}`);
+  // Add depth information
+  extraNudiInfo
+    .append("p")
+    .style("color", "white")
+    .style("padding-top", "0")
+    .text(`${nudi.depth ? nudi.depth + " meters" : "Not Available"}`);
 
-extraNudiInfo.append("h3")
-  .style("color", "white")
-  .style("padding-top", "0")
-  .text("Coordinates");
+  extraNudiInfo
+    .append("h3")
+    .style("color", "white")
+    .style("padding-top", "0")
+    .text("Coordinates");
 
-// Add the latitude and longitude coordinates
-extraNudiInfo.append("p")
-  .style("color", "white")
-  .style("padding-top", "0")
-  .text(`Latitude: ${nudi.latitude.content || "Not Available"} | Longitude: ${nudi.longitude.content || "Not Available"}`);
+  // Add the latitude and longitude coordinates
+  extraNudiInfo
+    .append("p")
+    .style("color", "white")
+    .style("padding-top", "0")
+    .text(
+      `Latitude: ${nudi.latitude.content || "Not Available"} | Longitude: ${
+        nudi.longitude.content || "Not Available"
+      }`
+    );
 
-// Add the image source credit
-infoDiv.append("p")
-  .style("color", "white")
-  .text("Image and information courtesy of the Smithsonian Institution");
-
-// Create close button
-NudiContainer.append("button")
-  .text("Close")
-  .style("position", "absolute")
-  .style("top", "0")
-  .style("right", "0")
-  .style("z-index", 1001)
-  .style("background-color", "white")
-  .style("color", "black")
-  .style("border", "none")
-  .style("padding", "10px")
-  .style("cursor", "pointer")
-  .style("border-radius", "5px")
-  .style("font-size", "16px")
-  .style("font-family", '"Kodchasan", sans-serif')
-  .style("font-weight", "600")
-  .style("margin", "20px")
-  .on("click", function () {
-    d3.select("#nudi-dish").remove();
-  });
+  // Create close button
+  NudiContainer.append("button")
+    .text("Close")
+    .style("position", "absolute")
+    .style("top", "0")
+    .style("right", "0")
+    .style("z-index", 1001)
+    .style("background-color", "white")
+    .style("color", "black")
+    .style("border", "none")
+    .style("padding", "10px")
+    .style("cursor", "pointer")
+    .style("border-radius", "5px")
+    .style("font-size", "16px")
+    .style("font-family", '"Kodchasan", sans-serif')
+    .style("font-weight", "600")
+    .style("margin", "20px")
+    .on("click", function () {
+      d3.select("#nudi-dish").remove();
+    });
 }

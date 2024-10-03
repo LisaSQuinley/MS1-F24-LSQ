@@ -1,3 +1,7 @@
+I am going to refine these sketches. This is for Qualitative (Assignment 2).
+![Sketches-Assignment2-Qualitative](https://github.com/user-attachments/assets/51e608e6-0843-4b61-a5fa-4ffe9e1f65e5)
+
+
 # Know Your Nudibrachs: A Scuba Diver's Guide to Sea Slugs
 ### GitHub Pages: https://lisasquinley.github.io/MS1-F24-LSQ/
 ![lisasquinley github io_MS1-F24-LSQ_0](https://github.com/user-attachments/assets/d091536f-b032-4d45-87f2-63c63d5ef730)

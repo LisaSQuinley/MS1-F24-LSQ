@@ -194,9 +194,9 @@ function renderCircles(groupedData) {
       d3.select(this).attr("stroke-width", 1).attr("stroke", "white");
     })
     .on("click", function (event, d) {
-      const nudiId = d.nudi_id; // Change to d.properties.Nudi_id if necessary
-      console.log("Clicked Nudi ID:", nudiId);
-      highlightTaxonomy(nudiId);
+      const nudiId = d.id; // Assuming `d` has an `id` that corresponds to your Nudi_id
+      console.log("Clicked Nudi ID:", nudiId); // Log the clicked Nudi ID
+      highlightTaxonomy(nudiId); // Call function to highlight taxonomy
     });
 
   // Add text labels for each circle
@@ -219,16 +219,23 @@ function renderCircles(groupedData) {
 
 function highlightTaxonomy(nudiId) {
   // Clear previous highlights
-  d3.selectAll('.tax-level').style('background-color', 'transparent');
+  d3.selectAll('.tax-level').style('background-color', 'transparent'); // Clear previous highlights
 
   // Highlight all taxonomic levels associated with the nudiId
-  const nudi = myNudies.find(n => n.id === nudiId);
-  if (nudi) {
-    d3.selectAll(`.${nudi.tax_kingdom}, .${nudi.tax_phylum}, .${nudi.tax_class}, .${nudi.tax_order}, .${nudi.tax_family}`)
-      .style('background-color', 'yellow');
-  }
-}
+  myNudies.forEach(nudi => {
+    if (nudi.id === nudiId) {
+      console.log("Highlighting taxonomic levels for Nudi ID:", nudiId); // Log the Nudi ID being processed
+      console.log("Taxonomic levels:", nudi.tax_kingdom, nudi.tax_phylum, nudi.tax_class, nudi.tax_order, nudi.tax_family); // Log the taxonomic levels
 
+      // Highlight taxonomic levels
+      d3.selectAll(`.${nudi.tax_kingdom}, .${nudi.tax_phylum}, .${nudi.tax_class}, .${nudi.tax_order}, .${nudi.tax_family}`)
+        .style('background-color', 'yellow')
+        .each(function() {
+          console.log("Highlighting element:", this); // Log the element being highlighted
+        });
+    }
+  });
+}
 
 // Load your GeoJSON data and call the functions
 d3.json("data.geojson").then((data) => {

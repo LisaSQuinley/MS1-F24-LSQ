@@ -19,36 +19,6 @@
 // https://observablehq.com/@d3/equirectangular?intent=fork
 
 */
-
-// Load your additional JSON data
-d3.json("data.json").then((nudiData) => {
-  // Create a mapping from id to nudi object
-  const nudiMap = {};
-  nudiData.forEach(nudi => {
-    nudiMap[nudi.id] = nudi; // Assuming nudi has an "id" field
-  });
-
-  // Now load your GeoJSON data
-  d3.json("data.geojson").then((geoData) => {
-    // Enrich the GeoJSON features with additional data
-    geoData.features.forEach(feature => {
-      const nudiId = feature.properties.Nudi_id; // Assuming Nudi_id is in properties
-      const nudiInfo = nudiMap[nudiId];
-
-      if (nudiInfo) {
-        // Add additional properties to the feature from nudiInfo
-        feature.properties = { ...feature.properties, ...nudiInfo };
-      }
-    });
-
-    // Now you can use geoData with enriched properties
-    const groupedData = groupDataByLocation(geoData);
-    renderCircles(groupedData);
-  });
-}).catch(error => {
-  console.error("Error loading data:", error);
-});
-
 const ProjectTitle = d3.select("body").append("div");
 ProjectTitle.attr("id", "section")
   .style("margin-left", "50px")
@@ -74,8 +44,8 @@ const mapheight = 800; // Set the height for your SVG
 let myNudies;
 const Nudiprojection = d3
   .geoEquirectangular()
-  .scale(400)
-  .translate([mapwidth / 1.5, mapheight / 1.5]);
+  .scale(250)
+  .translate([mapwidth / 2, mapheight / 2]);
 const Nudipath = d3.geoPath(Nudiprojection);
 
 // Create a single SVG element
@@ -85,15 +55,10 @@ const svg = d3
   .attr("width", mapwidth)
   .attr("height", mapheight);
 
-// Create a group for map layers
-const mapGroup = svg.append("g").attr("class", "map-layer");
-// Create a group for the circles and text
-const dataGroup = svg.append("g").attr("class", "data-layer");
-
 // Load and render the countries map
 d3.json("ne_110m_admin_0_countries.json")
   .then((data) => {
-    mapGroup
+    svg
       .selectAll("path.country")
       .data(data.features)
       .enter()
@@ -102,13 +67,17 @@ d3.json("ne_110m_admin_0_countries.json")
       .attr("d", Nudipath)
       .attr("fill", "white")
       .attr("stroke", "#262262")
-      .attr("stroke-width", 0.5);
+      .attr("stroke-width", 0.5)
+      .attr("z-index", 6);
+  })
+  .catch((error) => {
+    console.error("Error loading the GeoJSON data:", error);
   });
 
 // Load and render the ocean map
 d3.json("ne_10m_ocean.json")
   .then((data) => {
-    mapGroup
+    svg
       .selectAll("path.ocean")
       .data(data.features)
       .enter()
@@ -116,127 +85,32 @@ d3.json("ne_10m_ocean.json")
       .attr("class", "ocean")
       .attr("d", Nudipath)
       .attr("fill", "#1C75BC")
-      .attr("opacity", 0.2);
+      .attr("opacity", 0.2)
+      .attr("z-index", 2);
+  })
+  .catch((error) => {
+    console.error("Error loading the GeoJSON data:", error);
   });
 
-// Load GeoJSON data and render circles and text
-d3.json("data.geojson").then((data) => {
-  const groupedData = groupDataByLocation(data);
-  renderCircles(groupedData);
-});
-
-function groupDataByLocation(data, threshold = 2) {
-  const grouped = [];
-
-  data.features.forEach(feature => {
-    const latitude = feature.geometry.coordinates[1]; // GeoJSON is [lon, lat]
-    const longitude = feature.geometry.coordinates[0];
-    const sciName = feature.properties.sci_name || "No Scientific Name Available"; // Use placeholder if blank
-
-    const existingGroup = grouped.find(group => {
-      const latDiff = Math.abs(group.latitude - latitude);
-      const longDiff = Math.abs(group.longitude - longitude);
-      return latDiff < threshold && longDiff < threshold;
-    });
-
-    if (existingGroup) {
-      existingGroup.count += 1; // Increase the count for the existing group
-      existingGroup.scientificNames.push(sciName); // Add scientific name or placeholder
-    } else {
-      grouped.push({
-        latitude: latitude,
-        longitude: longitude,
-        count: 1, // Start a new group
-        scientificNames: [sciName] // Start with the current scientific name or placeholder
-      });
-    }
+// Load and render the GeoJSON data with dots (circles) - this should be last
+d3.json("data.geojson")
+  .then((data) => {
+    svg
+      .selectAll("circle")
+      .data(data.features)
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => Nudiprojection(d.geometry.coordinates)[0])
+      .attr("cy", (d) => Nudiprojection(d.geometry.coordinates)[1])
+      .attr("r", 5)
+      .attr("fill", "#FF0000")
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .attr("z-index", 3);
+  })
+  .catch((error) => {
+    console.error("Error loading the GeoJSON data:", error);
   });
-
-  return grouped;
-}
-
-// Create a tooltip div
-const tooltip = d3.select("body").append("div")
-  .attr("class", "tooltip")
-  .style("position", "absolute")
-  .style("visibility", "hidden")
-  .style("background", "white")
-  .style("border", "1px solid black")
-  .style("padding", "5px")
-  .style("font-family", '"Kodchasan", sans-serif')
-  .style("font-weight", "600");
-
-function renderCircles(groupedData) {
-  const circleScale = d3.scaleSqrt()
-    .domain([0, d3.max(groupedData, d => d.count)])
-    .range([5, 60]);
-
-  svg.selectAll("circle")
-    .data(groupedData)
-    .enter()
-    .append("circle")
-    .attr("cx", d => Nudiprojection([d.longitude, d.latitude])[0])
-    .attr("cy", d => Nudiprojection([d.longitude, d.latitude])[1])
-    .attr("r", d => circleScale(d.count))
-    .attr("fill", "red")
-    .attr("stroke", "white")
-    .attr("stroke-width", 1)
-    .attr("opacity", 0.7)
-    .on("mouseover", function (event, d) {
-      tooltip.html(d.scientificNames.join(", ")) // List scientific names
-        .style("visibility", "visible")
-        .style("top", (event.pageY - 10) + "px")
-        .style("left", (event.pageX + 10) + "px");
-      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
-    })
-    .on("mouseout", function () {
-      tooltip.style("visibility", "hidden");
-      d3.select(this).attr("stroke-width", 1).attr("stroke", "white");
-    })
-    .on("click", function (event, d) {
-      const nudiId = d.nudi_id; // Change to d.properties.Nudi_id if necessary
-      console.log("Clicked Nudi ID:", nudiId);
-      highlightTaxonomy(nudiId);
-    });
-
-  // Add text labels for each circle
-  svg.selectAll("text")
-    .data(groupedData)
-    .enter()
-    .append("text")
-    .attr("x", d => Nudiprojection([d.longitude, d.latitude])[0]) // Center text on the circle
-    .attr("y", d => Nudiprojection([d.longitude, d.latitude])[1]) // Center text on the circle
-    .attr("dy", ".35em") // Vertical alignment
-    .attr("text-anchor", "middle") // Center text horizontally
-    .style("fill", "white") // Text color
-    .style("font-size", "12px") // Font size
-    .style("font-family", '"Kodchasan", sans-serif') // Font family
-    .style("font-weight", "800") // Font weight
-    .text(d => d.count); // Set the text to the count
-
-}
-
-
-function highlightTaxonomy(nudiId) {
-  // Clear previous highlights
-  d3.selectAll('.tax-level').style('background-color', 'transparent');
-
-  // Highlight all taxonomic levels associated with the nudiId
-  const nudi = myNudies.find(n => n.id === nudiId);
-  if (nudi) {
-    d3.selectAll(`.${nudi.tax_kingdom}, .${nudi.tax_phylum}, .${nudi.tax_class}, .${nudi.tax_order}, .${nudi.tax_family}`)
-      .style('background-color', 'yellow');
-  }
-}
-
-
-// Load your GeoJSON data and call the functions
-d3.json("data.geojson").then((data) => {
-  const groupedData = groupDataByLocation(data);
-  renderCircles(groupedData);
-}).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
-});
 
 const descriptionTaxonomy = d3.select("body").append("div");
 descriptionTaxonomy
@@ -432,22 +306,22 @@ function displayTaxonomy() {
   const Credits = d3.select("body").append("div");
   Credits.attr("id", "section")
     .style("margin-left", "50px");
-
+  
   Credits.append("h3")
     .text("Credits")
     .style("margin-top", "0px");
-
+  
   // Append the first paragraph
   Credits.append("p")
     .text("Images and Nudibranch Data from the Smithsonian Institution");
-
+  
   // Append the second paragraph
   Credits.append("p")
     .text("Map polygons from Natural Earth");
 
-  Credits.append("p")
+    Credits.append("p")
     .text("Visualization created by Lisa Sakai Quinley");
-
+  
 
 }
 
@@ -546,7 +420,8 @@ function showNudi(nudi) {
     .style("color", "white")
     .style("padding-top", "0")
     .text(
-      `Latitude: ${nudi.latitude.content || "Not Available"} | Longitude: ${nudi.longitude.content || "Not Available"
+      `Latitude: ${nudi.latitude.content || "Not Available"} | Longitude: ${
+        nudi.longitude.content || "Not Available"
       }`
     );
 

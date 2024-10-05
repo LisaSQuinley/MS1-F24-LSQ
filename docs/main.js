@@ -155,14 +155,6 @@ d3.json("ne_10m_ocean.json")
       .attr("opacity", 0.2);
   });
 
-// Load your GeoJSON data again (not necessary if already loaded above)
-d3.json("data.geojson").then((data) => {
-  const groupedData = groupDataByLocation(data);
-  renderCircles(groupedData);
-}).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
-});
-
 function groupDataByLocation(data, threshold = 2) {
   const grouped = [];
 
@@ -548,10 +540,9 @@ NudiContainer.append("button")
   .style("right", "10px") // Adjusted position
   .style("z-index", 2000) // Increased z-index
   .style("background-color", "white")
-  .style("color", "black")
   .style("padding", "10px")
+  .style("border", "0px")
   .style("cursor", "pointer")
-  .style("border-radius", "5px")
   .style("font-size", "16px")
   .style("font-family", '"Kodchasan", sans-serif')
   .style("font-weight", "600")

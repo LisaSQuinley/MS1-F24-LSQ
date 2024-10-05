@@ -1,90 +1,52 @@
 /*
-{
-       "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -31.9688,
-          39.366
-        ]
-      },
-      "properties": {
-        "Nudi_id": "ld1-1679947473480-1679947537392-0",
-        "title": "Nudibranchia",
-        "sci_name": "No information available",
-        "link": "http://n2t.net/ark:/65665/302947a06-2e80-4cb8-bd8a-e21349d1a1ff",
-        "place": "Azores",
-        "depth": "1433.34 - 1433.34",
-        "tax_class": "Gastropoda",
-        "tax_family": "No information available",
-        "tax_kingdom": "Animalia",
-        "tax_order": "Nudibranchia",
-        "tax_phylum": "Mollusca",
-        "image": null,
-        "tax_subclass": "Heterobranchia"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -157.817,
-          21.4617
-        ]
-      },
-      "properties": {
-        "Nudi_id": "ld1-1643411352667-1643411381973-0",
-        "title": "Nudibranchia",
-        "sci_name": "No information available",
-        "link": "http://n2t.net/ark:/65665/3e223b413-a1d5-4de7-a610-bb75e8594570",
-        "place": "United States",
-        "depth": "5 - 5",
-        "tax_class": "Gastropoda",
-        "tax_family": "No information available",
-        "tax_kingdom": "Animalia",
-        "tax_order": "Nudibranchia",
-        "tax_phylum": "Mollusca",
-        "image": {
-          "id": "damsmdm:NMNH-USNM_1573355_FARMS_14_LEE_4446",
-          "guid": "http://n2t.net/ark:/65665/m3d9e26a6e-f500-46c6-b537-a3e143067c6e",
-          "type": "Images",
-          "idsId": "ark:/65665/m3d9e26a6ef50046c6b537a3e143067c6e",
-          "usage": {
-            "access": "CC0"
-          },
-          "content": "https://ids.si.edu/ids/deliveryService/id/ark:/65665/m3d9e26a6ef50046c6b537a3e143067c6e",
-          "thumbnail": "https://ids.si.edu/ids/deliveryService/id/ark:/65665/m3d9e26a6ef50046c6b537a3e143067c6e/90",
-          "altTextAccessibility": "",
-          "resources": [
-            {
-              "label": "Screen Image",
-              "url": "https://ids.si.edu/ids/download?id=NMNH-USNM_1573355_FARMS_14_LEE_4446_screen"
-            },
-            {
-              "label": "Thumbnail Image",
-              "url": "https://ids.si.edu/ids/download?id=NMNH-USNM_1573355_FARMS_14_LEE_4446_thumb"
-            }
-          ]
-        },
-        "tax_subclass": "Heterobranchia"
-      }
-    },
+  myNudies.push({
+    id: objectData.id,
+    title: objectData.title,
+    link: objectData.content.descriptiveNonRepeating.record_link,
+    place: currentPlace,
+    depth: depthData,
+    sci_name: objectData.content.indexedStructured.scientific_name,
+    tax_kingdom: objectData.content.indexedStructured.tax_kingdom,
+    tax_phylum: objectData.content.indexedStructured.tax_phylum,
+    tax_class: objectData.content.indexedStructured.tax_class,
+    tax_order: objectData.content.indexedStructured.tax_order,
+    tax_family: objectData.content.indexedStructured.tax_family,
+    latitude: objectData.content.indexedStructured.geoLocation[0].points.point.latitude,
+    longitude: objectData.content.indexedStructured.geoLocation[0].points.point.longitude,
+    image: image_url
+    })
 // https://d3js.org/d3-geo/cylindrical (for the geographic map) https://github.com/d3/d3-geo/blob/main/src/projection/equirectangular.js
 // https://observablehq.com/@d3/equirectangular?intent=fork
 
 */
 
-// Load your GeoJSON data
-d3.json("data.geojson").then((geoData) => {
-  // Now you can use geoData directly
-  const groupedData = groupDataByLocation(geoData);
-  renderCircles(groupedData);
+// Load your additional JSON data
+d3.json("data.json").then((nudiData) => {
+  // Create a mapping from id to nudi object
+  const nudiMap = {};
+  nudiData.forEach(nudi => {
+    nudiMap[nudi.id] = nudi; // Assuming nudi has an "id" field
+  });
+
+  // Now load your GeoJSON data
+  d3.json("data.geojson").then((geoData) => {
+    // Enrich the GeoJSON features with additional data
+    geoData.features.forEach(feature => {
+      const nudiId = feature.properties.Nudi_id; // Assuming Nudi_id is in properties
+      const nudiInfo = nudiMap[nudiId];
+
+      if (nudiInfo) {
+        // Add additional properties to the feature from nudiInfo
+        feature.properties = { ...feature.properties, ...nudiInfo };
+      }
+    });
+
+    // Now you can use geoData with enriched properties
+    const groupedData = groupDataByLocation(geoData);
+    renderCircles(groupedData);
+  });
 }).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
+  console.error("Error loading data:", error);
 });
 
 const ProjectTitle = d3.select("body").append("div");
@@ -109,12 +71,12 @@ ProjectOverview.attr("id", "section")
 const mapwidth = 1920; // Set the width for your SVG
 const mapheight = 800; // Set the height for your SVG
 
+let myNudies;
 const Nudiprojection = d3
   .geoEquirectangular()
   .scale(400)
   .translate([mapwidth / 1.5, mapheight / 1.5]);
 const Nudipath = d3.geoPath(Nudiprojection);
-
 
 // Create a single SVG element
 const svg = d3
@@ -125,6 +87,8 @@ const svg = d3
 
 // Create a group for map layers
 const mapGroup = svg.append("g").attr("class", "map-layer");
+// Create a group for the circles and text
+const dataGroup = svg.append("g").attr("class", "data-layer");
 
 // Load and render the countries map
 d3.json("ne_110m_admin_0_countries.json")
@@ -155,12 +119,10 @@ d3.json("ne_10m_ocean.json")
       .attr("opacity", 0.2);
   });
 
-// Load your GeoJSON data again (not necessary if already loaded above)
+// Load GeoJSON data and render circles and text
 d3.json("data.geojson").then((data) => {
   const groupedData = groupDataByLocation(data);
   renderCircles(groupedData);
-}).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
 });
 
 function groupDataByLocation(data, threshold = 2) {
@@ -232,8 +194,9 @@ function renderCircles(groupedData) {
       d3.select(this).attr("stroke-width", 1).attr("stroke", "white");
     })
     .on("click", function (event, d) {
-      console.log("Clicked on scientific names:", d.scientificNames);
-      highlightTaxonomy(d.scientificNames); // Adjust to pass scientific names directly
+      const nudiId = d.nudi_id; // Change to d.properties.Nudi_id if necessary
+      console.log("Clicked Nudi ID:", nudiId);
+      highlightTaxonomy(nudiId);
     });
 
   // Add text labels for each circle
@@ -250,20 +213,20 @@ function renderCircles(groupedData) {
     .style("font-family", '"Kodchasan", sans-serif') // Font family
     .style("font-weight", "800") // Font weight
     .text(d => d.count); // Set the text to the count
+
 }
 
-function highlightTaxonomy(scientificNames) {
+
+function highlightTaxonomy(nudiId) {
   // Clear previous highlights
   d3.selectAll('.tax-level').style('background-color', 'transparent');
 
-  // Highlight taxonomic levels associated with the scientific names
-  scientificNames.forEach(sciName => {
-    const nudi = geoData.features.find(f => f.properties.sci_name === sciName);
-    if (nudi) {
-      d3.selectAll(`.${nudi.properties.tax_kingdom}, .${nudi.properties.tax_phylum}, .${nudi.properties.tax_class}, .${nudi.properties.tax_order}, .${nudi.properties.tax_family}`)
-        .style('background-color', 'yellow');
-    }
-  });
+  // Highlight all taxonomic levels associated with the nudiId
+  const nudi = myNudies.find(n => n.id === nudiId);
+  if (nudi) {
+    d3.selectAll(`.${nudi.tax_kingdom}, .${nudi.tax_phylum}, .${nudi.tax_class}, .${nudi.tax_order}, .${nudi.tax_family}`)
+      .style('background-color', 'yellow');
+  }
 }
 
 
@@ -283,8 +246,15 @@ descriptionTaxonomy
   .text("Taxonomy")
   .append("p")
   .text(
-    "The scientific system of classification for these lovely little sea slugs–their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow."
+    "The scientific system of classification for these lovely little sea slugs. You’ll see changes starting with the Suborder. Please note that the taxonomic name usually consists of two parts, the Genus (capitalized) and the species epithet."
   );
+
+// Load the data from the JSON file
+d3.json("data.json").then((data) => {
+  myNudies = data; // Assign fetched data to myNudies
+  console.log(myNudies.length);
+  displayTaxonomy(); // Call displayTaxonomy after data is loaded
+});
 
 // Set up margins and dimensions for the SVG
 const margin = { top: 20, right: 50, bottom: 20, left: 80 };
@@ -292,8 +262,16 @@ const width = 1920 - margin.left - margin.right;
 const rectangleHeight = 40; // Height of each rectangle
 // const labelSpacing = 20;
 
-const taxonomicLevels = ['tax_kingdom', 'tax_phylum', 'tax_class', 'tax_subclass', 'tax_order', 'tax_family', 'title'];
-
+// Define taxonomic levels to be displayed
+const taxonomicLevels = [
+  "tax_kingdom",
+  "tax_phylum",
+  "tax_class",
+  "tax_subclass",
+  "tax_order",
+  "tax_family",
+  "title",
+];
 
 // Define custom x-coordinates for each column
 const columnPositions = [
@@ -338,90 +316,117 @@ const headerWidths = [
     .text(text);
 });
 
-d3.json("data.geojson").then((data) => {
-  geoData = data; // Store it for later use
-  displayTaxonomy(); // Call the function to render taxonomy
-}).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
-});
+
+
+
+
+/* 
+// only keep this if I want the xScale even
+const xScale = d3
+  .scaleLinear()
+  .domain([0, taxonomicLevels.length - 1]) // Corrected domain
+  .range([0, width - margin.left - margin.right - 15 * taxonomicLevels.length]); // Account for spacing
+ */
 
 function displayTaxonomy() {
-  const totalHeight = geoData.features.length * rectangleHeight + margin.top + margin.bottom;
-  const svg = d3.select("body")
+  if (!myNudies) return; // Ensure myNudies is defined
+  const totalHeight =
+    myNudies.length * rectangleHeight + margin.top + margin.bottom; // Move this here to use the latest myNudies length
+  const svg = d3
+    .select("body")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", totalHeight)
     .append("g")
     .attr("transform", `translate(25,${margin.top})`);
 
-  const RectMargin = { top: 3, right: 3, bottom: 3, left: 3 };
+  //    const columnWidth = width / taxonomicLevels.length; // Calculate column width
+  const RectMargin = { top: 3, right: 3, bottom: 3, left: 3 }; // Margin for rectangles
 
+  // Create rectangles for each taxonomic level
   taxonomicLevels.forEach((level, index) => {
-    const textWidths = geoData.features.map(feature => {
-      // Access the specific property dynamically
-      const textValue = feature.properties[level] || "No information available"; // Default if missing
-  
-      // Create a temporary text element to measure width
-      const textElement = svg.append("text")
+    const textWidths = myNudies.map((d) => {
+      let textValueSubclass = d[level]; // Default to the value of the current level
+      if (level === "tax_subclass") {
+        textValueSubclass = "Heterobranchia "; // Special case for tax_subclass
+      } else if (level === "tax_family" && !d[level]) {
+        textValueSubclass = "No information available"; // Special case for tax_family
+      }
+      const textElement = svg
+        .append("text")
         .attr("class", `${level}-label`)
         .style("font-size", "12px")
         .style("font-family", '"Kodchasan", sans-serif')
         .style("font-weight", "600")
-        .text(textValue);
-      
-      // Get the width of the text
-      const width = textElement.node().getBBox().width;
+        .text(textValueSubclass); // if level is tax_subclass, display 'Heterobranchia' instead
+      const width = textElement.node().getBBox().width; // Get the width of the text
       textElement.remove(); // Remove the temporary text element
-      
       return width;
     });
 
-    svg.selectAll(`.${level}`)
-      .data(geoData.features)
+    // Create rectangles based on calculated text widths
+    svg
+      .selectAll(`.${level}`)
+      .data(myNudies)
       .enter()
       .append("rect")
       .attr("class", level)
-      .attr("x", columnPositions[index])
-      .attr("y", (feature, i) => i * rectangleHeight - RectMargin.top - RectMargin.bottom - 2)
-      .attr("width", (feature, i) => textWidths[i] + RectMargin.left * 4 + RectMargin.right * 4)
+      .attr("x", columnPositions[index]) // Use custom column positions
+      //      .attr("x", xScale(index) + index * 5) // Add spacing for each rectangle
+      //            .attr('x', xScale(index)) // Use xScale to determine x position
+      .attr(
+        "y",
+        (d, i) => i * rectangleHeight - RectMargin.top - RectMargin.bottom - 2
+      )
+      .attr(
+        "width",
+        (d, i) => textWidths[i] + RectMargin.left * 4 + RectMargin.right * 4
+      ) // Set width based on text
       .attr("height", rectangleHeight - RectMargin.top - RectMargin.bottom)
       .on("mouseover", function () {
         d3.select(this)
-          .attr("stroke-width", 3)
-          .attr("stroke", "white");
+          .attr("stroke-width", 3) // Change stroke-width on mouseover
+          .attr("stroke", "white"); // Change stroke color on mouseover
       })
       .on("mouseout", function () {
-        d3.select(this).attr("stroke-width", 0);
+        d3.select(this).attr("stroke-width", 0); // Reset stroke-width on mouseout
       })
-      .on("click", function (event, feature) {
-        showNudi(feature.properties); // Pass the properties of the feature
+      .on("click", function (event, d) {
+        showNudi(d); // Pass the whole object instead of just d.image
       });
   });
-
   // Create labels for each taxonomic level
   taxonomicLevels.forEach((level, index) => {
-    svg.selectAll(`.${level}-label`)
-      .data(geoData.features)
+    svg
+      .selectAll(`.${level}-label`)
+      .data(myNudies)
       .enter()
       .append("text")
       .attr("class", `${level}-label`)
-      .attr("x", columnPositions[index] + 5 + RectMargin.left + RectMargin.right)
-      .attr("y", (feature, i) => i * rectangleHeight + 2 + RectMargin.top + RectMargin.bottom)
+      .attr(
+        "x",
+        columnPositions[index] + 5 + RectMargin.left + RectMargin.right
+      ) // Use custom column positions
+
+      //      .attr("x",(d, i) =>xScale(index) + index * 5 + 5 + RectMargin.left + RectMargin.right) // Adjust label position with spacing
+      //                .attr('x', (d, i) => xScale(index) + (textWidths[i] + (RectMargin.left * 4) + (RectMargin.right * 4)) + labelSpacing)
+      // Use xScale for label x position
+      .attr(
+        "y",
+        (d, i) => i * rectangleHeight + 2 + RectMargin.top + RectMargin.bottom
+      )
       .attr("dy", "0.35em")
       .style("font-size", "12px")
       .style("fill", "white")
       .style("font-family", '"Kodchasan", sans-serif')
       .style("font-weight", "600")
-      .text(feature => {
-        const value = feature.properties[level];
-        if (level === "tax_family" && value === null) {
-          return "No information available";
+      .text((d) => {
+        if (level === "tax_family" && !d[level]) {
+          return "No information available"; // Display this if tax_family is blank
         }
-        return level === "tax_subclass" ? "Heterobranchia " : value || "No information available"; // Handle nulls
+        return level === "tax_subclass" ? "Heterobranchia " : d[level]; // For other levels
       });
   });
-
-
 
 
   const Credits = d3.select("body").append("div");
@@ -449,6 +454,7 @@ function displayTaxonomy() {
 function showNudi(nudi) {
   // Remove any existing image
   d3.select("#nudi-dish").remove();
+
   // Append a new div for the image
   const NudiContainer = d3
     .select("body")
@@ -465,7 +471,7 @@ function showNudi(nudi) {
 
   // Append the image
   const image = NudiContainer.append("img")
-    .attr("src", nudi.image.content || "")
+    .attr("src", nudi.image.content) // Adjust as needed for the image path
     .attr("alt", "Taxonomic Image")
     .style("font-family", '"Kodchasan", sans-serif')
     .style("max-width", "950px")
@@ -532,31 +538,36 @@ function showNudi(nudi) {
     .append("h3")
     .style("color", "white")
     .style("padding-top", "0")
-    .text("Place");
-    extraNudiInfo
+    .text("Coordinates");
+
+  // Add the latitude and longitude coordinates
+  extraNudiInfo
     .append("p")
     .style("color", "white")
     .style("padding-top", "0")
-    .text(`${nudi.place || "Not Available"}`);
+    .text(
+      `Latitude: ${nudi.latitude.content || "Not Available"} | Longitude: ${nudi.longitude.content || "Not Available"
+      }`
+    );
 
-
-// Create close button
-NudiContainer.append("button")
-  .text("Close")
-  .style("position", "absolute")
-  .style("top", "10px") // Adjusted position
-  .style("right", "10px") // Adjusted position
-  .style("z-index", 2000) // Increased z-index
-  .style("background-color", "white")
-  .style("color", "black")
-  .style("padding", "10px")
-  .style("cursor", "pointer")
-  .style("border-radius", "5px")
-  .style("font-size", "16px")
-  .style("font-family", '"Kodchasan", sans-serif')
-  .style("font-weight", "600")
-  .on("click", function () {
-    d3.select("#nudi-dish").remove();
-  });
-
+  // Create close button
+  NudiContainer.append("button")
+    .text("Close")
+    .style("position", "absolute")
+    .style("top", "0")
+    .style("right", "0")
+    .style("z-index", 1001)
+    .style("background-color", "white")
+    .style("color", "black")
+    .style("border", "none")
+    .style("padding", "10px")
+    .style("cursor", "pointer")
+    .style("border-radius", "5px")
+    .style("font-size", "16px")
+    .style("font-family", '"Kodchasan", sans-serif')
+    .style("font-weight", "600")
+    .style("margin", "20px")
+    .on("click", function () {
+      d3.select("#nudi-dish").remove();
+    });
 }

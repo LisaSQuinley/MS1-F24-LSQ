@@ -1,90 +1,11 @@
-/*
-{
-       "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -31.9688,
-          39.366
-        ]
-      },
-      "properties": {
-        "Nudi_id": "ld1-1679947473480-1679947537392-0",
-        "title": "Nudibranchia",
-        "sci_name": "No information available",
-        "link": "http://n2t.net/ark:/65665/302947a06-2e80-4cb8-bd8a-e21349d1a1ff",
-        "place": "Azores",
-        "depth": "1433.34 - 1433.34",
-        "tax_class": "Gastropoda",
-        "tax_family": "No information available",
-        "tax_kingdom": "Animalia",
-        "tax_order": "Nudibranchia",
-        "tax_phylum": "Mollusca",
-        "image": null,
-        "tax_subclass": "Heterobranchia"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -157.817,
-          21.4617
-        ]
-      },
-      "properties": {
-        "Nudi_id": "ld1-1643411352667-1643411381973-0",
-        "title": "Nudibranchia",
-        "sci_name": "No information available",
-        "link": "http://n2t.net/ark:/65665/3e223b413-a1d5-4de7-a610-bb75e8594570",
-        "place": "United States",
-        "depth": "5 - 5",
-        "tax_class": "Gastropoda",
-        "tax_family": "No information available",
-        "tax_kingdom": "Animalia",
-        "tax_order": "Nudibranchia",
-        "tax_phylum": "Mollusca",
-        "image": {
-          "id": "damsmdm:NMNH-USNM_1573355_FARMS_14_LEE_4446",
-          "guid": "http://n2t.net/ark:/65665/m3d9e26a6e-f500-46c6-b537-a3e143067c6e",
-          "type": "Images",
-          "idsId": "ark:/65665/m3d9e26a6ef50046c6b537a3e143067c6e",
-          "usage": {
-            "access": "CC0"
-          },
-          "content": "https://ids.si.edu/ids/deliveryService/id/ark:/65665/m3d9e26a6ef50046c6b537a3e143067c6e",
-          "thumbnail": "https://ids.si.edu/ids/deliveryService/id/ark:/65665/m3d9e26a6ef50046c6b537a3e143067c6e/90",
-          "altTextAccessibility": "",
-          "resources": [
-            {
-              "label": "Screen Image",
-              "url": "https://ids.si.edu/ids/download?id=NMNH-USNM_1573355_FARMS_14_LEE_4446_screen"
-            },
-            {
-              "label": "Thumbnail Image",
-              "url": "https://ids.si.edu/ids/download?id=NMNH-USNM_1573355_FARMS_14_LEE_4446_thumb"
-            }
-          ]
-        },
-        "tax_subclass": "Heterobranchia"
-      }
-    },
-// https://d3js.org/d3-geo/cylindrical (for the geographic map) https://github.com/d3/d3-geo/blob/main/src/projection/equirectangular.js
-// https://observablehq.com/@d3/equirectangular?intent=fork
-
-*/
-
-// Load your GeoJSON data
-d3.json("data.geojson").then((geoData) => {
-  // Now you can use geoData directly
-  const groupedData = groupDataByLocation(geoData);
-  renderCircles(groupedData);
+let geoData;
+d3.json("data.geojson").then(data => {
+    geoData = data;
+    const groupedData = groupDataByLocation(geoData);
+    renderCircles(groupedData);
+    displayTaxonomy(); // Call this once the data is loaded
 }).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
+    console.error("Error loading GeoJSON data:", error);
 });
 
 const ProjectTitle = d3.select("body").append("div");
@@ -102,6 +23,7 @@ ProjectOverview.attr("id", "section")
   .append("h3")
   .text("Project Overview")
   .append("p")
+  .style("padding-bottom", "20px")
   .text(
     "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others)–some of these aspects are explored in my data visualization. Four highlights are visible here–a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
   );
@@ -213,19 +135,30 @@ function renderCircles(groupedData) {
     .attr("stroke-width", 1)
     .attr("opacity", 0.7)
     .on("mouseover", function (event, d) {
-      tooltip.html(d.scientificNames.join(", ")) // List scientific names
-        .style("visibility", "visible")
-        .style("top", (event.pageY - 10) + "px")
-        .style("left", (event.pageX + 10) + "px");
+      // Get the image content for the scientific names
+      const images = d.scientificNames.map(sciName => {
+          const nudi = geoData.features.find(f => f.properties.sci_name === sciName);
+          return nudi && nudi.properties.image ? nudi.properties.image.content : null; // Adjust to your data structure
+      }).filter(Boolean); // Filter out any null values
+  
+      // Shuffle and slice to get a random set of 10
+      const randomImages = images.sort(() => 0.5 - Math.random()).slice(0, 10);
+      
+      // Create HTML for the images
+      const imageHTML = randomImages.map(image => 
+          `<img src="${image}" style="width: 100px; height: auto; margin: 2px; " alt="Image">`
+      ).join('');
+  
+      tooltip.html(imageHTML) // Use the HTML with images
+          .style("visibility", "visible")
+          .style("top", (event.pageY - 10) + "px")
+          .style("left", (event.pageX + 10) + "px");
+      
       d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
-    })
+  })
     .on("mouseout", function () {
       tooltip.style("visibility", "hidden");
       d3.select(this).attr("stroke-width", 1).attr("stroke", "white");
-    })
-    .on("click", function (event, d) {
-      console.log("Clicked on scientific names:", d.scientificNames);
-      highlightTaxonomy(d.scientificNames); // Adjust to pass scientific names directly
     });
 
   // Add text labels for each circle
@@ -244,34 +177,12 @@ function renderCircles(groupedData) {
     .text(d => d.count); // Set the text to the count
 }
 
-function highlightTaxonomy(scientificNames) {
-  // Clear previous highlights
-  d3.selectAll('.tax-level').style('background-color', 'transparent');
-
-  // Highlight taxonomic levels associated with the scientific names
-  scientificNames.forEach(sciName => {
-    const nudi = geoData.features.find(f => f.properties.sci_name === sciName);
-    if (nudi) {
-      d3.selectAll(`.${nudi.properties.tax_kingdom}, .${nudi.properties.tax_phylum}, .${nudi.properties.tax_class}, .${nudi.properties.tax_order}, .${nudi.properties.tax_family}`)
-        .style('background-color', 'yellow');
-    }
-  });
-}
-
-
-// Load your GeoJSON data and call the functions
-d3.json("data.geojson").then((data) => {
-  const groupedData = groupDataByLocation(data);
-  renderCircles(groupedData);
-}).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
-});
-
 const descriptionTaxonomy = d3.select("body").append("div");
 descriptionTaxonomy
   .attr("id", "section")
   .style("margin-left", "50px")
   .append("h3")
+  .style("padding-top", "20px")
   .text("Taxonomy")
   .append("p")
   .text(
@@ -330,12 +241,38 @@ const headerWidths = [
     .text(text);
 });
 
-d3.json("data.geojson").then((data) => {
-  geoData = data; // Store it for later use
-  displayTaxonomy(); // Call the function to render taxonomy
-}).catch(error => {
-  console.error("Error loading GeoJSON data:", error);
-});
+// Create a container for taxonomic levels
+const taxonomicContainer = d3.select("body")
+  .append("div")
+  .attr("id", "taxonomy-container")
+  .style("display", "none") // Initially hidden
+  .style("margin-left", "50px");
+
+// Function to render taxonomic levels based on scientific names
+function displayTaxonomyLevels(scientificNames) {
+  taxonomicContainer.html(""); // Clear previous content
+
+  scientificNames.forEach(sciName => {
+    const nudi = geoData.features.find(f => f.properties.sci_name === sciName);
+    if (nudi) {
+      const levels = `
+        <h4>${nudi.properties.tax_kingdom}</h4>
+        <h4>${nudi.properties.tax_phylum}</h4>
+        <h4>${nudi.properties.tax_class}</h4>
+        <h4>${nudi.properties.tax_subclass}</h4>
+        <h4>${nudi.properties.tax_order}</h4>
+        <h4>${nudi.properties.tax_family}</h4>
+      `;
+      taxonomicContainer.append("div")
+        .html(levels)
+        .style("background-color", "yellow") // Highlight background
+        .style("margin-bottom", "10px");
+    }
+  });
+
+  taxonomicContainer.style("display", "block"); // Show the container
+}
+
 
 function displayTaxonomy() {
   const totalHeight = geoData.features.length * rectangleHeight + margin.top + margin.bottom;
@@ -352,7 +289,7 @@ function displayTaxonomy() {
     const textWidths = geoData.features.map(feature => {
       // Access the specific property dynamically
       const textValue = feature.properties[level] || "No information available"; // Default if missing
-  
+    
       // Create a temporary text element to measure width
       const textElement = svg.append("text")
         .attr("class", `${level}-label`)
@@ -367,7 +304,7 @@ function displayTaxonomy() {
       
       return width;
     });
-
+  
     svg.selectAll(`.${level}`)
       .data(geoData.features)
       .enter()
@@ -378,17 +315,28 @@ function displayTaxonomy() {
       .attr("width", (feature, i) => textWidths[i] + RectMargin.left * 4 + RectMargin.right * 4)
       .attr("height", rectangleHeight - RectMargin.top - RectMargin.bottom)
       .on("mouseover", function () {
-        d3.select(this)
-          .attr("stroke-width", 3)
-          .attr("stroke", "white");
+        // Highlight only if it's a title rectangle
+        if (d3.select(this).classed('title')) {
+          d3.select(this)
+            .attr("stroke-width", 3)
+            .attr("stroke", "white");
+        }
       })
       .on("mouseout", function () {
-        d3.select(this).attr("stroke-width", 0);
+        // Remove highlight only if it's a title rectangle
+        if (d3.select(this).classed('title')) {
+          d3.select(this).attr("stroke-width", 0);
+        }
       })
       .on("click", function (event, feature) {
-        showNudi(feature.properties); // Pass the properties of the feature
+        // Check if the clicked element has the class 'title'
+        if (d3.select(this).classed('title')) {
+          showNudi(feature.properties); // Pass the properties of the feature only for 'title' class
+        }
       });
   });
+  
+  
 
   // Create labels for each taxonomic level
   taxonomicLevels.forEach((level, index) => {
@@ -449,7 +397,7 @@ function showNudi(nudi) {
     .style("position", "fixed")
     .style("top", "50%")
     .style("right", "50%")
-    .style("transform", "translate(95%, -50%)")
+    .style("transform", "translate(99%, -50%)")
     .style("display", "flex") // Use flexbox
     .style("flex-direction", "column") // Stack items vertically
     .style("align-items", "flex-end") // Align items to the right
@@ -457,7 +405,7 @@ function showNudi(nudi) {
 
   // Append the image
   const image = NudiContainer.append("img")
-    .attr("src", nudi.image.content || "")
+    .attr("src", nudi.image.content || "") // Use the image content 
     .attr("alt", "Taxonomic Image")
     .style("font-family", '"Kodchasan", sans-serif')
     .style("max-width", "950px")
@@ -551,3 +499,74 @@ NudiContainer.append("button")
   });
 
 }
+
+
+const fs = require('fs');
+const path = require('path');
+const Vibrant = require('node-vibrant'); // Ensure you have installed this library
+let idColorArray = []; // Your idArray where colors will be stored
+
+function findColor(index, imageUrl) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            console.log("Finding color for:", imageUrl);
+            console.log("at:", index);
+
+            Vibrant.from(imageUrl)
+                .getPalette((err, palette) => {
+                    if (err) {
+                        console.error("Error getting color palette at " + imageUrl, err);
+                        return reject(err);
+                    }
+
+                    var vibrantColor = palette.Vibrant.getHex();
+                    vibrantColor = hexToRGB(vibrantColor);
+
+                    // Assign the color to idArray
+                    idColorArray[index] = { color: vibrantColor }; // Ensure idArray has an object structure
+
+                    console.log("Color found:", vibrantColor);
+                    resolve();
+                });
+        }, 1000);
+    });
+}
+
+function hexToRGB(hex) {
+    var r = parseInt(hex.slice(1, 3), 16),
+        g = parseInt(hex.slice(3, 5), 16),
+        b = parseInt(hex.slice(5, 7), 16);
+    return [r, g, b];
+}
+
+function processImagesFromFolder(folderPath) {
+    fs.readdir(folderPath, (err, files) => {
+        if (err) {
+            console.error("Error reading directory:", err);
+            return;
+        }
+
+        // Filter for image files (adjust the extensions as needed)
+        const imageFiles = files.filter(file => {
+            return /\.(jpg|jpeg|png|gif)$/i.test(file);
+        });
+
+        // Process each image file
+        const promises = imageFiles.map((file, index) => {
+            const imageUrl = path.join(folderPath, file);
+            return findColor(index, imageUrl);
+        });
+
+        // Wait for all colors to be processed
+        Promise.all(promises)
+            .then(() => {
+                console.log("All colors processed:", idArray);
+            })
+            .catch(err => {
+                console.error("Error processing images:", err);
+            });
+    });
+}
+
+// Call the function with your folder path
+processImagesFromFolder('./path/to/your/image/folder');

@@ -2,6 +2,18 @@
   "dependencies": {
     "d3-geo-projection": "^4.0.0",
     "fs-extra": "^11.2.0",
-    "node-vibrant": "^3.2.1-alpha.1"
-  }
+    "node-vibrant": "^3.2.1-alpha.1",
+    "vibrant": "^0.0.1"
+  },
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "I am going to refine these sketches. This is for Qualitative (Assignment 2). ![Sketches-Assignment2-Qualitative](https://github.com/user-attachments/assets/51e608e6-0843-4b61-a5fa-4ffe9e1f65e5)",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {}
 }

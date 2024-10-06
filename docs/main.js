@@ -499,73 +499,42 @@ NudiContainer.append("button")
   });
 
 }
+/* 
+Vibrant.from('./image-data/images/ld1-1643411352667-1643411353012-1.jpg').getPalette()
+  .then(palette => {
+    console.log(palette);
+  })
+  .catch(err => {
+    console.error('Error:', err);
+  });
+ */
 
-
-const fs = require('fs');
-const path = require('path');
-const Vibrant = require('node-vibrant');
-
-// Array to hold color information
-const idArray = [];
-
-// Function to convert hex to RGB
-function hexToRGB(hex) {
-    const bigint = parseInt(hex.slice(1), 16);
-    return {
-        r: (bigint >> 16) & 255,
-        g: (bigint >> 8) & 255,
-        b: bigint & 255
-    };
-}
-
-// Function to find color
-function findColor(index, imageUrl) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            console.log("Finding color for:", imageUrl);  
-            console.log("at:", index);
-            
-            Vibrant.from(imageUrl)
-                .getPalette((err, palette) => {
-                    if (err) {
-                        console.error("Error getting color palette at " + imageUrl, err);
-                        reject(err); // Reject the promise if there's an error
-                        return;
-                    }
-
-                    const vibrantColor = palette.Vibrant.getHex(); 
-                    const rgbColor = hexToRGB(vibrantColor);
-
-                    // Assign the color to idArray
-                    idArray[index] = { url: imageUrl, color: rgbColor };
-
-                    console.log("Color found:", rgbColor);  
-                    resolve();
-                });
-        }, 1000);  
-    });
-}
-
-// Function to analyze a folder of images
-async function analyzeImages(folderPath) {
-    try {
-        const files = await fs.promises.readdir(folderPath);
-
-        // Filter for image files (you can adjust the extensions as needed)
-        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
-
-        // Process each image
-        for (let i = 0; i < imageFiles.length; i++) {
-            const imageUrl = path.join(folderPath, imageFiles[i]);
-            await findColor(i, imageUrl);
-        }
-
-        console.log("All colors have been found:", idArray);
-    } catch (error) {
-        console.error("Error reading the directory:", error);
+  const fs = require('fs');
+  const path = require('path');
+  const Vibrant = require('node-vibrant');
+  
+  const imagesFolder = './image-data/images';
+  
+  fs.readdir(imagesFolder, (err, files) => {
+    if (err) {
+      return console.error('Error reading directory:', err);
     }
-}
-
-// Specify the path to your folder of images
-const folderPath = './path/to/your/image/folder'; // Update this path
-analyzeImages(folderPath);
+  
+    const imageFiles = files.filter(file => {
+      const ext = path.extname(file).toLowerCase();
+      return ['.jpg', '.jpeg', '.png', '.gif'].includes(ext);
+    });
+  
+    imageFiles.forEach(file => {
+      const imagePath = path.join(imagesFolder, file);
+  
+      Vibrant.from(imagePath).getPalette()
+        .then(palette => {
+          console.log(`Palette for ${file}:`, palette);
+        })
+        .catch(err => {
+          console.error(`Error processing ${file}:`, err);
+        });
+    });
+  });
+  

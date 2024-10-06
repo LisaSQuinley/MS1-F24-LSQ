@@ -503,70 +503,69 @@ NudiContainer.append("button")
 
 const fs = require('fs');
 const path = require('path');
-const Vibrant = require('node-vibrant'); // Ensure you have installed this library
-let idColorArray = []; // Your idArray where colors will be stored
+const Vibrant = require('node-vibrant');
 
+// Array to hold color information
+const idArray = [];
+
+// Function to convert hex to RGB
+function hexToRGB(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    return {
+        r: (bigint >> 16) & 255,
+        g: (bigint >> 8) & 255,
+        b: bigint & 255
+    };
+}
+
+// Function to find color
 function findColor(index, imageUrl) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            console.log("Finding color for:", imageUrl);
+            console.log("Finding color for:", imageUrl);  
             console.log("at:", index);
-
+            
             Vibrant.from(imageUrl)
                 .getPalette((err, palette) => {
                     if (err) {
                         console.error("Error getting color palette at " + imageUrl, err);
-                        return reject(err);
+                        reject(err); // Reject the promise if there's an error
+                        return;
                     }
 
-                    var vibrantColor = palette.Vibrant.getHex();
-                    vibrantColor = hexToRGB(vibrantColor);
+                    const vibrantColor = palette.Vibrant.getHex(); 
+                    const rgbColor = hexToRGB(vibrantColor);
 
                     // Assign the color to idArray
-                    idColorArray[index] = { color: vibrantColor }; // Ensure idArray has an object structure
+                    idArray[index] = { url: imageUrl, color: rgbColor };
 
-                    console.log("Color found:", vibrantColor);
+                    console.log("Color found:", rgbColor);  
                     resolve();
                 });
-        }, 1000);
+        }, 1000);  
     });
 }
 
-function hexToRGB(hex) {
-    var r = parseInt(hex.slice(1, 3), 16),
-        g = parseInt(hex.slice(3, 5), 16),
-        b = parseInt(hex.slice(5, 7), 16);
-    return [r, g, b];
-}
+// Function to analyze a folder of images
+async function analyzeImages(folderPath) {
+    try {
+        const files = await fs.promises.readdir(folderPath);
 
-function processImagesFromFolder(folderPath) {
-    fs.readdir(folderPath, (err, files) => {
-        if (err) {
-            console.error("Error reading directory:", err);
-            return;
+        // Filter for image files (you can adjust the extensions as needed)
+        const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+
+        // Process each image
+        for (let i = 0; i < imageFiles.length; i++) {
+            const imageUrl = path.join(folderPath, imageFiles[i]);
+            await findColor(i, imageUrl);
         }
 
-        // Filter for image files (adjust the extensions as needed)
-        const imageFiles = files.filter(file => {
-            return /\.(jpg|jpeg|png|gif)$/i.test(file);
-        });
-
-        // Process each image file
-        const promises = imageFiles.map((file, index) => {
-            const imageUrl = path.join(folderPath, file);
-            return findColor(index, imageUrl);
-        });
-
-        // Wait for all colors to be processed
-        Promise.all(promises)
-            .then(() => {
-                console.log("All colors processed:", idArray);
-            })
-            .catch(err => {
-                console.error("Error processing images:", err);
-            });
-    });
+        console.log("All colors have been found:", idArray);
+    } catch (error) {
+        console.error("Error reading the directory:", error);
+    }
 }
 
-// Call the function with your folder path
-processImagesFromFolder('./path/to/your/image/folder');
+// Specify the path to your folder of images
+const folderPath = './path/to/your/image/folder'; // Update this path
+analyzeImages(folderPath);

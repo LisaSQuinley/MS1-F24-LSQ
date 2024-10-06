@@ -86,6 +86,19 @@ p {
   height: auto; /* Maintain aspect ratio */
 }
 
+footer {
+  position: fixed; /* Fixes the footer at the bottom */
+  bottom: 0; /* Aligns it to the bottom */
+  left: 0; /* Aligns it to the left */
+  width: 100%; /* Makes it span the full width */
+  margin: 0;
+  clear: both; /* Ensure it stays below floated elements */
+}
+
+#footer p, h3 {
+  width: 100%;
+}
+
 /*
 
 // Reminder to self of the Kodchasan styles

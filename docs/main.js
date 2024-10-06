@@ -1,12 +1,47 @@
-let geoData;
-d3.json("data.geojson").then(data => {
-    geoData = data;
-    const groupedData = groupDataByLocation(geoData);
-    renderCircles(groupedData);
-    displayTaxonomy(); // Call this once the data is loaded
+function displayTaxonomy() {
+  return new Promise((resolve, reject) => {
+      // Your existing logic to render taxonomy levels
+
+      // At the end of your processing
+      resolve(); // Resolve the promise when done
+  });
+}
+
+function extractPalettes(palettesDiv) {
+  return new Promise((resolve, reject) => {
+      const imageFiles = getImageFiles();
+
+      // Processing logic
+      // For each file, do your processing...
+
+      // Resolve the promise after processing all files
+      resolve(); // Resolve when done
+  });
+}
+
+// Main data loading and rendering logic
+d3.json("data.geojson").then((data) => {
+  geoData = data;
+  const groupedData = groupDataByLocation(geoData);
+  renderCircles(groupedData);
+
+  // Call displayTaxonomy and extractPalettes in order
+  displayTaxonomy()
+      .then(() => {
+          return extractPalettes(palettesDiv);
+      })
+      .then(() => {
+          // Now append the footer
+          appendFooter(); 
+      })
+      .catch(error => {
+          console.error("Error during rendering:", error);
+      });
 }).catch(error => {
-    console.error("Error loading GeoJSON data:", error);
+  console.error("Error loading GeoJSON data:", error);
 });
+
+
 
 const ProjectTitle = d3.select("body").append("div");
 ProjectTitle.attr("id", "section")
@@ -17,16 +52,19 @@ ProjectTitle.attr("id", "section")
   .append("h2")
   .text("A Scuba Diver's Guide to Sea Slugs");
 
-const ProjectOverview = d3.select("body").append("div");
-ProjectOverview.attr("id", "section")
-  .style("margin-left", "50px")
+  
+  const ProjectOverview = d3.select("body").append("div")
+  .attr("id", "section")
+  .style("margin", "0 auto") // Center the div horizontally
+  .style("max-width", "1920px") // Set a maximum width
   .append("h3")
   .text("Project Overview")
   .append("p")
   .style("padding-bottom", "20px")
   .text(
-    "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others)–some of these aspects are explored in my data visualization. Four highlights are visible here–a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
+    "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
   );
+
 
 const mapwidth = 1920; // Set the width for your SVG
 const mapheight = 800; // Set the height for your SVG
@@ -177,6 +215,7 @@ function renderCircles(groupedData) {
     .text(d => d.count); // Set the text to the count
 }
 
+
 const descriptionTaxonomy = d3.select("body").append("div");
 descriptionTaxonomy
   .attr("id", "section")
@@ -190,7 +229,7 @@ descriptionTaxonomy
   );
 
 // Set up margins and dimensions for the SVG
-const margin = { top: 20, right: 50, bottom: 20, left: 80 };
+const margin = { top: 20, right: 50, bottom: 50, left: 80 };
 const width = 1920 - margin.left - margin.right;
 const rectangleHeight = 40; // Height of each rectangle
 // const labelSpacing = 20;
@@ -278,6 +317,7 @@ function displayTaxonomy() {
   const totalHeight = geoData.features.length * rectangleHeight + margin.top + margin.bottom;
   const svg = d3.select("body")
     .append("svg")
+    .attr("class", "taxonomy")
     .attr("width", width + margin.left + margin.right)
     .attr("height", totalHeight)
     .append("g")
@@ -361,30 +401,29 @@ function displayTaxonomy() {
       });
   });
 
-
-
-
-  const Credits = d3.select("body").append("div");
-  Credits.attr("id", "section")
-    .style("margin-left", "50px");
-
-  Credits.append("h3")
-    .text("Credits")
-    .style("margin-top", "0px");
-
-  // Append the first paragraph
-  Credits.append("p")
-    .text("Images and Nudibranch Data from the Smithsonian Institution");
-
-  // Append the second paragraph
-  Credits.append("p")
-    .text("Map polygons from Natural Earth");
-
-  Credits.append("p")
-    .text("Visualization created by Lisa Sakai Quinley");
-
-
 }
+
+const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
+Credits.attr("id", "footer")
+  .style("margin-left", "0px")
+  .style("background-color", "#f1f1f1") // Optional: Add background color for styling
+  .style("text-align", "center") // Optional: Center text
+  .style("padding", "10px"); // Optional: Add padding
+
+Credits.append("h3")
+  .text("Credits ")
+  .style("font-weight", "700")
+  .style("margin-top", "0px")
+  .style("margin-left", "0px")
+  .style("margin-right", "0px")
+  .style("display", "inline");
+
+Credits.append("p")
+  .text("Images and Nudibranch Data from the Smithsonian Institution  |  Map polygons from Natural Earth  |  Visualization created by Lisa Sakai Quinley")
+  .style("margin-left", "0px")
+  .style("margin-right", "0px")
+  .style("display", "inline");
+
 
 function showNudi(nudi) {
   // Remove any existing image
@@ -499,42 +538,92 @@ NudiContainer.append("button")
   });
 
 }
-/* 
-Vibrant.from('./image-data/images/ld1-1643411352667-1643411353012-1.jpg').getPalette()
-  .then(palette => {
-    console.log(palette);
-  })
-  .catch(err => {
-    console.error('Error:', err);
-  });
- */
 
-  const fs = require('fs');
-  const path = require('path');
-  const Vibrant = require('node-vibrant');
-  
-  const imagesFolder = './image-data/images';
-  
-  fs.readdir(imagesFolder, (err, files) => {
-    if (err) {
-      return console.error('Error reading directory:', err);
+
+// Add these styles for the body to enable Flexbox and center content
+d3.select("body")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center") // Center items horizontally
+    .style("justify-content", "center") // Center items vertically
+    .style("min-height", "100vh"); // Ensure it takes the full viewport height
+
+    const palettesDiv = d3.select("body").append("div")
+    .attr("id", "palettes")
+    .style("display", "flex")
+    .style("align-items", "center")
+    .style("margin", "20px auto") 
+    .style("width", "90%") 
+    .style("max-width", "1200px");
+
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const palettesDiv = document.createElement('div');
+    palettesDiv.id = 'palettes';
+    document.body.appendChild(palettesDiv);
+    await extractPalettes(palettesDiv); // Await the function
+});
+
+const imageFolder = './image-data/images'; // The folder where your images are stored
+
+async function fetchImageData() {
+    const response = await fetch('./filtered.json');
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
     }
-  
-    const imageFiles = files.filter(file => {
-      const ext = path.extname(file).toLowerCase();
-      return ['.jpg', '.jpeg', '.png', '.gif'].includes(ext);
-    });
-  
-    imageFiles.forEach(file => {
-      const imagePath = path.join(imagesFolder, file);
-  
-      Vibrant.from(imagePath).getPalette()
-        .then(palette => {
-          console.log(`Palette for ${file}:`, palette);
-        })
-        .catch(err => {
-          console.error(`Error processing ${file}:`, err);
-        });
-    });
-  });
-  
+    return await response.json();
+}
+
+async function getImageFiles() {
+    const imageData = await fetchImageData();
+    return imageData
+        .map(item => item.id)
+        .filter(id => id !== null)
+        .map(id => `${imageFolder}/${id}.jpg`);
+}
+async function extractPalettes(palettesDiv) {
+  const imageFiles = await getImageFiles();
+
+  // Set the palettesDiv as a flex container
+  palettesDiv.style.display = 'flex';
+  palettesDiv.style.flexWrap = 'wrap'; // Allow wrapping to the next line if needed
+
+  for (const file of imageFiles) {
+      try {
+          const vibrant = new Vibrant(file);
+          const palette = await vibrant.getPalette();
+
+          //console.log(`Palette for ${file}:`, palette);
+
+          // Create a container for the palette
+          const paletteContainer = document.createElement('div');
+          paletteContainer.style.margin = '10px'; // Add some spacing around each palette
+          paletteContainer.style.display = 'flex'; // Make the palette container a flex container
+
+          const title = document.createElement('h4');
+          title.textContent = `Palette for ${file}`;
+          paletteContainer.appendChild(title);
+
+          // Create color boxes for each swatch
+          for (const swatch of Object.values(palette)) {
+              if (swatch) {
+                  const colorBox = document.createElement('div');
+                  colorBox.style.backgroundColor = swatch.getHex();
+                  colorBox.style.width = '50px';
+                  colorBox.style.height = '50px';
+                  colorBox.style.margin = '2px'; // Add some spacing between color boxes
+                  paletteContainer.appendChild(colorBox);
+              }
+          }
+
+          palettesDiv.appendChild(paletteContainer);
+      } catch (err) {
+          //console.error(`Error processing image ${file}:`, err);
+      }
+  }
+  return Promise.resolve(); // Ensure it returns a promise
+}
+
+
+
+

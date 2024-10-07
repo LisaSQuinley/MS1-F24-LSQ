@@ -11,7 +11,9 @@ filtered_data = []
 for item in data:
     # Initialize filtered item
     filtered_item = {
-        'id': item.get('id')
+        'id': item.get('id'),
+        'sci_name': item.get('sci_name'),
+        'title': item.get('title')
     }
     
     # Check if 'image' is a dictionary and extract 'content' if it is

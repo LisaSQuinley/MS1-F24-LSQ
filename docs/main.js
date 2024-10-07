@@ -7,18 +7,6 @@ function displayTaxonomy() {
   });
 }
 
-function extractPalettes(palettesDiv) {
-  return new Promise((resolve, reject) => {
-      const imageFiles = getImageFiles();
-
-      // Processing logic
-      // For each file, do your processing...
-
-      // Resolve the promise after processing all files
-      resolve(); // Resolve when done
-  });
-}
-
 // Main data loading and rendering logic
 d3.json("data.geojson").then((data) => {
   geoData = data;
@@ -43,18 +31,29 @@ d3.json("data.geojson").then((data) => {
 
 
 
-const ProjectTitle = d3.select("body").append("div");
-ProjectTitle.attr("id", "section")
-  .style("margin-left", "50px")
+const ProjectTitle = d3.select("header").append("div");
+
+ProjectTitle
+  .attr("id", "title")
+  .style("margin-left", "0px")
+  .style("background-color", "#f1f1f1") // Optional: Add background color for styling
+  .style("text-align", "center") // Optional: Center text
+  .style("padding", "10px");
+
+ProjectTitle
   .append("h1")
   .text("Know Your Nudibranchs")
-  .style("margin-top", "20px")
+  .style("display", "inline");
+
+ProjectTitle
   .append("h2")
-  .text("A Scuba Diver's Guide to Sea Slugs");
+  .text("A Scuba Diver's Guide to Sea Slugs")
+  .style("display", "inline");
 
   
   const ProjectOverview = d3.select("body").append("div")
   .attr("id", "section")
+  .style("padding-top", "90px")
   .style("margin", "0 auto") // Center the div horizontally
   .style("max-width", "1920px") // Set a maximum width
   .append("h3")
@@ -538,23 +537,25 @@ NudiContainer.append("button")
   });
 
 }
+ 
 
+function extractPalettes(palettesDiv) {
+  return new Promise((resolve, reject) => {
+      const imageFiles = getImageFiles();
 
-// Add these styles for the body to enable Flexbox and center content
-d3.select("body")
-    .style("display", "flex")
-    .style("flex-direction", "column")
-    .style("align-items", "center") // Center items horizontally
-    .style("justify-content", "center") // Center items vertically
-    .style("min-height", "100vh"); // Ensure it takes the full viewport height
+      // Processing logic
+      // For each file, do your processing...
 
-    const palettesDiv = d3.select("body").append("div")
+      // Resolve the promise after processing all files
+      resolve(); // Resolve when done
+  });
+}
+
+const palettesDiv = d3.select("body").append("div")
     .attr("id", "palettes")
     .style("display", "flex")
     .style("align-items", "center")
-    .style("margin", "20px auto") 
-    .style("width", "90%") 
-    .style("max-width", "1200px");
+    .style("margin", "20px auto");
 
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -568,12 +569,35 @@ const imageFolder = './image-data/images'; // The folder where your images are s
 
 async function fetchImageData() {
     const response = await fetch('./filtered.json');
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
     return await response.json();
 }
 
+async function getImageFiles() {
+  const imageData = await fetchImageData();
+  return imageData
+      .map(item => {
+          const id = item.id;
+          return {
+              url: id ? `${imageFolder}/${id}.jpg` : null, // Construct the URL from the id
+              title: item.title // Use the title from the JSON
+          };
+      })
+      .filter(item => item.url !== null); // Filter out items with null URLs
+}
+
+/* 
+async function getImageFiles() {
+  const imageData = await fetchImageData();
+  return imageData
+      .map(item => ({
+          url: item.image_content,  // The URL of the image
+          title: item.title          // The title from the JSON
+      }))
+      .filter(item => item.url !== null); // Filter out items with null URLs
+}
+ */
+/*
+// by image in the folder
 async function getImageFiles() {
     const imageData = await fetchImageData();
     return imageData
@@ -581,6 +605,57 @@ async function getImageFiles() {
         .filter(id => id !== null)
         .map(id => `${imageFolder}/${id}.jpg`);
 }
+// by image link
+async function getImageFiles() {
+    const imageData = await fetchImageData();
+    return imageData
+        .map(item => item.image_content) // Extracting image_content instead of id
+        .filter(url => url !== null); // Filter out null values
+}
+*/
+
+async function extractPalettes(palettesDiv) {
+  const imageFiles = await getImageFiles();
+
+  // Set the palettesDiv as a flex container
+  palettesDiv.style.display = 'flex';
+  palettesDiv.style.flexWrap = 'wrap'; // Allow wrapping to the next line if needed
+
+  for (const { url, title } of imageFiles) {  // Destructure the url and title
+      try {
+          const vibrant = new Vibrant(url);
+          const palette = await vibrant.getPalette();
+
+          // Create a container for the palette
+          const paletteContainer = document.createElement('div');
+          paletteContainer.style.margin = '10px'; // Add some spacing around each palette
+          paletteContainer.style.display = 'flex'; // Make the palette container a flex container
+
+          const titleElement = document.createElement('h4');
+          titleElement.textContent = `Palette for ${title}`; // Use the title from the JSON
+          paletteContainer.appendChild(titleElement);
+
+          // Create color boxes for each swatch
+          for (const swatch of Object.values(palette)) {
+              if (swatch) {
+                  const colorBox = document.createElement('div');
+                  colorBox.style.backgroundColor = swatch.getHex();
+                  colorBox.style.width = '50px';
+                  colorBox.style.height = '50px';
+                  colorBox.style.margin = '2px'; // Add some spacing between color boxes
+                  paletteContainer.appendChild(colorBox);
+              }
+          }
+
+          palettesDiv.appendChild(paletteContainer);
+      } catch (err) {
+          console.error(`Error processing image ${url}:`, err);
+      }
+  }
+  return Promise.resolve(); // Ensure it returns a promise
+}
+
+/* 
 async function extractPalettes(palettesDiv) {
   const imageFiles = await getImageFiles();
 
@@ -601,7 +676,7 @@ async function extractPalettes(palettesDiv) {
           paletteContainer.style.display = 'flex'; // Make the palette container a flex container
 
           const title = document.createElement('h4');
-          title.textContent = `Palette for ${file}`;
+          title.textContent = `Palette for ${file}`; // for the file name ${file}
           paletteContainer.appendChild(title);
 
           // Create color boxes for each swatch
@@ -623,7 +698,7 @@ async function extractPalettes(palettesDiv) {
   }
   return Promise.resolve(); // Ensure it returns a promise
 }
-
+ */
 
 
 

@@ -43,15 +43,53 @@ body {
     fill: #FF0000;
 }
 
+header {
+  position: fixed; /* Fixes the footer at the bottom */
+  top: 0; /* Aligns it to the bottom */
+  left: 0; /* Aligns it to the left */
+  width: 100%; /* Makes it span the full width */
+  margin: 0;
+  clear: both; /* Ensure it stays below floated elements */
+}
 
-#section h1, h2, h3, h4, h5, h6, p {
+#title h1, h2 {
+  font-family: "Kodchasan", sans-serif;
+  color: #262262;
+  display: inline-block;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-width: 1920px;
+}
+
+footer {
+  position: fixed; /* Fixes the footer at the bottom */
+  bottom: 0; /* Aligns it to the bottom */
+  left: 0; /* Aligns it to the left */
+  width: 100%; /* Makes it span the full width */
+  margin: 0;
+  clear: both; /* Ensure it stays below floated elements */
+}
+
+#footer p, h3 {
+  font-family: "Kodchasan", sans-serif;
+  color: #262262;
+  width: 100%;
+}
+
+#section h3, h4, h5, h6, p {
   font-family: "Kodchasan", sans-serif;
   color: #262262;
   margin-left: 25px;
   margin-right: 25px;
   margin-bottom: 0;
   margin-top: 0;
-  width: 1920px;
+}
+
+#palette h4 {
+  margin-top: 0;
+  font-weight: 700;
+  font-size: 10pt;
 }
 
 h1 {
@@ -61,6 +99,7 @@ h1 {
 
 h2 {
   margin-top: 0;
+  margin-left: 25px;
   font-weight: 400;
   font-size: 18pt;
 }
@@ -86,18 +125,7 @@ p {
   height: auto; /* Maintain aspect ratio */
 }
 
-footer {
-  position: fixed; /* Fixes the footer at the bottom */
-  bottom: 0; /* Aligns it to the bottom */
-  left: 0; /* Aligns it to the left */
-  width: 100%; /* Makes it span the full width */
-  margin: 0;
-  clear: both; /* Ensure it stays below floated elements */
-}
 
-#footer p, h3 {
-  width: 100%;
-}
 
 /*
 

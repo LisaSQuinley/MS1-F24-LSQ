@@ -1,6 +1,10 @@
-I am going to refine these sketches. This is for Qualitative (Assignment 2).
-![Sketches-Assignment2-Qualitative](https://github.com/user-attachments/assets/51e608e6-0843-4b61-a5fa-4ffe9e1f65e5)
+# Unveiling the Vibrant Palette of Nudibranchs (Sketch 1)
+### Qualitative
+![Unveiling-Vibrant-Palette-of-Nudibranchs](https://github.com/user-attachments/assets/5d2a3afd-7cf6-4f7b-9b68-828d2489bbe1)
 
+# GemHue Lexicon
+### Qualitative
+![GemHue-Lexicon](https://github.com/user-attachments/assets/e86ece45-4044-4138-8443-c1fd8f9d29cd)
 
 # Know Your Nudibrachs: A Scuba Diver's Guide to Sea Slugs
 ### GitHub Pages: https://lisasquinley.github.io/MS1-F24-LSQ/

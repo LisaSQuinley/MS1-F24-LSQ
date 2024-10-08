@@ -542,12 +542,7 @@ NudiContainer.append("button")
 function extractPalettes(palettesDiv) {
   return new Promise((resolve, reject) => {
       const imageFiles = getImageFiles();
-
-      // Processing logic
-      // For each file, do your processing...
-
-      // Resolve the promise after processing all files
-      resolve(); // Resolve when done
+      resolve();
   });
 }
 
@@ -701,4 +696,92 @@ async function extractPalettes(palettesDiv) {
  */
 
 
+function getColorCategory(swatch) {
+  const rgb = swatch.getRgb(); // Get the RGB values
+  const r = rgb[0], g = rgb[1], b = rgb[2];
 
+  // Calculate the maximum value to determine the dominant color
+  const max = Math.max(r, g, b);
+  const threshold = 50; // This can be adjusted for your needs
+
+  // Check for brown shades
+  if (r > 100 && g > 50 && b < 70) { // Adjust thresholds for brown detection
+      return 'Browns'; // Dominant red and green, low blue
+  }
+
+  if (max === r) {
+      if (g > b && g - b > threshold) return 'Oranges'; // More red and green = Orange
+      if (g > b) return 'Yellows'; // More red and green = Yellow
+      return 'Reds/Pinks'; // Pure red
+  } else if (max === g) {
+      return 'Greens'; // Pure green
+  } else if (max === b) {
+      if (r > g) return 'Purples'; // More blue and red = Purple
+      return 'Blue'; // Pure blue
+  }
+
+  // Fallback to a default category if it doesn't match
+  return 'Reds/Pinks'; // Default to Reds/Pinks if all else fails
+}
+
+async function extractPalettes(palettesDiv) {
+  const imageFiles = await getImageFiles();
+  const groupedPalettes = {};
+
+  for (const { url, title } of imageFiles) {
+      try {
+          const vibrant = new Vibrant(url);
+          const palette = await vibrant.getPalette();
+          
+          // Determine the primary color category
+          const primaryColorCategory = getColorCategory(Object.values(palette)[0]);
+
+          // Initialize the group if it doesn't exist
+          if (!groupedPalettes[primaryColorCategory]) {
+              groupedPalettes[primaryColorCategory] = [];
+          }
+
+          // Add the palette to the appropriate category
+          groupedPalettes[primaryColorCategory].push({ url, title, palette });
+      } catch (err) {
+          console.error(`Error processing image ${url}:`, err);
+      }
+  }
+
+  // Now render the grouped palettes
+  for (const [colorCategory, palettes] of Object.entries(groupedPalettes)) {
+      const categoryContainer = document.createElement('div');
+      categoryContainer.style.margin = '20px'; // Spacing around each category
+      const categoryTitle = document.createElement('h2');
+      categoryTitle.textContent = colorCategory; // Display the color category
+      categoryContainer.appendChild(categoryTitle);
+
+      for (const { url, title, palette } of palettes) {
+          const paletteContainer = document.createElement('div');
+          paletteContainer.style.margin = '10px'; 
+          paletteContainer.style.display = 'flex';
+
+          const titleElement = document.createElement('h4');
+          titleElement.textContent = `Palette for ${title}`;
+          paletteContainer.appendChild(titleElement);
+
+          // Create color boxes for each swatch
+          for (const swatch of Object.values(palette)) {
+              if (swatch) {
+                  const colorBox = document.createElement('div');
+                  colorBox.style.backgroundColor = swatch.getHex();
+                  colorBox.style.width = '50px';
+                  colorBox.style.height = '50px';
+                  colorBox.style.margin = '2px';
+                  paletteContainer.appendChild(colorBox);
+              }
+          }
+
+          categoryContainer.appendChild(paletteContainer);
+      }
+
+      palettesDiv.appendChild(categoryContainer);
+  }
+
+  return Promise.resolve();
+}

@@ -752,7 +752,7 @@ async function extractPalettes(palettesDiv) {
   for (const [colorCategory, palettes] of Object.entries(groupedPalettes)) {
       const categoryContainer = document.createElement('div');
       categoryContainer.style.margin = '20px'; // Spacing around each category
-      const categoryTitle = document.createElement('h2');
+      const categoryTitle = document.createElement('h3');
       categoryTitle.textContent = colorCategory; // Display the color category
       categoryContainer.appendChild(categoryTitle);
 
@@ -770,7 +770,7 @@ async function extractPalettes(palettesDiv) {
               if (swatch) {
                   const colorBox = document.createElement('div');
                   colorBox.style.backgroundColor = swatch.getHex();
-                  colorBox.style.width = '50px';
+                  colorBox.style.width = '20px';
                   colorBox.style.height = '50px';
                   colorBox.style.margin = '2px';
                   paletteContainer.appendChild(colorBox);

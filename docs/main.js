@@ -237,7 +237,7 @@ descriptionTaxonomy
   );
 
 // Set up margins and dimensions for the SVG
-const margin = { top: 20, right: 50, bottom: 50, left: 80 };
+const margin = { top: 20, right: 50, bottom: 10, left: 80 };
 const width = 1920 - margin.left - margin.right;
 const rectangleHeight = 40; // Height of each rectangle
 // const labelSpacing = 20;
@@ -297,7 +297,8 @@ const headerWidths = [
   "Family",
   "Genus & Species",
   "",
-].forEach((text, index) => {
+]
+.forEach((text, index) => {
   TaxonomicHeaders.append("h4")
     .style("margin", "0") // Remove margin to prevent spacing issues
     .style("width", headerWidths[index]) // Set specific width for each header
@@ -310,18 +311,26 @@ const taxonomicContainer = d3
   .select("body")
   .append("div")
   .attr("id", "taxonomy-container")
-  .style("display", "none") // Initially hidden
+  .style("display", "block") // Initially hidden
   .style("margin-left", "50px");
 
 const PaletteDescription = d3.select("body").append("div");
 PaletteDescription.attr("id", "section")
+  .style("margin-left", "50px")
   .append("h3")
   .style("padding-top", "20px")
   .text("Color Palettes")
   .append("p")
   .text(
-    "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped colors by their dominant color category. Click on any color palette to view the colors extracted from the image."
+    "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, DarkVibrant, DarkMuted, LightVibrant, LightMuted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
   );
+// Create a container for palettes
+const paletteContainer = d3
+  .select("body")
+  .append("div")
+  .attr("id", "palette-container")
+  .style("display", "block") // Initially hidden
+  .style("margin-left", "50px");
 
 // Append a footer with credits
 const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
@@ -367,8 +376,7 @@ function displayTaxonomyLevels(scientificNames) {
       taxonomicContainer
         .append("div")
         .html(levels)
-        .style("background-color", "yellow") // Highlight background
-        .style("margin-bottom", "10px");
+        .style("background-color", "yellow"); // Highlight background
     }
   });
 
@@ -379,7 +387,7 @@ function displayTaxonomy() {
   const totalHeight =
     geoData.features.length * rectangleHeight + margin.top + margin.bottom;
   const svg = d3
-    .select("body")
+    .select("#taxonomy-container")
     .append("svg")
     .attr("class", "taxonomy")
     .attr("width", width + margin.left + margin.right)
@@ -595,9 +603,7 @@ function showNudi(nudi) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const palettesDiv = document.createElement("div");
-  palettesDiv.id = "palettes";
-  document.body.appendChild(palettesDiv);
+  const palettesDiv = paletteContainer.node();
 
   // Create a tooltip element
   const paletteTooltip = document.createElement("div");
@@ -642,7 +648,7 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
     try {
       const vibrant = new Vibrant(url);
       const palette = await vibrant.getPalette();
-
+      console.log(palette); // Log the palette for debugging, this gives all six colors: Vibrant, Muted, DarkVibrant, DarkMuted, LightVibrant, LightMuted
       // Store swatches grouped by color category
       for (const swatch of Object.values(palette)) {
         if (swatch) {
@@ -656,6 +662,7 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
     } catch (err) {
       console.error(`Error processing image ${url}:`, err);
     }
+    // console.log(groupedPalettes); // this will give me the color categories
   }
 
   // Now render the grouped palettes

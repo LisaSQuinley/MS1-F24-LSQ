@@ -91,6 +91,7 @@ footer {
   max-width: 1920px;
   justify-content: center;
   align-items: center;
+  margin-bottom: 50px;
 }
 
 #palette h4 {

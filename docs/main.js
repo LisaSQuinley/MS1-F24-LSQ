@@ -580,35 +580,6 @@ async function getImageFiles() {
       .filter(item => item.url !== null); // Filter out items with null URLs
 }
 
-/* 
-async function getImageFiles() {
-  const imageData = await fetchImageData();
-  return imageData
-      .map(item => ({
-          url: item.image_content,  // The URL of the image
-          title: item.title          // The title from the JSON
-      }))
-      .filter(item => item.url !== null); // Filter out items with null URLs
-}
- */
-/*
-// by image in the folder
-async function getImageFiles() {
-    const imageData = await fetchImageData();
-    return imageData
-        .map(item => item.id)
-        .filter(id => id !== null)
-        .map(id => `${imageFolder}/${id}.jpg`);
-}
-// by image link
-async function getImageFiles() {
-    const imageData = await fetchImageData();
-    return imageData
-        .map(item => item.image_content) // Extracting image_content instead of id
-        .filter(url => url !== null); // Filter out null values
-}
-*/
-
 async function extractPalettes(palettesDiv) {
   const imageFiles = await getImageFiles();
 
@@ -649,52 +620,6 @@ async function extractPalettes(palettesDiv) {
   }
   return Promise.resolve(); // Ensure it returns a promise
 }
-
-/* 
-async function extractPalettes(palettesDiv) {
-  const imageFiles = await getImageFiles();
-
-  // Set the palettesDiv as a flex container
-  palettesDiv.style.display = 'flex';
-  palettesDiv.style.flexWrap = 'wrap'; // Allow wrapping to the next line if needed
-
-  for (const file of imageFiles) {
-      try {
-          const vibrant = new Vibrant(file);
-          const palette = await vibrant.getPalette();
-
-          //console.log(`Palette for ${file}:`, palette);
-
-          // Create a container for the palette
-          const paletteContainer = document.createElement('div');
-          paletteContainer.style.margin = '10px'; // Add some spacing around each palette
-          paletteContainer.style.display = 'flex'; // Make the palette container a flex container
-
-          const title = document.createElement('h4');
-          title.textContent = `Palette for ${file}`; // for the file name ${file}
-          paletteContainer.appendChild(title);
-
-          // Create color boxes for each swatch
-          for (const swatch of Object.values(palette)) {
-              if (swatch) {
-                  const colorBox = document.createElement('div');
-                  colorBox.style.backgroundColor = swatch.getHex();
-                  colorBox.style.width = '50px';
-                  colorBox.style.height = '50px';
-                  colorBox.style.margin = '2px'; // Add some spacing between color boxes
-                  paletteContainer.appendChild(colorBox);
-              }
-          }
-
-          palettesDiv.appendChild(paletteContainer);
-      } catch (err) {
-          //console.error(`Error processing image ${file}:`, err);
-      }
-  }
-  return Promise.resolve(); // Ensure it returns a promise
-}
- */
-
 
 function getColorCategory(swatch) {
   const rgb = swatch.getRgb(); // Get the RGB values

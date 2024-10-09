@@ -114,7 +114,7 @@ function groupDataByLocation(data, threshold = 2) {
   data.features.forEach((feature) => {
     const latitude = feature.geometry.coordinates[1]; // GeoJSON is [lon, lat]
     const longitude = feature.geometry.coordinates[0];
-    const sciName =
+    const id =
       feature.properties.sci_name || "No Scientific Name Available"; // Use placeholder if blank
 
     const existingGroup = grouped.find((group) => {
@@ -125,13 +125,13 @@ function groupDataByLocation(data, threshold = 2) {
 
     if (existingGroup) {
       existingGroup.count += 1; // Increase the count for the existing group
-      existingGroup.scientificNames.push(sciName); // Add scientific name or placeholder
+      existingGroup.Nudi_id.push(id); // Add scientific name or placeholder
     } else {
       grouped.push({
         latitude: latitude,
         longitude: longitude,
         count: 1, // Start a new group
-        scientificNames: [sciName], // Start with the current scientific name or placeholder
+        Nudi_id: [id], // Start with the current scientific name or placeholder
       });
     }
   });
@@ -170,12 +170,22 @@ function renderCircles(groupedData) {
     .attr("stroke", "white")
     .attr("stroke-width", 1)
     .attr("opacity", 0.7)
+    .attr("class", (d) => {
+      // Create a class string using Nudi_ids
+      return d.Nudi_id.map((id) => {
+        const nudi = geoData.features.find(
+          (f) => f.properties.sci_name === id
+        );
+        return nudi ? nudi.properties.Nudi_id : null; // Adjust to your data structure
+      }).filter(Boolean).join(" "); // Join into a single string of classes
+    })
+
     .on("mouseover", function (event, d) {
       // Get the image content for the scientific names
-      const images = d.scientificNames
-        .map((sciName) => {
+      const images = d.Nudi_id
+        .map((id) => {
           const nudi = geoData.features.find(
-            (f) => f.properties.sci_name === sciName
+            (f) => f.properties.sci_name === id
           );
           return nudi && nudi.properties.image
             ? nudi.properties.image.content
@@ -200,7 +210,7 @@ function renderCircles(groupedData) {
         .style("top", event.pageY - 10 + "px")
         .style("left", event.pageX + 10 + "px");
 
-      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
+      d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
     })
     .on("mouseout", function () {
       tooltip.style("visibility", "hidden");
@@ -227,10 +237,9 @@ function renderCircles(groupedData) {
 const descriptionTaxonomy = d3.select("body").append("div");
 descriptionTaxonomy
   .attr("id", "section")
-  .style("margin-left", "50px")
   .append("h3")
   .style("padding-top", "20px")
-  .text("Taxonomy")
+  .text("The Many Faces and Names of Marine Slugs")
   .append("p")
   .text(
     "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow."
@@ -268,7 +277,7 @@ const TaxonomicHeaders = d3
   .append("div")
   .attr("id", "TaxHeaders")
   .attr("width", width + margin.left + margin.right)
-  .style("margin-left", "40px") // Margin to the left
+  .style("margin-left", "82px") // Margin to the left
   .style("margin-bottom", "0px")
   .style("margin-top", "0px")
   .style("display", "flex") // Use flex to arrange items in a row
@@ -316,10 +325,9 @@ const taxonomicContainer = d3
 
 const PaletteDescription = d3.select("body").append("div");
 PaletteDescription.attr("id", "section")
-  .style("margin-left", "50px")
   .append("h3")
   .style("padding-top", "20px")
-  .text("Color Palettes")
+  .text("Unveiling the Vibrant Palette of Nudies")
   .append("p")
   .text(
     "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, DarkVibrant, DarkMuted, LightVibrant, LightMuted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
@@ -330,7 +338,7 @@ const paletteContainer = d3
   .append("div")
   .attr("id", "palette-container")
   .style("display", "block") // Initially hidden
-  .style("margin-left", "50px");
+  ;
 
 // Append a footer with credits
 const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
@@ -357,12 +365,12 @@ Credits.append("p")
   .style("display", "inline");
 
 // Function to render taxonomic levels based on scientific names
-function displayTaxonomyLevels(scientificNames) {
+function displayTaxonomyLevels(Nudi_id) {
   taxonomicContainer.html(""); // Clear previous content
 
-  scientificNames.forEach((sciName) => {
+  Nudi_id.forEach((id) => {
     const nudi = geoData.features.find(
-      (f) => f.properties.sci_name === sciName
+      (f) => f.properties.sci_name === id
     );
     if (nudi) {
       const levels = `
@@ -423,7 +431,7 @@ function displayTaxonomy() {
       .data(geoData.features)
       .enter()
       .append("rect")
-      .attr("class", level)
+      .attr("class", (d) => `${level} ${d.properties.Nudi_id}`)
       .attr("x", columnPositions[index])
       .attr(
         "y",
@@ -648,21 +656,34 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
     try {
       const vibrant = new Vibrant(url);
       const palette = await vibrant.getPalette();
-      console.log(palette); // Log the palette for debugging, this gives all six colors: Vibrant, Muted, DarkVibrant, DarkMuted, LightVibrant, LightMuted
-      // Store swatches grouped by color category
-      for (const swatch of Object.values(palette)) {
+      console.log(palette); // Log the palette for debugging
+
+      // Define the palette keys based on Vibrant.js classification
+      const paletteKeys = ["Vibrant", "DarkVibrant", "LightVibrant", "Muted", "DarkMuted", "LightMuted"];
+
+      // Loop through palette keys to group by color category
+      for (const key of paletteKeys) {
+        const swatch = palette[key];
         if (swatch) {
-          const colorCategory = getColorCategory(swatch);
+          const colorCategory = getColorCategory(swatch); // Get the color category
+          
+          // Initialize the color category if it doesn't exist
           if (!groupedPalettes[colorCategory]) {
             groupedPalettes[colorCategory] = [];
           }
-          groupedPalettes[colorCategory].push({ url, title, swatch });
+
+          // Add swatch to the corresponding category
+          groupedPalettes[colorCategory].push({
+            url,
+            title,
+            key, // Include the key for class assignment
+            swatch
+          });
         }
       }
     } catch (err) {
       console.error(`Error processing image ${url}:`, err);
     }
-    // console.log(groupedPalettes); // this will give me the color categories
   }
 
   // Now render the grouped palettes
@@ -677,87 +698,79 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
     swatchContainer.style.display = "flex";
     swatchContainer.style.flexWrap = "wrap";
 
-    for (const { url, title, swatch } of swatches) {
+    for (const { url, title, key, swatch } of swatches) {
       const colorBox = document.createElement("div");
-      colorBox.style.backgroundColor = swatch.getHex();
+      
+      // Add classes: one for the Vibrant.js classification and one for the color category
+      colorBox.classList.add(key.toLowerCase()); // e.g., 'vibrant', 'darkvibrant'
+      colorBox.classList.add(colorCategory.toLowerCase()); // e.g., 'reds', 'greens'
+
+      const imageId = url.split('/').pop().split('.')[0]; // Extract image ID from URL
+      colorBox.classList.add(imageId); // Assign the ID as a class
+
+      colorBox.style.backgroundColor = `rgb(${swatch.rgb.join(',')})`; // Use the RGB values
       colorBox.style.width = "50px";
       colorBox.style.height = "50px";
       colorBox.style.margin = "1px";
       colorBox.style.cursor = "pointer"; // Change cursor to pointer for clickable swatches
 
-     // Show tooltip on mouse over
-     colorBox.addEventListener("mouseover", (event) => {
-      paletteTooltip.textContent = `This color is in the palette for: ${title}`;
-      paletteTooltip.style.visibility = "visible";
-      paletteTooltip.style.left = `${event.pageX + 10}px`; // Position the tooltip
-      paletteTooltip.style.top = `${event.pageY + 10}px`;
-    });
+      // Show tooltip on mouse over
+      colorBox.addEventListener("mouseover", (event) => {
+        paletteTooltip.textContent = `${key} color for: ${title}`;
+        paletteTooltip.style.visibility = "visible";
+        paletteTooltip.style.left = `${event.pageX + 10}px`; // Position the tooltip
+        paletteTooltip.style.top = `${event.pageY + 10}px`;
+      });
 
-    // Hide tooltip on mouse out
-    colorBox.addEventListener("mouseout", () => {
-      paletteTooltip.style.visibility = "hidden";
-    });
+      // Hide tooltip on mouse out
+      colorBox.addEventListener("mouseout", () => {
+        paletteTooltip.style.visibility = "hidden";
+      });
 
-    swatchContainer.appendChild(colorBox);
+      swatchContainer.appendChild(colorBox);
+    }
+
+    categoryContainer.appendChild(swatchContainer);
+    palettesDiv.appendChild(categoryContainer);
   }
 
-  categoryContainer.appendChild(swatchContainer);
-  palettesDiv.appendChild(categoryContainer);
-}
-
-return Promise.resolve();
+  return Promise.resolve();
 }
 
 function getColorCategory(swatch) {
   const rgb = swatch.getRgb(); // Get the RGB values
+  const hsl = swatch.hsl; // Get the HSL values
   const [r, g, b] = rgb;
+  const [h, s, l] = hsl;
 
-  // Calculate the maximum value to determine the dominant color
-  const max = Math.max(r, g, b);
-  const total = r + g + b;
+  // Check for Whites
+  if (s < 0.1 && l > 0.9) return "Whites"; // High lightness, low saturation
+  if (r > 220 && g > 220 && b > 220) return "Whites"; // Almost white
 
-  // Adjust thresholds for color detection
-  const threshold = 30; // Threshold for determining differences
+  // Check for Blacks
+  if (s < 0.1 && l < 0.1) return "Blacks"; // Low lightness, low saturation
+  if (r < 40 && g < 40 && b < 40) return "Blacks"; // Almost black
 
-  // Check for white
-  if (total > 765 - 30) return "White"; // Near maximum RGB value
+  // Check for Browns
+  if (r > 100 && g < 100 && b < 100 && l < 0.5) return "Browns"; // Dark reds/browns
+  if (r > 100 && g > 70 && b < 50) return "Browns"; // Brownish reds
 
-  // Check for black
-  if (total < 30) return "Black"; // Near zero for all RGB
-
-  // Check for brown shades
-  if (r > 100 && g > 50 && b < 50 && (r + g) / 2 > 75) {
-    return "Browns"; // Dominant red and green, low blue, and overall dark
+  // Use HSL for main color categorization
+  if (l > 0.5) { // Light colors
+    if (h >= 0 && h < 15 / 360) return "Reds"; // Light red range
+    if (h >= 15 / 360 && h < 45 / 360) return "Yellows"; // Light yellow range
+    if (h >= 45 / 360 && h < 75 / 360) return "Oranges"; // Light orange range
+    if (h >= 75 / 360 && h < 165 / 360) return "Greens"; // Light green range
+    if (h >= 165 / 360 && h < 240 / 360) return "Blues"; // Light blue range
+    if (h >= 240 / 360 && h < 300 / 360) return "Purples"; // Light purple range
+  } else { // Dark colors
+    if (h >= 0 && h < 15 / 360) return "Reds"; // Dark red range
+    if (h >= 15 / 360 && h < 45 / 360) return "Yellows"; // Dark yellow range
+    if (h >= 45 / 360 && h < 75 / 360) return "Oranges"; // Dark orange range
+    if (h >= 75 / 360 && h < 165 / 360) return "Greens"; // Dark green range
+    if (h >= 165 / 360 && h < 240 / 360) return "Blues"; // Dark blue range
+    if (h >= 240 / 360 && h < 300 / 360) return "Purples"; // Dark purple range
   }
 
-  // Check for yellows
-  if (max === r && g > b && g > threshold) {
-    return "Yellows"; // More red and green than blue
-  }
-
-  // Check for oranges
-  if (max === r && g > b && (g - b) > threshold) {
-    return "Oranges"; // More red and green, significant green component
-  }
-
-  // Check for reds/pinks
-  if (max === r) {
-    return "Reds/Pinks"; // Dominant red
-  }
-
-  // Check for greens
-  if (max === g) {
-    return "Greens"; // Dominant green
-  }
-
-  // Check for blues
-  if (max === b) {
-    if (r > g) {
-      return "Purples"; // More blue and red = Purple
-    }
-    return "Blues"; // Dominant blue
-  }
-
-  // Fallback to "Other" if it doesn't match any category
-  return "Other";
+  return "Other"; // Fallback if no category matches
 }

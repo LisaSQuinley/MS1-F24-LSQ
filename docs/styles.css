@@ -3,11 +3,12 @@ body {
 }
 
 body {
+    max-width: 1920px; /* Set a maximum width */
+    margin: 0 auto; /* Center the content */
     display: flex;
     flex-direction: column; /* Stack elements vertically */
     align-items: center; /* Center horizontally */
     justify-content: center; /* Center vertically if you want */
-    margin: 0; /* Remove default margin */
 }
 
 
@@ -121,6 +122,7 @@ h4 {
   font-weight: 700;
   font-size: 10pt;
   text-transform: uppercase;
+  margin-left: 0px;
 }
 
 h5 {
@@ -143,6 +145,9 @@ p {
   margin-left: 25px;
 }
 
+#palette-container {
+  margin-bottom: 50px;
+}
 
 /*
 

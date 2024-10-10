@@ -114,8 +114,7 @@ function groupDataByLocation(data, threshold = 2) {
   data.features.forEach((feature) => {
     const latitude = feature.geometry.coordinates[1]; // GeoJSON is [lon, lat]
     const longitude = feature.geometry.coordinates[0];
-    const id =
-      feature.properties.sci_name || "No Scientific Name Available"; // Use placeholder if blank
+    const id = feature.properties.sci_name || "No Scientific Name Available"; // Use placeholder if blank
 
     const existingGroup = grouped.find((group) => {
       const latDiff = Math.abs(group.latitude - latitude);
@@ -125,7 +124,7 @@ function groupDataByLocation(data, threshold = 2) {
 
     if (existingGroup) {
       existingGroup.count += 1; // Increase the count for the existing group
-      existingGroup.Nudi_id.push(id); // Add scientific name or placeholder
+      existingGroup.Nudi_id.push(id); // Push id to the existing group
     } else {
       grouped.push({
         latitude: latitude,
@@ -140,14 +139,13 @@ function groupDataByLocation(data, threshold = 2) {
 }
 
 // Create a tooltip div
-const tooltip = d3
+const mapTooltip = d3
   .select("body")
   .append("div")
   .attr("class", "tooltip")
   .style("position", "absolute")
   .style("visibility", "hidden")
-  .style("background", "white")
-  .style("border", "1px solid black")
+  .style("background", "black")
   .style("padding", "5px")
   .style("font-family", '"Kodchasan", sans-serif')
   .style("font-weight", "600");
@@ -167,31 +165,26 @@ function renderCircles(groupedData) {
     .attr("cy", (d) => Nudiprojection([d.longitude, d.latitude])[1])
     .attr("r", (d) => circleScale(d.count))
     .attr("fill", "red")
-    .attr("stroke", "white")
-    .attr("stroke-width", 1)
     .attr("opacity", 0.7)
     .attr("class", (d) => {
-      // Create a class string using Nudi_ids
       return d.Nudi_id.map((id) => {
-        const nudi = geoData.features.find(
-          (f) => f.properties.sci_name === id
-        );
-        return nudi ? nudi.properties.Nudi_id : null; // Adjust to your data structure
-      }).filter(Boolean).join(" "); // Join into a single string of classes
+        const nudi = geoData.features.find((f) => f.properties.sci_name === id);
+        return nudi
+          ? nudi.properties.Nudi_id.replace(/\s+/g, "_").replace(/[()]/g, "")
+          : null;
+      })
+        .filter(Boolean)
+        .join(" ");
     })
 
     .on("mouseover", function (event, d) {
       // Get the image content for the scientific names
-      const images = d.Nudi_id
-        .map((id) => {
-          const nudi = geoData.features.find(
-            (f) => f.properties.sci_name === id
-          );
-          return nudi && nudi.properties.image
-            ? nudi.properties.image.content
-            : null; // Adjust to your data structure
-        })
-        .filter(Boolean); // Filter out any null values
+      const images = d.Nudi_id.map((id) => {
+        const nudi = geoData.features.find((f) => f.properties.sci_name === id);
+        return nudi && nudi.properties.image
+          ? nudi.properties.image.content
+          : null; // Adjust to your data structure
+      }).filter(Boolean); // Filter out any null values
 
       // Shuffle and slice to get a random set of 10
       const randomImages = images.sort(() => 0.5 - Math.random()).slice(0, 10);
@@ -204,7 +197,7 @@ function renderCircles(groupedData) {
         )
         .join("");
 
-      tooltip
+      mapTooltip
         .html(imageHTML) // Use the HTML with images
         .style("visibility", "visible")
         .style("top", event.pageY - 10 + "px")
@@ -213,8 +206,27 @@ function renderCircles(groupedData) {
       d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
     })
     .on("mouseout", function () {
-      tooltip.style("visibility", "hidden");
-      d3.select(this).attr("stroke-width", 1).attr("stroke", "white");
+      mapTooltip.style("visibility", "hidden");
+      d3.select(this).attr("stroke", "none");
+    })
+
+    .on("click", function (event, d) {
+      // Remove existing highlights first
+      d3.selectAll("rect").attr("stroke", "none");
+
+      // Highlight the clicked rectangle
+      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
+
+      // Highlight rectangles matching the Nudi_ids
+      d.Nudi_id.forEach((id) => {
+        // Ensure id is a string before replacing spaces and special characters
+        if (typeof id === "string") {
+          const safeId = id.replace(/\s+/g, "_").replace(/[()]/g, "");
+          d3.selectAll(`.${safeId}`)
+            .attr("stroke-width", 3)
+            .attr("stroke", "yellow");
+        }
+      });
     });
 
   // Add text labels for each circle
@@ -306,8 +318,7 @@ const headerWidths = [
   "Family",
   "Genus & Species",
   "",
-]
-.forEach((text, index) => {
+].forEach((text, index) => {
   TaxonomicHeaders.append("h4")
     .style("margin", "0") // Remove margin to prevent spacing issues
     .style("width", headerWidths[index]) // Set specific width for each header
@@ -337,9 +348,7 @@ const paletteContainer = d3
   .select("body")
   .append("div")
   .attr("id", "palette-container")
-  .style("display", "block") // Initially hidden
-  ;
-
+  .style("display", "block"); // Initially hidden
 // Append a footer with credits
 const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
 Credits.attr("id", "footer")
@@ -369,9 +378,7 @@ function displayTaxonomyLevels(Nudi_id) {
   taxonomicContainer.html(""); // Clear previous content
 
   Nudi_id.forEach((id) => {
-    const nudi = geoData.features.find(
-      (f) => f.properties.sci_name === id
-    );
+    const nudi = geoData.features.find((f) => f.properties.sci_name === id);
     if (nudi) {
       const levels = `
         <h4>${nudi.properties.tax_kingdom}</h4>
@@ -413,7 +420,7 @@ function displayTaxonomy() {
       // Create a temporary text element to measure width
       const textElement = svg
         .append("text")
-        .attr("class", `${level}-label`)
+        .attr("class", `${level} ${feature.properties.Nudi_id}`)
         .style("font-size", "12px")
         .style("font-family", '"Kodchasan", sans-serif')
         .style("font-weight", "600")
@@ -446,56 +453,59 @@ function displayTaxonomy() {
       .attr("height", rectangleHeight - RectMargin.top - RectMargin.bottom)
       .on("mouseover", function () {
         // Highlight only if it's a title rectangle
-        if (d3.select(this).classed("title")) {
+        if (d3.select(this).classed("Nudi_id")) {
           d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
         }
       })
       .on("mouseout", function () {
         // Remove highlight only if it's a title rectangle
-        if (d3.select(this).classed("title")) {
+        if (d3.select(this).classed("Nudi_id")) {
           d3.select(this).attr("stroke-width", 0);
         }
       })
       .on("click", function (event, feature) {
-        // Check if the clicked element has the class 'title'
-        if (d3.select(this).classed("title")) {
-          showNudi(feature.properties); // Pass the properties of the feature only for 'title' class
-        }
-      });
-  });
+        // Reset previous selections
+        svg.selectAll("rect").attr("stroke", "none");
 
-  // Create labels for each taxonomic level
-  taxonomicLevels.forEach((level, index) => {
-    svg
-      .selectAll(`.${level}-label`)
-      .data(geoData.features)
-      .enter()
-      .append("text")
-      .attr("class", `${level}-label`)
-      .attr(
-        "x",
-        columnPositions[index] + 5 + RectMargin.left + RectMargin.right
-      )
-      .attr(
-        "y",
-        (feature, i) =>
-          i * rectangleHeight + 2 + RectMargin.top + RectMargin.bottom
-      )
-      .attr("dy", "0.35em")
-      .style("font-size", "12px")
-      .style("fill", "white")
-      .style("font-family", '"Kodchasan", sans-serif')
-      .style("font-weight", "600")
-      .text((feature) => {
-        const value = feature.properties[level];
-        if (level === "tax_family" && value === null) {
-          return "No information available";
-        }
-        return level === "tax_subclass"
-          ? "Heterobranchia "
-          : value || "No information available"; // Handle nulls
+        // Highlight the clicked rectangle
+        d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
+
+        // Call a function to display additional info, if needed
+        showNudi(feature.properties);
       });
   });
+// Create labels for each taxonomic level
+taxonomicLevels.forEach((level, index) => {
+  svg
+    .selectAll(`.${level}-label`)
+    .data(geoData.features)
+    .enter()
+    .append("text")
+    .attr("class", (feature) => `${level} ${feature.properties.Nudi_id}`) // Add Nudi_id as a second class
+    .attr(
+      "x",
+      columnPositions[index] + 5 + RectMargin.left + RectMargin.right
+    )
+    .attr(
+      "y",
+      (feature, i) =>
+        i * rectangleHeight + 2 + RectMargin.top + RectMargin.bottom
+    )
+    .attr("dy", "0.35em")
+    .style("font-size", "12px")
+    .style("fill", "white")
+    .style("font-family", '"Kodchasan", sans-serif')
+    .style("font-weight", "600")
+    .text((feature) => {
+      const value = feature.properties[level];
+      if (level === "tax_family" && value === null) {
+        return "No information available";
+      }
+      return level === "tax_subclass"
+        ? "Heterobranchia "
+        : value || "No information available"; // Handle nulls
+    });
+});
 }
 
 function showNudi(nudi) {
@@ -620,7 +630,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   paletteTooltip.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
   paletteTooltip.style.color = "#fff";
   paletteTooltip.style.padding = "5px 10px";
-  paletteTooltip.style.borderRadius = "4px";
   paletteTooltip.style.visibility = "hidden"; // Initially hidden
   paletteTooltip.style.pointerEvents = "none"; // Prevent mouse events
   document.body.appendChild(paletteTooltip);
@@ -656,17 +665,24 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
     try {
       const vibrant = new Vibrant(url);
       const palette = await vibrant.getPalette();
-      console.log(palette); // Log the palette for debugging
+      //console.log(palette); // Log the palette for debugging
 
       // Define the palette keys based on Vibrant.js classification
-      const paletteKeys = ["Vibrant", "DarkVibrant", "LightVibrant", "Muted", "DarkMuted", "LightMuted"];
+      const paletteKeys = [
+        "Vibrant",
+        "DarkVibrant",
+        "LightVibrant",
+        "Muted",
+        "DarkMuted",
+        "LightMuted",
+      ];
 
       // Loop through palette keys to group by color category
       for (const key of paletteKeys) {
         const swatch = palette[key];
         if (swatch) {
           const colorCategory = getColorCategory(swatch); // Get the color category
-          
+
           // Initialize the color category if it doesn't exist
           if (!groupedPalettes[colorCategory]) {
             groupedPalettes[colorCategory] = [];
@@ -677,7 +693,7 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
             url,
             title,
             key, // Include the key for class assignment
-            swatch
+            swatch,
           });
         }
       }
@@ -700,15 +716,15 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
 
     for (const { url, title, key, swatch } of swatches) {
       const colorBox = document.createElement("div");
-      
+
       // Add classes: one for the Vibrant.js classification and one for the color category
       colorBox.classList.add(key.toLowerCase()); // e.g., 'vibrant', 'darkvibrant'
       colorBox.classList.add(colorCategory.toLowerCase()); // e.g., 'reds', 'greens'
 
-      const imageId = url.split('/').pop().split('.')[0]; // Extract image ID from URL
+      const imageId = url.split("/").pop().split(".")[0]; // Extract image ID from URL
       colorBox.classList.add(imageId); // Assign the ID as a class
 
-      colorBox.style.backgroundColor = `rgb(${swatch.rgb.join(',')})`; // Use the RGB values
+      colorBox.style.backgroundColor = `rgb(${swatch.rgb.join(",")})`; // Use the RGB values
       colorBox.style.width = "50px";
       colorBox.style.height = "50px";
       colorBox.style.margin = "1px";
@@ -756,14 +772,16 @@ function getColorCategory(swatch) {
   if (r > 100 && g > 70 && b < 50) return "Browns"; // Brownish reds
 
   // Use HSL for main color categorization
-  if (l > 0.5) { // Light colors
+  if (l > 0.5) {
+    // Light colors
     if (h >= 0 && h < 15 / 360) return "Reds"; // Light red range
     if (h >= 15 / 360 && h < 45 / 360) return "Yellows"; // Light yellow range
     if (h >= 45 / 360 && h < 75 / 360) return "Oranges"; // Light orange range
     if (h >= 75 / 360 && h < 165 / 360) return "Greens"; // Light green range
     if (h >= 165 / 360 && h < 240 / 360) return "Blues"; // Light blue range
     if (h >= 240 / 360 && h < 300 / 360) return "Purples"; // Light purple range
-  } else { // Dark colors
+  } else {
+    // Dark colors
     if (h >= 0 && h < 15 / 360) return "Reds"; // Dark red range
     if (h >= 15 / 360 && h < 45 / 360) return "Yellows"; // Dark yellow range
     if (h >= 45 / 360 && h < 75 / 360) return "Oranges"; // Dark orange range

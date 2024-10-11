@@ -142,7 +142,7 @@ function groupDataByLocation(data, threshold = 2) {
 const mapTooltip = d3
   .select("body")
   .append("div")
-  .attr("class", "tooltip")
+  .attr("class", "mapTooltip")
   .style("position", "absolute")
   .style("visibility", "hidden")
   .style("background", "black")
@@ -180,8 +180,9 @@ function renderCircles(groupedData) {
 
     .on("mouseover", function (event, d) {
       // Get the image content for the scientific names
+      // console.log(d.Nudi_id);
       const images = d.Nudi_id.map((id) => {
-        const nudi = geoData.features.find((f) => f.properties.sci_name === id);
+        const nudi = geoData.features.find((f) => f.properties.Nudi_id === id);
         return nudi && nudi.properties.image
           ? nudi.properties.image.content
           : null; // Adjust to your data structure
@@ -206,20 +207,21 @@ function renderCircles(groupedData) {
 
       d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
     })
-    // .on("mouseout", function () {
-    //   mapTooltip.style("visibility", "hidden");
-    //   d3.select(this).attr("stroke", "none");
-    // })
+    .on("mouseout", function () {
+      mapTooltip.style("visibility", "hidden");
+      d3.select(this).attr("stroke", "none");
+    })
     .on("click", function (event, d) {
       // Remove existing highlights first
       d3.selectAll("rect").attr("stroke", "none");
       d3.selectAll("circle").attr("stroke", "none");
+      d3.selectAll("div").style("border", "none");
 
       // Highlight the clicked rectangle
       d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
 
       d.Nudi_id.forEach((i) => {
-        console.log(i);
+        //console.log(i);
         d3.selectAll(`rect.${i}`).attr("stroke-width", 3).attr("stroke", "yellow");
         d3.selectAll(`div.${i}`).style("border", "3px solid yellow"); 
       }) 
@@ -327,7 +329,7 @@ const taxonomicContainer = d3
   .select("body")
   .append("div")
   .attr("id", "taxonomy-container")
-  .style("display", "block") // Initially hidden
+  .style("display", "visible")
   .style("margin-left", "50px");
 
 const PaletteDescription = d3.select("body").append("div");
@@ -447,19 +449,8 @@ function displayTaxonomy() {
           textWidths[i] + RectMargin.left * 4 + RectMargin.right * 4
       )
       .attr("height", rectangleHeight - RectMargin.top - RectMargin.bottom)
-      // .on("mouseover", function () {
-      //   // Highlight only if it's a title rectangle
-      //   if (d3.select(this).classed("Nudi_id")) {
-      //     d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
-      //   }
-      // })
-      // .on("mouseout", function () {
-      //   // Remove highlight only if it's a title rectangle
-      //   if (d3.select(this).classed("Nudi_id")) {
-      //     d3.select(this).attr("stroke", "none");
-      //   }
-      // })
-      .on("click", function (event, feature, d) {
+
+      .on("click", function (event, feature) {
         // Reset previous selections
         svg.selectAll("rect").attr("stroke", "none");
 
@@ -468,7 +459,12 @@ function displayTaxonomy() {
 
         // Call a function to display additional info, if needed
         showNudi(feature.properties);
-      });
+
+        console.log(feature.properties.Nudi_id);
+
+        d3.selectAll(`rect.${feature.properties.Nudi_id}`).attr("stroke-width", 3).attr("stroke", "yellow");
+
+});
   });
 // Create labels for each taxonomic level
 taxonomicLevels.forEach((level, index) => {
@@ -722,6 +718,7 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
       colorBox.classList.add(imageId); // Assign the ID as a class
 
       colorBox.style.backgroundColor = `rgb(${swatch.rgb.join(",")})`; // Use the RGB values
+      colorBox.style.setProperty('box-sizing', 'border-box');
       colorBox.style.width = "50px";
       colorBox.style.height = "50px";
       colorBox.style.margin = "1px";

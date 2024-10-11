@@ -136,7 +136,12 @@ p {
   width: 50%;
 }
 
-.tooltip img {
+.mapTooltip {
+  display: flex;
+  align-items: center;
+}
+
+.mapTooltip img {
   width: 100px; /* Thumbnail size */
   height: auto; /* Maintain aspect ratio */
 }

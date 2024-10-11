@@ -329,7 +329,8 @@ const taxonomicContainer = d3
   .select("body")
   .append("div")
   .attr("id", "taxonomy-container")
-  .style("display", "visible")
+      // CHANGE THIS BACK TO VISIBLE
+  .style("display", "none")
   .style("margin-left", "50px");
 
 const PaletteDescription = d3.select("body").append("div");
@@ -346,7 +347,7 @@ const paletteContainer = d3
   .select("body")
   .append("div")
   .attr("id", "palette-container")
-  .style("display", "block"); // Initially hidden
+  .style("display", "block");
 // Append a footer with credits
 const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
 Credits.attr("id", "footer")
@@ -453,6 +454,7 @@ function displayTaxonomy() {
       .on("click", function (event, feature) {
         // Reset previous selections
         svg.selectAll("rect").attr("stroke", "none");
+        d3.selectAll("div").style("border", "none")
 
         // Highlight the clicked rectangle
         d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
@@ -463,6 +465,7 @@ function displayTaxonomy() {
         console.log(feature.properties.Nudi_id);
 
         d3.selectAll(`rect.${feature.properties.Nudi_id}`).attr("stroke-width", 3).attr("stroke", "yellow");
+        d3.selectAll(`div.${feature.properties.Nudi_id}`).style("border", "3px solid yellow"); 
 
 });
   });
@@ -610,6 +613,7 @@ function showNudi(nudi) {
     .on("click", function () {
       d3.select("#nudi-dish").remove();
       d3.selectAll("rect").attr("stroke", "none");
+      d3.selectAll("div").style("border", "none");
     });
 }
 
@@ -761,6 +765,25 @@ function getColorCategory(swatch) {
   if (s < 0.1 && l < 0.1) return "Blacks"; // Low lightness, low saturation
   if (r < 40 && g < 40 && b < 40) return "Blacks"; // Almost black
 
+  // Check for Reds
+  if (r > 200 && g < 100 && b < 100) return "Reds";
+
+  if (r < 150 && r > 100 && g < 130 && b < 100) return "Browns";
+
+  if (r > 220 && g > 180 && b < 45) return "Yellows";
+
+  if (r < 100 && g > 80 && g < 140 && b < 60) return "Greens";
+
+
+/* 
+  // Check for Whites
+  if (s < 0.1 && l > 0.9) return "Whites"; // High lightness, low saturation
+  if (r > 220 && g > 220 && b > 220) return "Whites"; // Almost white
+
+  // Check for Blacks
+  if (s < 0.1 && l < 0.1) return "Blacks"; // Low lightness, low saturation
+  if (r < 40 && g < 40 && b < 40) return "Blacks"; // Almost black
+
   // Check for Browns
   if (r > 100 && g < 100 && b < 100 && l < 0.5) return "Browns"; // Dark reds/browns
   if (r > 100 && g > 70 && b < 50) return "Browns"; // Brownish reds
@@ -783,6 +806,6 @@ function getColorCategory(swatch) {
     if (h >= 165 / 360 && h < 240 / 360) return "Blues"; // Dark blue range
     if (h >= 240 / 360 && h < 300 / 360) return "Purples"; // Dark purple range
   }
-
+ */
   return "Other"; // Fallback if no category matches
 }

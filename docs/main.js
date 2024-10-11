@@ -766,13 +766,19 @@ function getColorCategory(swatch) {
   if (r < 40 && g < 40 && b < 40) return "Blacks"; // Almost black
 
   // Check for Reds
-  if (r > 200 && g < 100 && b < 100) return "Reds";
+  if (r > 200 && g < 100 && b < 100) return "Reds"; // Brights like ketchup
 
-  if (r < 150 && r > 100 && g < 130 && b < 100) return "Browns";
+  if (r < 160 && r > 100 && g < 130 && b < 100) return "Browns"; // Dark
+  if (r < 200 && r > 150 && g > 130 && g < 190 && b > 100 && b < 160) return "Browns"; // Light
 
-  if (r > 220 && g > 180 && b < 45) return "Yellows";
+  if (r > 220 && g > 180 && b < 45) return "Yellows"; // Brights and Mustards
 
-  if (r < 100 && g > 80 && g < 140 && b < 60) return "Greens";
+  if (r < 100 && g > 80 && g < 140 && b < 60) return "Greens"; // Dark
+
+  //if (r < 200 && g < 200 && b > 100) return "Blues";
+
+  if (r > 90 && r < 195 && g > 120 && g < 140 && b > 120) return "Purples";
+  if (r > 90 && r < 195 && g < 100 && b > 120) return "Purples";
 
 
 /* 

@@ -114,7 +114,7 @@ function groupDataByLocation(data, threshold = 2) {
   data.features.forEach((feature) => {
     const latitude = feature.geometry.coordinates[1]; // GeoJSON is [lon, lat]
     const longitude = feature.geometry.coordinates[0];
-    const id = feature.properties.sci_name || "No Scientific Name Available"; // Use placeholder if blank
+    const id = feature.properties.Nudi_id || "No Scientific Name Available"; // Use placeholder if blank
 
     const existingGroup = grouped.find((group) => {
       const latDiff = Math.abs(group.latitude - latitude);
@@ -151,6 +151,7 @@ const mapTooltip = d3
   .style("font-weight", "600");
 
 function renderCircles(groupedData) {
+  console.log(groupedData);
   const circleScale = d3
     .scaleSqrt()
     .domain([0, d3.max(groupedData, (d) => d.count)])
@@ -205,28 +206,23 @@ function renderCircles(groupedData) {
 
       d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
     })
-    .on("mouseout", function () {
-      mapTooltip.style("visibility", "hidden");
-      d3.select(this).attr("stroke", "none");
-    })
-
+    // .on("mouseout", function () {
+    //   mapTooltip.style("visibility", "hidden");
+    //   d3.select(this).attr("stroke", "none");
+    // })
     .on("click", function (event, d) {
       // Remove existing highlights first
       d3.selectAll("rect").attr("stroke", "none");
+      d3.selectAll("circle").attr("stroke", "none");
 
       // Highlight the clicked rectangle
       d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
 
-      // Highlight rectangles matching the Nudi_ids
-      d.Nudi_id.forEach((id) => {
-        // Ensure id is a string before replacing spaces and special characters
-        if (typeof id === "string") {
-          const safeId = id.replace(/\s+/g, "_").replace(/[()]/g, "");
-          d3.selectAll(`.${safeId}`)
-            .attr("stroke-width", 3)
-            .attr("stroke", "yellow");
-        }
-      });
+      d.Nudi_id.forEach((i) => {
+        console.log(i);
+        d3.selectAll(`rect.${i}`).attr("stroke-width", 3).attr("stroke", "yellow");
+        d3.selectAll(`div.${i}`).style("border", "3px solid yellow"); 
+      }) 
     });
 
   // Add text labels for each circle
@@ -451,19 +447,19 @@ function displayTaxonomy() {
           textWidths[i] + RectMargin.left * 4 + RectMargin.right * 4
       )
       .attr("height", rectangleHeight - RectMargin.top - RectMargin.bottom)
-      .on("mouseover", function () {
-        // Highlight only if it's a title rectangle
-        if (d3.select(this).classed("Nudi_id")) {
-          d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
-        }
-      })
-      .on("mouseout", function () {
-        // Remove highlight only if it's a title rectangle
-        if (d3.select(this).classed("Nudi_id")) {
-          d3.select(this).attr("stroke-width", 0);
-        }
-      })
-      .on("click", function (event, feature) {
+      // .on("mouseover", function () {
+      //   // Highlight only if it's a title rectangle
+      //   if (d3.select(this).classed("Nudi_id")) {
+      //     d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
+      //   }
+      // })
+      // .on("mouseout", function () {
+      //   // Remove highlight only if it's a title rectangle
+      //   if (d3.select(this).classed("Nudi_id")) {
+      //     d3.select(this).attr("stroke", "none");
+      //   }
+      // })
+      .on("click", function (event, feature, d) {
         // Reset previous selections
         svg.selectAll("rect").attr("stroke", "none");
 
@@ -617,6 +613,7 @@ function showNudi(nudi) {
     .style("font-weight", "600")
     .on("click", function () {
       d3.select("#nudi-dish").remove();
+      d3.selectAll("rect").attr("stroke", "none");
     });
 }
 

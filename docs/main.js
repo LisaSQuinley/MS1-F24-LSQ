@@ -183,8 +183,8 @@ function renderCircles(groupedData) {
       // console.log(d.Nudi_id);
       const images = d.Nudi_id.map((id) => {
         const nudi = geoData.features.find((f) => f.properties.Nudi_id === id);
-        return nudi && nudi.properties.image
-          ? nudi.properties.image.content
+        return nudi && nudi.properties.image_content
+          ? nudi.properties.image_content
           : null; // Adjust to your data structure
       }).filter(Boolean); // Filter out any null values
 
@@ -194,8 +194,8 @@ function renderCircles(groupedData) {
       // Create HTML for the images
       const imageHTML = randomImages
         .map(
-          (image) =>
-            `<img src="${image}" style="width: 100px; height: auto; margin: 2px; " alt="Image">`
+          (image_content) =>
+            `<img src="${image_content}" style="width: 100px; height: auto; margin: 2px; " alt="Image">`
         )
         .join("");
 
@@ -330,7 +330,7 @@ const taxonomicContainer = d3
   .append("div")
   .attr("id", "taxonomy-container")
       // CHANGE THIS BACK TO VISIBLE
-  .style("display", "none")
+  .style("display", "visible")
   .style("margin-left", "50px");
 
 const PaletteDescription = d3.select("body").append("div");
@@ -522,7 +522,7 @@ function showNudi(nudi) {
 
   // Append the image
   const image = NudiContainer.append("img")
-    .attr("src", nudi.image.content || "") // Use the image content
+    .attr("src", nudi.Nudi_id ? `${imageFolder}/${nudi.Nudi_id}.jpg` : "")
     .attr("alt", "Taxonomic Image")
     .style("font-family", '"Kodchasan", sans-serif')
     .style("max-width", "950px")
@@ -637,18 +637,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 const imageFolder = "./image-data/images"; // The folder where your images are stored
 
 async function fetchImageData() {
-  const response = await fetch("./filtered.json");
+  const response = await fetch("./data.geojson");
   return await response.json();
 }
 
 async function getImageFiles() {
   const imageData = await fetchImageData();
-  return imageData
-    .map((item) => {
-      const id = item.id;
+  return imageData.features
+    .map((feature) => {
+      const id = feature.properties.Nudi_id;
       return {
         url: id ? `${imageFolder}/${id}.jpg` : null, // Construct the URL from the id
-        title: item.title, // Use the title from the JSON
+        title: feature.properties.title, // Use the title from the JSON
       };
     })
     .filter((item) => item.url !== null); // Filter out items with null URLs

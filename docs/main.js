@@ -329,7 +329,6 @@ const taxonomicContainer = d3
   .select("body")
   .append("div")
   .attr("id", "taxonomy-container")
-      // CHANGE THIS BACK TO VISIBLE
   .style("display", "visible")
   .style("margin-left", "50px");
 
@@ -617,6 +616,228 @@ function showNudi(nudi) {
     });
 }
 
+
+// Create the carousel container
+const NudiesCarousel = d3.select("body").append("div")
+  .attr("id", "carousel")
+  .attr("class", "carousel");
+
+// Create the inner carousel div
+const carouselInner = NudiesCarousel.append("div")
+  .attr("class", "carousel-inner");
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const palettesDiv = paletteContainer.node();
+
+  // Create a tooltip element
+  const paletteTooltip = document.createElement("div");
+  paletteTooltip.style.position = "absolute";
+  paletteTooltip.style.fontFamily = "Kodchasan, sans-serif";
+  paletteTooltip.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+  paletteTooltip.style.color = "#fff";
+  paletteTooltip.style.padding = "5px 10px";
+  paletteTooltip.style.visibility = "hidden"; // Initially hidden
+  paletteTooltip.style.pointerEvents = "none"; // Prevent mouse events
+  document.body.appendChild(paletteTooltip);
+
+  await extractPalettes(palettesDiv, paletteTooltip); // Pass the tooltip to the function
+});
+
+const imageFolder = "./image-data/images"; // The folder where your images are stored
+
+async function fetchImageData() {
+  const response = await fetch("./data.geojson");
+  return await response.json();
+}
+
+async function getImageFiles() {
+  const imageData = await fetchImageData();
+  return imageData.features
+    .map((feature) => {
+      const id = feature.properties.Nudi_id;
+      return {
+        url: id ? `${imageFolder}/${id}.jpg` : null, // Construct the URL from the id
+        title: feature.properties.title, // Use the title from the JSON
+      };
+    })
+    .filter((item) => item.url !== null); // Filter out items with null URLs
+}
+
+function getColorCategory(swatch) {
+  const rgb = swatch.rgb;
+  const r = rgb[0];
+  const g = rgb[1];
+  const b = rgb[2];
+
+  // Categorization logic
+  if (r > g && r > b) return "Reds";
+  if (g > r && g > b) return "Greens";
+  if (b > r && b > g) return "Blues";
+  return "Others"; // Default category
+}
+
+async function extractPalettes(palettesDiv, paletteTooltip) {
+  const imageFiles = await getImageFiles();
+  const groupedPalettes = {};
+
+  for (const { url, title } of imageFiles) {
+    try {
+      const vibrant = new Vibrant(url);
+      const palette = await vibrant.getPalette();
+
+      const paletteKeys = [
+        "Vibrant",
+        "DarkVibrant",
+        "LightVibrant",
+        "Muted",
+        "DarkMuted",
+        "LightMuted",
+      ];
+
+      for (const key of paletteKeys) {
+        const swatch = palette[key];
+        if (swatch) {
+          const colorCategory = getColorCategory(swatch);
+          if (!groupedPalettes[colorCategory]) {
+            groupedPalettes[colorCategory] = [];
+          }
+          groupedPalettes[colorCategory].push({
+            url,
+            title,
+            key,
+            swatch,
+          });
+        }
+      }
+    } catch (err) {
+      console.error(`Error processing image ${url}:`, err);
+    }
+  }
+
+  console.log(groupedPalettes)  
+  // {red: "", blue :""}} 
+  const valuesOfGroupedPalettes = Object.values(groupedPalettes); 
+
+  // flattens the valuesOfGroupedPalettes into a single array
+  const concatArray = valuesOfGroupedPalettes.flat();
+  
+  // traserves over geoData to access every image using Nudi_ID and filters the concatArray to find the corresponding swatch matches based on image ID
+  geoData.features.forEach((d, i) => {
+    const nudiBranchImageURL = `./image-data/images/${d.properties.Nudi_id}.jpg`;
+    const correspondingImageSwatches = concatArray.filter(image => image.url === nudiBranchImageURL);
+    console.log(correspondingImageSwatches)
+  })
+
+  
+
+
+  // for(const (d, i) of geoData.features){
+  //   console.log(d[i].Nudi_id)
+  // }
+
+  // Create carousel items
+  // for (const [colorCategory, swatches] of Object.entries(groupedPalettes)) {
+  //   // console.log(groupedPalettes)
+  //   const carouselItem = document.createElement("div");
+  //   carouselItem.classList.add("carousel-item");
+
+  //   // Create a container for the image and swatches
+  //   const itemContainer = document.createElement("div");
+  //   itemContainer.style.display = "flex"; // Flex layout for image and swatches
+  //   itemContainer.style.alignItems = "flex-start"; // Align items at the top
+  //   itemContainer.style.margin = "20px"; 
+
+  //   // for(const swatch of swatches){ // Create image element
+  //   const imgElement = document.createElement("img");
+  //   imgElement.src = swatches[0].url; // Use the first image's URL
+  //   imgElement.alt = swatches[0].title;
+  //   imgElement.style.width = "400px"; // Set a larger fixed width for images
+  //   imgElement.style.marginRight = "20px"; // Spacing between image and swatches
+  //   imgElement.style.borderRadius = "8px"; // Optional: add rounded corners
+  //   itemContainer.appendChild(imgElement);
+
+  //   // Create swatch container
+  //   const swatchContainer = document.createElement("div");
+  //   swatchContainer.style.display = "flex";
+  //   swatchContainer.style.flexDirection = "column"; // Stack swatches vertically
+  //   swatchContainer.style.flexWrap = "wrap";
+
+  //   for (const { url, title, key, swatch } of swatches) {
+  //     // console.log(swatches)
+  //     const colorBox = document.createElement("div");
+  //     colorBox.classList.add(key.toLowerCase());
+  //     colorBox.style.backgroundColor = `rgb(${swatch.rgb.join(",")})`;
+  //     colorBox.style.width = "50px";
+  //     colorBox.style.height = "50px";
+  //     colorBox.style.margin = "5px"; // Add some spacing between color boxes
+  //     colorBox.style.cursor = "pointer";
+
+  //     // Tooltip logic for color box
+  //     colorBox.addEventListener("mouseover", (event) => {
+  //       paletteTooltip.textContent = `${key} color for: ${title}`;
+  //       paletteTooltip.style.visibility = "visible";
+  //       paletteTooltip.style.left = `${event.pageX + 10}px`;
+  //       paletteTooltip.style.top = `${event.pageY + 10}px`;
+  //     });
+
+  //     colorBox.addEventListener("mouseout", () => {
+  //       paletteTooltip.style.visibility = "hidden";
+  //     });
+
+  //     swatchContainer.appendChild(colorBox);
+
+  // // }
+  // // Add margin around the item
+  // itemContainer.appendChild(swatchContainer);
+  // carouselItem.appendChild(itemContainer); // Append the entire item container
+  // carouselInner.node().appendChild(carouselItem); // Append to carouselInner
+  
+  // }
+    
+  // }
+}
+
+let currentIndex = 0;
+
+function updateCarousel() {
+  const carousel = document.getElementById("carousel");
+  const items = carousel.children.length;
+  carousel.style.transform = `translateX(${-currentIndex * 100}%)`;
+}
+
+function nextSlide() {
+  const carousel = document.getElementById("carousel");
+  if (currentIndex < carousel.children.length - 1) {
+    currentIndex++;
+    updateCarousel();
+  }
+}
+
+function prevSlide() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    updateCarousel();
+  }
+}
+
+// Add buttons to control the carousel
+const nextButton = document.createElement("button");
+nextButton.textContent = "Next";
+nextButton.id = "nextButton"; // Set ID for styling
+nextButton.onclick = nextSlide;
+
+const prevButton = document.createElement("button");
+prevButton.textContent = "Previous";
+prevButton.id = "prevButton"; // Set ID for styling
+prevButton.onclick = prevSlide;
+
+palettesDiv.appendChild(prevButton);
+palettesDiv.appendChild(nextButton);
+
+
+
+// swatches of color palettes from the Nudies
+/* 
 document.addEventListener("DOMContentLoaded", async () => {
   const palettesDiv = paletteContainer.node();
 
@@ -750,7 +971,11 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
 
   return Promise.resolve();
 }
+ */
 
+// categorizing my colors
+
+/* 
 function getColorCategory(swatch) {
   const rgb = swatch.getRgb(); // Get the RGB values
   const hsl = swatch.hsl; // Get the HSL values
@@ -780,38 +1005,6 @@ function getColorCategory(swatch) {
   if (r > 90 && r < 195 && g > 120 && g < 140 && b > 120) return "Purples";
   if (r > 90 && r < 195 && g < 100 && b > 120) return "Purples";
 
-
-/* 
-  // Check for Whites
-  if (s < 0.1 && l > 0.9) return "Whites"; // High lightness, low saturation
-  if (r > 220 && g > 220 && b > 220) return "Whites"; // Almost white
-
-  // Check for Blacks
-  if (s < 0.1 && l < 0.1) return "Blacks"; // Low lightness, low saturation
-  if (r < 40 && g < 40 && b < 40) return "Blacks"; // Almost black
-
-  // Check for Browns
-  if (r > 100 && g < 100 && b < 100 && l < 0.5) return "Browns"; // Dark reds/browns
-  if (r > 100 && g > 70 && b < 50) return "Browns"; // Brownish reds
-
-  // Use HSL for main color categorization
-  if (l > 0.5) {
-    // Light colors
-    if (h >= 0 && h < 15 / 360) return "Reds"; // Light red range
-    if (h >= 15 / 360 && h < 45 / 360) return "Yellows"; // Light yellow range
-    if (h >= 45 / 360 && h < 75 / 360) return "Oranges"; // Light orange range
-    if (h >= 75 / 360 && h < 165 / 360) return "Greens"; // Light green range
-    if (h >= 165 / 360 && h < 240 / 360) return "Blues"; // Light blue range
-    if (h >= 240 / 360 && h < 300 / 360) return "Purples"; // Light purple range
-  } else {
-    // Dark colors
-    if (h >= 0 && h < 15 / 360) return "Reds"; // Dark red range
-    if (h >= 15 / 360 && h < 45 / 360) return "Yellows"; // Dark yellow range
-    if (h >= 45 / 360 && h < 75 / 360) return "Oranges"; // Dark orange range
-    if (h >= 75 / 360 && h < 165 / 360) return "Greens"; // Dark green range
-    if (h >= 165 / 360 && h < 240 / 360) return "Blues"; // Dark blue range
-    if (h >= 240 / 360 && h < 300 / 360) return "Purples"; // Dark purple range
-  }
- */
   return "Other"; // Fallback if no category matches
 }
+ */

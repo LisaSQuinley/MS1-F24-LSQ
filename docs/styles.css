@@ -153,6 +153,51 @@ p {
   margin-bottom: 50px;
 }
 
+
+
+
+#carousel {
+  overflow: hidden;
+  width: 100%;
+  position: relative; /* To position buttons correctly */
+}
+
+.carousel-inner {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.carousel-item {
+  display: flex; /* Keep flex layout for carousel items */
+  width: 100%; /* Full width for each carousel item */
+  align-items: flex-start; /* Align items at the top */
+}
+
+button {
+  position: absolute; /* Position buttons relative to the carousel */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1; /* Ensure buttons are on top */
+}
+
+button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+#prevButton {
+  left: 10px;
+}
+
+#nextButton {
+  right: 10px;
+}
+
+
 /*
 
 // Reminder to self of the Kodchasan styles

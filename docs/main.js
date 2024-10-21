@@ -1,9 +1,23 @@
-// Main data loading and rendering logic
+let geoData; // Declare geoData in a higher scope
+
+// Load GeoJSON data
 d3.json("data.geojson")
   .then((data) => {
-    geoData = data;
+    // Store geoData globally or in an accessible scope
+    const geoData = data;
+
+    // Group the data by location
     const groupedData = groupDataByLocation(geoData);
+
+    // Render circles (if you have a function for this)
     renderCircles(groupedData);
+
+    // Load image files and extract palettes
+    const palettesDiv = d3.select("#palettesDiv"); // Assuming you have a div for displaying palettes
+    extractPalettes(palettesDiv, geoData);
+  })
+  .catch((error) => {
+    console.error("Error loading GeoJSON data:", error);
   });
 
 const ProjectTitle = d3.select("header").append("div");
@@ -331,12 +345,79 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
   }
 
   // Call the function to display the images and swatches
-  displayPalettes(groupedPalettes, palettesDiv);
+  displayPalettes(groupedPalettes, palettesDiv, geoData);
 }
 
 // This function displays the images and their color palettes
+function displayPalettes(groupedPalettes, palettesDiv, geoData) {
+  // Flatten the grouped palettes into a single array
+  const valuesOfGroupedPalettes = Object.values(groupedPalettes);
+  const concatGroupedPalettes = valuesOfGroupedPalettes.flat();
+
+  // Create a container for each image and its swatches
+  geoData.features.forEach((d) => {
+    const nudiBranchImageURL = `./image-data/images/${d.properties.Nudi_id}.jpg`;
+    // Find the corresponding swatches for the current image
+    const correspondingImageSwatches = concatGroupedPalettes.filter(image => image.url === nudiBranchImageURL);
+    
+    if (correspondingImageSwatches.length > 0) {
+      // Create a container for this specific image
+      const paletteContainer = palettesDiv.append("div")
+        .attr("class", d.properties.Nudi_id) // Use Nudi_id for class
+        .style("margin", "10px")
+        .style("display", "inline-block")
+        .style("text-align", "center");
+
+      // Add the image
+      paletteContainer.append("img")
+        .attr("src", nudiBranchImageURL)
+        .attr("alt", d.properties.title) // Assuming there's a title property
+        .style("width", "500px")
+        .style("height", "auto");
+
+      // Add title
+      paletteContainer.append("p")
+        .text(d.properties.title) // Assuming there's a title property
+        .style("font-weight", "bold");
+
+      // Add swatches for the found images
+      const swatchesDiv = paletteContainer.append("div").style("display", "flex");
+
+      correspondingImageSwatches.forEach(swatch => {
+        const keys = [
+          "Vibrant",
+          "DarkVibrant",
+          "LightVibrant",
+          "Muted",
+          "DarkMuted",
+          "LightMuted",
+        ];
+
+        keys.forEach(key => {
+          const color = swatch.swatch[key];
+          if (color) {
+            const hexColor = color.rgb; // Use color.rgb if that's your format
+            swatchesDiv.append("div")
+              .style("background-color", hexColor) // Set background color
+              .style("width", "30px")
+              .style("height", "30px")
+              .style("margin", "2px")
+              .style("border", "1px solid #000");
+          }
+        });
+      });
+    }
+  });
+}
+
+
+
+/* 
+// This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, palettesDiv) {
   // Create a container for each image and its swatches
+
+
   groupedPalettes.forEach(({ url, title, Nudi_id, swatch }) => {
     const paletteContainer = palettesDiv.append("div")
       .attr("class", Nudi_id) // Use Nudi_id for class
@@ -383,4 +464,20 @@ function displayPalettes(groupedPalettes, palettesDiv) {
       }
     });
   });
+
+//console.log(groupedPalettes)  
+const valuesOfGroupedPalettes = Object.values(groupedPalettes); 
+// flattens the valuesOfGroupedPalettes into a single array
+const concatGroupedPalettes = valuesOfGroupedPalettes.flat();
+
+// traverses over geoData to access every image using Nudi_ID and filters the concatArray to find the corresponding swatch matches based on image ID
+geoData.features.forEach((d, i) => {
+  const nudiBranchImageURL = `./image-data/images/${d.properties.Nudi_id}.jpg`;
+  const correspondingImageSwatches = concatGroupedPalettes.filter(image => image.url === nudiBranchImageURL);
+  // console.log(correspondingImageSwatches)
+})
 }
+
+
+
+ */

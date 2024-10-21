@@ -341,11 +341,12 @@ async function extractPalettes(palettesDiv, geoData) { // Ensure geoData is pass
 
 // This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, palettesDiv, geoData) {
+  console.log(groupedPalettes);
   // Assuming groupedPalettes is already an array, no need to flatten
   geoData.features.forEach((d) => {
     const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
     const correspondingImageSwatches = groupedPalettes.filter(image => image.url === nudiBranchImageURL);
-
+console.log(correspondingImageSwatches);
     if (correspondingImageSwatches.length > 0) {
       const paletteContainer = palettesDiv.append("div")
         .attr("class", d.properties.Nudi_id)

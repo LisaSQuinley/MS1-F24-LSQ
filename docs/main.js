@@ -4,7 +4,7 @@ let geoData; // Declare geoData in a higher scope
 d3.json("data.geojson")
   .then((data) => {
     // Store geoData globally or in an accessible scope
-    const geoData = data;
+    geoData = data; // Remove const to avoid creating a new variable
 
     // Group the data by location
     const groupedData = groupDataByLocation(geoData);
@@ -14,7 +14,7 @@ d3.json("data.geojson")
 
     // Load image files and extract palettes
     const palettesDiv = d3.select("#palettesDiv"); // Assuming you have a div for displaying palettes
-    extractPalettes(palettesDiv, geoData);
+    extractPalettes(palettesDiv, geoData); // Pass geoData here
   })
   .catch((error) => {
     console.error("Error loading GeoJSON data:", error);
@@ -249,9 +249,6 @@ PaletteDescription.attr("id", "section")
 // Create a new div for displaying palettes
 const palettesDiv = d3.select("body").append("div").attr("id", "palettesDiv");
 
-// Now call the function to extract and display palettes
-extractPalettes(palettesDiv);
-
 
   const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
 Credits.attr("id", "footer")
@@ -277,8 +274,8 @@ Credits.append("p")
   .style("display", "inline");
 
 
-  const imageFolder = "./image-data/images"; // The folder where your images are stored
-
+// Define the image folder globally
+const imageFolder = "./image-data/images"; 
 
 // This function fetches image data from the GeoJSON
 async function fetchImageData() {
@@ -296,20 +293,14 @@ async function getImageFiles() {
         url: id ? `${imageFolder}/${id}.jpg` : null,
         title: feature.properties.title,
         id: id,
-        kingdom: feature.properties.tax_kingdom,
-        phylum: feature.properties.tax_phylum,
-        class: feature.properties.tax_class,
-        order: feature.properties.tax_order,
-        family: feature.properties.tax_family,
-        sci_name: feature.properties.sci_name,
-        SI_info: feature.properties.image_content,
+        // Additional properties...
       };
     })
     .filter((item) => item.url !== null);
 }
 
 // This function extracts color palettes using Vibrant.js
-async function extractPalettes(palettesDiv, paletteTooltip) {
+async function extractPalettes(palettesDiv, geoData) { // Ensure geoData is passed
   const imageFiles = await getImageFiles();
   const groupedPalettes = [];
 
@@ -345,42 +336,33 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
   }
 
   // Call the function to display the images and swatches
-  displayPalettes(groupedPalettes, palettesDiv, geoData);
+  displayPalettes(groupedPalettes, palettesDiv, geoData); // Ensure geoData is passed
 }
 
 // This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, palettesDiv, geoData) {
-  // Flatten the grouped palettes into a single array
-  const valuesOfGroupedPalettes = Object.values(groupedPalettes);
-  const concatGroupedPalettes = valuesOfGroupedPalettes.flat();
-
-  // Create a container for each image and its swatches
+  // Assuming groupedPalettes is already an array, no need to flatten
   geoData.features.forEach((d) => {
-    const nudiBranchImageURL = `./image-data/images/${d.properties.Nudi_id}.jpg`;
-    // Find the corresponding swatches for the current image
-    const correspondingImageSwatches = concatGroupedPalettes.filter(image => image.url === nudiBranchImageURL);
-    
+    const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
+    const correspondingImageSwatches = groupedPalettes.filter(image => image.url === nudiBranchImageURL);
+
     if (correspondingImageSwatches.length > 0) {
-      // Create a container for this specific image
       const paletteContainer = palettesDiv.append("div")
-        .attr("class", d.properties.Nudi_id) // Use Nudi_id for class
+        .attr("class", d.properties.Nudi_id)
         .style("margin", "10px")
         .style("display", "inline-block")
         .style("text-align", "center");
 
-      // Add the image
       paletteContainer.append("img")
         .attr("src", nudiBranchImageURL)
-        .attr("alt", d.properties.title) // Assuming there's a title property
+        .attr("alt", d.properties.title)
         .style("width", "500px")
         .style("height", "auto");
 
-      // Add title
       paletteContainer.append("p")
-        .text(d.properties.title) // Assuming there's a title property
+        .text(d.properties.title)
         .style("font-weight", "bold");
 
-      // Add swatches for the found images
       const swatchesDiv = paletteContainer.append("div").style("display", "flex");
 
       correspondingImageSwatches.forEach(swatch => {
@@ -396,9 +378,9 @@ function displayPalettes(groupedPalettes, palettesDiv, geoData) {
         keys.forEach(key => {
           const color = swatch.swatch[key];
           if (color) {
-            const hexColor = color.rgb; // Use color.rgb if that's your format
+            const hexColor = color.rgb; // Ensure this property exists
             swatchesDiv.append("div")
-              .style("background-color", hexColor) // Set background color
+              .style("background-color", hexColor)
               .style("width", "30px")
               .style("height", "30px")
               .style("margin", "2px")
@@ -409,7 +391,6 @@ function displayPalettes(groupedPalettes, palettesDiv, geoData) {
     }
   });
 }
-
 
 
 /* 

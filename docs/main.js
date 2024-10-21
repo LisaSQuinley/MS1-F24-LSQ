@@ -37,21 +37,20 @@ const ProjectOverview = d3
     "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
   );
 
-const mapwidth = 1920; // Set the width for your SVG
-const mapheight = 800; // Set the height for your SVG
+  const mapwidth = window.innerWidth; // Width of the viewport
+  const mapheight = window.innerHeight; // Height of the viewport
 
 const Nudiprojection = d3
   .geoEquirectangular()
-  .scale(400)
-  .translate([mapwidth / 1.5, mapheight / 1.5]);
+  .scale(450)
+  .translate([mapwidth*0.7,mapheight/1.93]);
 const Nudipath = d3.geoPath(Nudiprojection);
 
 // Create a single SVG element
 const svg = d3
   .select("body")
   .append("svg")
-  .attr("width", mapwidth)
-  .attr("height", mapheight);
+  .attr("class", "map");
 
 // Create a group for map layers
 const mapGroup = svg.append("g").attr("class", "map-layer");

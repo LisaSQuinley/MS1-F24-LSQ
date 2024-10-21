@@ -130,7 +130,7 @@ function renderCircles(groupedData) {
     .domain([0, d3.max(groupedData, (d) => d.count)])
     .range([5, 60]);
 
-  svg
+    svg
     .selectAll("circle")
     .data(groupedData)
     .enter()
@@ -140,16 +140,9 @@ function renderCircles(groupedData) {
     .attr("r", (d) => circleScale(d.count))
     .attr("fill", "red")
     .attr("opacity", 0.7)
-    .attr("class", (d) => {
-      return d.Nudi_id.map((id) => {
-        const nudi = geoData.features.find((f) => f.properties.sci_name === id);
-        return nudi
-          ? nudi.properties.Nudi_id.replace(/\s+/g, "_").replace(/[()]/g, "")
-          : null;
-      })
-        .filter(Boolean)
-        .join(" ");
-    })
+    .attr("class", (d) => d.Nudi_id.join(" ")) // Directly join Nudi_id values
+  
+  
 
     .on("mouseover", function (event, d) {
       // Get the image content for the scientific names
@@ -238,8 +231,12 @@ PaletteDescription.attr("id", "section")
     "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, DarkVibrant, DarkMuted, LightVibrant, LightMuted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
   );
 
-  const palettesDiv = d3.select("body").append("div");
-  palettesDiv.attr("id", "palettesDiv");
+
+// Create a new div for displaying palettes
+const palettesDiv = d3.select("body").append("div").attr("id", "palettesDiv");
+
+// Now call the function to extract and display palettes
+extractPalettes(palettesDiv);
 
 
   const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
@@ -296,6 +293,7 @@ async function getImageFiles() {
     })
     .filter((item) => item.url !== null);
 }
+
 // This function extracts color palettes using Vibrant.js
 async function extractPalettes(palettesDiv, paletteTooltip) {
   const imageFiles = await getImageFiles();
@@ -338,13 +336,10 @@ async function extractPalettes(palettesDiv, paletteTooltip) {
 
 // This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, palettesDiv) {
-  // Clear the palettesDiv before appending new content
-  palettesDiv.selectAll("*").remove();
-
   // Create a container for each image and its swatches
   groupedPalettes.forEach(({ url, title, Nudi_id, swatch }) => {
     const paletteContainer = palettesDiv.append("div")
-      .attr("class", Nudi_id.replace(/\s+/g, "_")) // Use Nudi_id for class
+      .attr("class", Nudi_id) // Use Nudi_id for class
       .style("margin", "10px")
       .style("display", "inline-block")
       .style("text-align", "center");
@@ -363,10 +358,24 @@ function displayPalettes(groupedPalettes, palettesDiv) {
 
     // Add swatches
     const swatchesDiv = paletteContainer.append("div").style("display", "flex");
-    Object.values(swatch).forEach(color => {
+    
+    // Loop through the swatch object for the relevant keys
+    const paletteKeys = [
+      "Vibrant",
+      "DarkVibrant",
+      "LightVibrant",
+      "Muted",
+      "DarkMuted",
+      "LightMuted",
+    ];
+    
+    paletteKeys.forEach(key => {
+      const color = swatch[key];
       if (color) {
+        // Use the color's hex property directly
+        const hexColor = color.rgb; // or color.rgb if you're using that format
         swatchesDiv.append("div")
-          .style("background-color", color.getHex())
+          .style("background-color", hexColor) // Set background color
           .style("width", "30px")
           .style("height", "30px")
           .style("margin", "2px")

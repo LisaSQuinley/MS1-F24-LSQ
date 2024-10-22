@@ -1,3 +1,5 @@
+
+
 body {
   background-color: #DFE5F4;
 }
@@ -9,6 +11,47 @@ body {
     flex-direction: column; /* Stack elements vertically */
     align-items: center; /* Center horizontally */
     justify-content: center; /* Center vertically if you want */
+}
+
+.map {
+  position: relative; /* Allow circles to be rendered on top */
+  z-index: 1; /* Lower z-index than header/footer */
+}
+
+header {
+  position: fixed; /* Fixes the footer at the bottom */
+  top: 0; /* Aligns it to the bottom */
+  left: 0; /* Aligns it to the left */
+  width: 100%; /* Makes it span the full width */
+  margin: 0;
+  clear: both; /* Ensure it stays below floated elements */
+  z-index: 10;
+}
+
+#title h1, h2 {
+  font-family: "Kodchasan", sans-serif;
+  color: #262262;
+  display: inline-block;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-width: 1920px;
+}
+
+footer {
+  position: fixed; /* Fixes the footer at the bottom */
+  bottom: 0; /* Aligns it to the bottom */
+  left: 0; /* Aligns it to the left */
+  width: 100%; /* Makes it span the full width */
+  margin: 0;
+  clear: both; /* Ensure it stays below floated elements */
+  z-index: 10;
+}
+
+#footer p, h3 {
+  font-family: "Kodchasan", sans-serif;
+  color: #262262;
+  width: 100%;
 }
 
 #section {
@@ -43,38 +86,10 @@ body {
     fill: #FF0000;
 }
 
-header {
-  position: fixed; /* Fixes the footer at the bottom */
-  top: 0; /* Aligns it to the bottom */
-  left: 0; /* Aligns it to the left */
-  width: 100%; /* Makes it span the full width */
-  margin: 0;
-  clear: both; /* Ensure it stays below floated elements */
-}
-
-#title h1, h2 {
-  font-family: "Kodchasan", sans-serif;
-  color: #262262;
-  display: inline-block;
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 0;
-  max-width: 1920px;
-}
-
-footer {
-  position: fixed; /* Fixes the footer at the bottom */
-  bottom: 0; /* Aligns it to the bottom */
-  left: 0; /* Aligns it to the left */
-  width: 100%; /* Makes it span the full width */
-  margin: 0;
-  clear: both; /* Ensure it stays below floated elements */
-}
-
-#footer p, h3 {
-  font-family: "Kodchasan", sans-serif;
-  color: #262262;
-  width: 100%;
+#palettesDiv {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 #section h3, h4, h5, h6, p {
@@ -85,19 +100,6 @@ footer {
   margin-right: 25px;
   margin-bottom: 0;
   margin-top: 0;
-}
-
-#palettes {
-  max-width: 1920px;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 50px;
-}
-
-#palette h4 {
-  margin-top: 0;
-  font-weight: 700;
-  font-size: 10pt;
 }
 
 h1 {
@@ -138,6 +140,7 @@ p {
 .mapTooltip {
   display: flex;
   align-items: center;
+  z-index: 2;
 }
 
 .mapTooltip img {

@@ -5,7 +5,6 @@ body {
 }
 
 body {
-    max-width: 1920px; /* Set a maximum width */
     margin: 0 auto; /* Center the content */
     display: flex;
     flex-direction: column; /* Stack elements vertically */
@@ -48,6 +47,26 @@ footer {
   z-index: 10;
 }
 
+#NudiDivs {
+  z-index: 3;
+  position: fixed;
+  top: 5%;
+  right: 0;
+  width: 55%;
+  overflow-y: auto; 
+  height: 100vh;
+}
+
+#NudiContainers {
+  background: black;
+  font-family: "Kodchasan", sans-serif;
+}
+
+img {
+  width: 950px; /* Thumbnail size */
+  height: auto; /* Maintain aspect ratio */
+}
+
 #footer p, h3 {
   font-family: "Kodchasan", sans-serif;
   color: #262262;
@@ -58,38 +77,43 @@ footer {
   margin: 10px 0; /* Space between sections */
 }
 
+.tax_kingdom,
+.tax_phylum,
+.tax_class,
+.tax_subclass,
+.tax_order,
+.tax_family,
+.title {
+  display: inline-block; /* Ensures all are inline blocks */
+  padding: 5px 10px; /* Common padding for all */
+}
+
 .tax_kingdom {
-    fill: #1C75BC;
+    background-color: #1C75BC;
 }
 
 .tax_phylum {
-    fill: #275390;
+  background-color: #275390;
 }
 
 .tax_class {
-    fill: #273370;
+  background-color: #273370;
 }
 
 .tax_subclass {
-    fill: #3C2670;
+  background-color: #3C2670;
 }
 
 .tax_order {
-    fill: #662D91;
+  background-color: #662D91;
 }
 
 .tax_family {
-    fill: #CF1E3C;
+  background-color: #CF1E3C;
 }  
 
 .title {
-    fill: #FF0000;
-}
-
-#palettesDiv {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  background-color: #FF0000;
 }
 
 #section h3, h4, h5, h6, p {

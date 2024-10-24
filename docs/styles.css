@@ -13,8 +13,13 @@ body {
 }
 
 .map {
-  position: relative; /* Allow circles to be rendered on top */
+  position: absolute; /* Allows using top, left, etc. */
+  top: 0; /* Aligns the SVG to the top */
+  left: 0; /* Aligns the SVG to the left */
+  right: 0; /* Makes it stretch to the right */
   z-index: 1; /* Lower z-index than header/footer */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.5s ease-in; /* Fade effect */
 }
 
 header {
@@ -47,6 +52,7 @@ footer {
   z-index: 10;
 }
 
+
 #NudiDivs {
   z-index: 3;
   position: fixed;
@@ -60,6 +66,11 @@ footer {
 #NudiContainers {
   background: black;
   font-family: "Kodchasan", sans-serif;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.5s ease-in; /* Fade effect */
+}
+.NudiContainers.visible {
+  opacity: 1; /* Fully visible */
 }
 
 img {
@@ -73,8 +84,46 @@ img {
   width: 100%;
 }
 
-#section {
-  margin: 10px 0; /* Space between sections */
+/* #section {
+  margin: 10px 0; 
+  position: absolute; 
+  bottom: 60px; 
+  width: 42%; 
+  left: 30px;
+} 
+*/
+
+#toggleContainer {
+  z-index: 3; /* Ensure it appears above other content */
+  padding-bottom: 10px;
+}
+
+.toggle-section {
+  margin: 10px 0;
+}
+
+.toggle-section button {
+  margin-left: 10px;
+  font-family: "Kodchasan", sans-serif;
+  font-weight: 500;
+  font-size: 16pt;
+  color: #262262;
+}
+
+.content {
+  margin-top: 5px; /* Space between button and content */
+  margin-left: 10px;
+  font-family: "Kodchasan", sans-serif;
+  font-weight: 300;
+  font-size: 14pt;
+  color: #262262;
+}
+
+.NudiTaxonomy div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .tax_kingdom,
@@ -85,7 +134,7 @@ img {
 .tax_family,
 .title {
   display: inline-block; /* Ensures all are inline blocks */
-  padding: 5px 10px; /* Common padding for all */
+  padding: 5px 15px; /* Common padding for all */
 }
 
 .tax_kingdom {
@@ -93,35 +142,32 @@ img {
 }
 
 .tax_phylum {
-  background-color: #275390;
+  background-color: #366CB4;
 }
 
 .tax_class {
-  background-color: #273370;
+  background-color: #4462AD;
 }
 
 .tax_subclass {
-  background-color: #3C2670;
+  background-color: #4F58A5;
 }
 
 .tax_order {
-  background-color: #662D91;
+  background-color: #594C9E;
 }
 
 .tax_family {
-  background-color: #CF1E3C;
+  background-color: #603F96;
 }  
 
 .title {
-  background-color: #FF0000;
+  background-color: #662F90;
 }
 
 #section h3, h4, h5, h6, p {
   font-family: "Kodchasan", sans-serif;
-  color: #262262;
   max-width: 1920px;
-  margin-left: 25px;
-  margin-right: 25px;
   margin-bottom: 0;
   margin-top: 0;
 }
@@ -129,6 +175,7 @@ img {
 h1 {
   font-weight: 700;
   font-size: 28pt;
+  color: #262262;
 }
 
 h2 {
@@ -136,29 +183,34 @@ h2 {
   margin-left: 25px;
   font-weight: 400;
   font-size: 18pt;
+  color: #262262;
 }
 
 h3 {
   font-weight: 500;
   font-size: 16pt;
+  color: #262262;
 }
 
 h4 {
   font-weight: 700;
-  font-size: 10pt;
+  font-size: 12pt;
   text-transform: uppercase;
   margin-left: 0px;
 }
 
 h5 {
   font-weight: 700;
-  font-size: 10pt;
+  font-size: 12pt;
+  letter-spacing: 1px;
+  color: white;
 }
 
 p {
   font-weight: 300;
   font-size: 14pt;
-  width: 50%;
+  color: #262262;
+
 }
 
 .mapTooltip {
@@ -171,14 +223,6 @@ p {
   width: 100px; /* Thumbnail size */
   height: auto; /* Maintain aspect ratio */
   z-index: 4;
-}
-
-.map {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
 
 

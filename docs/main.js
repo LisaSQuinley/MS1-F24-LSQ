@@ -34,21 +34,11 @@ ProjectTitle.append("h2")
   .style("display", "inline");
 
 // Create a new div for displaying palettes
-const NudiDivs = d3.select("body").append("div").attr("id", "NudiDivs");
-
-const ProjectOverview = d3
+const NudiDivs = d3
   .select("body")
   .append("div")
-  .attr("id", "section")
-  .style("padding-top", "90px")
-  .style("margin", "0 auto") // Center the div horizontally
-  .append("h3")
-  .text("Project Overview")
-  .append("p")
-  .style("padding-bottom", "20px")
-  .text(
-    "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
-  );
+  .attr("id", "NudiDivs")
+  .style("margin-bottom", "20px");
 
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
@@ -70,24 +60,26 @@ const svg = d3
   .attr("width", mapwidth)
   .attr("height", mapheight);
 
+svg.style("opacity", 0);
+
 // Add a group for the map layers (countries and ocean)
 const mapGroup = svg.append("g").attr("class", "map-layers");
 
-// Load and render the countries map
-d3.json("ne_110m_admin_0_countries.json").then((data) => {
-  mapGroup
-    .append("g")
-    .attr("class", "country-layer")
-    .selectAll("path.country")
-    .data(data.features)
-    .enter()
-    .append("path")
-    .attr("class", "country")
-    .attr("d", Nudipath)
-    .attr("fill", "white")
-    .attr("stroke", "#262262")
-    .attr("stroke-width", 0.5);
-});
+// // Load and render the countries map
+// d3.json("ne_110m_admin_0_countries.json").then((data) => {
+//   mapGroup
+//     .append("g")
+//     .attr("class", "country-layer")
+//     .selectAll("path.country")
+//     .data(data.features)
+//     .enter()
+//     .append("path")
+//     .attr("class", "country")
+//     .attr("d", Nudipath)
+//     .attr("fill", "white")
+//     .attr("stroke", "#262262")
+//     .attr("stroke-width", 0.5);
+// });
 
 // Load and render the ocean map
 d3.json("ne_10m_ocean.json").then((data) => {
@@ -101,7 +93,10 @@ d3.json("ne_10m_ocean.json").then((data) => {
     .attr("class", "ocean")
     .attr("d", Nudipath)
     .attr("fill", "#1C75BC")
+    .attr("stroke", "#262262")
     .attr("opacity", 0.2);
+
+  svg.transition().duration(500).style("opacity", 1);
 });
 
 // Create a group for the circles
@@ -170,8 +165,7 @@ const mapTooltip = d3
   .style("font-weight", "600");
 
 function renderCircles(groupedData) {
-
-  groupedData.forEach(d => {
+  groupedData.forEach((d) => {
     d.selected = false; // New property to track selection
   });
 
@@ -195,7 +189,7 @@ function renderCircles(groupedData) {
     .attr("fill", "red")
     .attr("opacity", 0.7)
     .attr("class", (d) => d.Nudi_id.join(" "))
-    .attr("stroke", (d) => d.selected ? "yellow" : "none") // Set initial stroke based on selection
+    .attr("stroke", (d) => (d.selected ? "yellow" : "none")) // Set initial stroke based on selection
     .on("mouseover", function (event, d) {
       const images = d.Nudi_id.map((id) => {
         const nudi = geoData.features.find((f) => f.properties.Nudi_id === id);
@@ -218,32 +212,44 @@ function renderCircles(groupedData) {
         .style("top", event.pageY - 10 + "px")
         .style("left", event.pageX + 10 + "px");
 
-      d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
+      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
     })
     .on("mouseout", function () {
-      if (!d3.select(this).datum().selected) { // Only hide if not selected
+      if (!d3.select(this).datum().selected) {
+        // Only hide if not selected
         mapTooltip.style("visibility", "hidden");
         d3.select(this).attr("stroke", "none");
       }
     })
     .on("click", function (event, d) {
       // Clear selected state of all circles
-      groupedData.forEach(item => {
+      groupedData.forEach((item) => {
         item.selected = false;
-      });
 
-      // Reset all circle strokes
-      circles.attr("stroke", "none");
+        // Reset background color for associated divs
+        item.Nudi_id.forEach((i) => {
+          d3.selectAll(`div.${i}`).style("background-color", "black");
+          d3.selectAll(`div.${i} h4`).style("color", "white");
+          d3.selectAll(`div.${i} .AddDetails h5`).style("color", "white");
+          d3.selectAll(`div.${i} p`).style("color", "white");
+        });
+
+        // Reset stroke for all circles
+        d3.select(`circle.${item.Nudi_id.join(".")}`)
+          .attr("stroke-width", 0)
+          .attr("stroke", "none");
+      });
 
       // Select the clicked circle
       d.selected = true;
-      d3.select(this)
-        .attr("stroke-width", 3)
-        .attr("stroke", "yellow");
+      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
 
+      // Update background color for associated divs of the selected circle
       d.Nudi_id.forEach((i) => {
-        d3.selectAll(`rect.${i}`).attr("stroke-width", d.selected ? 3 : 0).attr("stroke", d.selected ? "yellow" : "none");
-        d3.selectAll(`div.${i}`).style("background-color", d.selected ? "yellow" : "none");
+        d3.selectAll(`div.${i}`).style("background-color", "yellow");
+        d3.selectAll(`div.${i} h4`).style("color", "#262262");
+        d3.selectAll(`div.${i} .AddDetails h5`).style("color", "#262262");
+        d3.selectAll(`div.${i} p`).style("color", "#262262");
       });
     });
 
@@ -283,28 +289,100 @@ function renderCircles(groupedData) {
   texts.exit().remove();
 }
 
-const descriptionTaxonomy = d3.select("body").append("div");
-descriptionTaxonomy
+/* const ProjectOverview = d3
+  .select("body")
+  .append("div")
   .attr("id", "section")
+  .attr("class", "ProjDesc")
+  .style("margin", "0 auto") // Center the div horizontally
   .append("h3")
-  .style("padding-top", "20px")
+  .text("Project Overview")
+  .append("p")
+  .style("padding-bottom", "20px")
+  .text(
+    "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
+  );
+
+const descriptionTaxonomy = d3
+  .select("body")
+  .append("div")
+  .attr("id", "section")
+  .attr("class", "TaxDesc")
+  .append("h3")
   .text("The Many Faces and Names of Marine Slugs")
   .append("p")
   .text(
     "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow."
   );
 
-const PaletteDescription = d3.select("body").append("div");
-PaletteDescription.attr("id", "section")
+const PaletteDescription = d3
+  .select("body")
+  .append("div")
+  .attr("id", "section")
+  .attr("class", "PalDesc")
   .append("h3")
-  .style("padding-top", "20px")
   .text("Unveiling the Vibrant Palette of Nudies")
   .append("p")
   .text(
-    "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, DarkVibrant, DarkMuted, LightVibrant, LightMuted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
+    "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
   );
+ */
 
-const Credits = d3.select("body").append("footer"); // Change 'div' to 'footer'
+  // Create a container for the toggleable sections
+const toggleContainer = d3.select("body")
+.append("div")
+.attr("id", "toggleContainer")
+.style("position", "fixed")
+.style("left", "30px")
+.style("bottom", "70px") // Adjust top margin
+.style("width", "42%"); // Width of the toggle container
+
+// Create each section with a toggle button
+const sections = [
+{
+  title: "Project Overview",
+  content: "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
+},
+{
+  title: "The Many Faces and Names of Marine Slugs",
+  content: "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow."
+},
+{
+  title: "Unveiling the Vibrant Palette of Nudies",
+  content: "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
+}
+];
+
+// Iterate through sections to create toggles
+sections.forEach(section => {
+const sectionDiv = toggleContainer.append("div")
+  .attr("class", "toggle-section")
+  .style("margin-bottom", "5px");
+
+sectionDiv.append("button")
+  .text(section.title)
+  .style("text-align", "left")
+  .style("padding", "10px")
+  .style("border", "none")
+  .style("background", "white")
+  .style("cursor", "pointer")
+  .on("click", function() {
+    const contentDiv = d3.select(this.parentNode).select(".content");
+    const isVisible = contentDiv.style("display") === "block";
+    contentDiv.style("display", isVisible ? "none" : "block");
+  });
+
+sectionDiv.append("div")
+  .attr("class", "content")
+  .style("display", "none") // Initially hidden
+  .style("margin-top", "0px")
+  .style("padding", "10px")
+  .style("background", "#f9f9f9")
+  .text(section.content);
+});
+
+
+const Credits = d3.select("body").append("footer"); 
 Credits.attr("id", "footer")
   .style("margin-left", "0px")
   .style("background-color", "#f1f1f1") // Optional: Add background color for styling
@@ -402,29 +480,42 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
     const correspondingImageSwatches = groupedPalettes.filter(
       (image) => image.url === nudiBranchImageURL
     );
-    // console.log(correspondingImageSwatches);
+    console.log(correspondingImageSwatches);
     if (correspondingImageSwatches.length > 0) {
       const NudiContainer = NudiDivs.append("div")
         .attr("class", d.properties.Nudi_id)
         .attr("id", "NudiContainers")
         .style("padding", "20px")
-        .style("margin", "10px")
+        .style("margin-right", "30px")
+        .style("margin-bottom", "20px")
         .style("display", "inline-block")
         .style("text-align", "center")
-        .style("cursor", "pointer") // Change cursor to pointer on hover
+        .style("cursor", "pointer"); // Change cursor to pointer on hover
 
-        // Add click event to toggle the details view
-        .on("click", function () {
-          const NudiTaxonomy = d3.select(this).select(".NudiTaxonomy");
-          const isVisible = NudiTaxonomy.style("display") === "block";
-          NudiTaxonomy.style("display", isVisible ? "none" : "block");
-        });
+      setTimeout(() => {
+        NudiContainer.style("opacity", 1); // Change opacity to 1 for fade-in
+        NudiContainer.style("transition", "opacity 0.5s ease-in"); // Add transition effect
+      }, 0);
 
-      NudiContainer.append("h4").text(d.properties.sci_name);
+      // Add click event to toggle the details view
+      NudiContainer.on("click", function () {
+        const NudiTaxonomy = d3.select(this).select(".NudiTaxonomy");
+        const isTaxVisible = NudiTaxonomy.style("display") === "block";
+        NudiTaxonomy.style("display", isTaxVisible ? "none" : "block");
+        const AddDetails = d3.select(this).select(".AddDetails");
+        const isAddDVisible = AddDetails.style("display") === "block";
+        AddDetails.style("display", isAddDVisible ? "none" : "block");
+      });
+
+      NudiContainer.append("h4")
+        .style("padding-bottom", "15px")
+        .text(d.properties.sci_name)
+        .style("color", "white");
 
       NudiContainer.append("img")
         .attr("src", nudiBranchImageURL)
-        .attr("alt", d.properties.title);
+        .attr("alt", d.properties.title)
+        .style("display", "block");
 
       const swatchesDiv = NudiContainer.append("div").style("display", "flex");
 
@@ -452,40 +543,60 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
           .style("align-items", "center"); // Center vertically
       });
 
-      // Create a details div to hold additional information
-      const NudiTaxonomy = NudiContainer.append("div")
-        .attr("class", "NudiTaxonomy")
-        .style("display", "none") // Initially hidden
+      // Create a flex container for NudiTaxonomy and AddDetails
+      const detailsContainer = NudiContainer.append("div")
+        .style("display", "flex")
         .style("margin-top", "10px");
 
+      // Create the NudiTaxonomy div
+      const NudiTaxonomy = detailsContainer
+        .append("div")
+        .attr("class", "NudiTaxonomy")
+        .style("flex", "1")
+        .style("display", "none");
+
       // Populate the details div with additional information
-      NudiTaxonomy.append("h5").text("Taxonomy");
+      NudiTaxonomy.append("h4")
+        .text("Taxonomy")
+        .style("color", "white")
+        .style("padding-bottom", "10px");
+
       NudiTaxonomy.append("div")
         .attr("class", "tax_kingdom")
+        .append("h5")
         .text(d.properties.tax_kingdom);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_phylum")
+        .append("h5")
         .text(d.properties.tax_phylum);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_class")
+        .append("h5")
         .text(d.properties.tax_class);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_subclass")
+        .append("h5")
         .text(d.properties.tax_subclass);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_order")
+        .append("h5")
         .text(d.properties.tax_order);
 
       const currentFeature = d; // Store the current feature context
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_family")
+        .append("h5")
         .text(function () {
-          if ((currentFeature.properties.tax_family === "No information available" && currentFeature.properties.title === "Dexiarchia")) {
+          if (
+            currentFeature.properties.tax_family ===
+              "No information available" &&
+            currentFeature.properties.title === "Dexiarchia"
+          ) {
             return currentFeature.properties.title;
           } else {
             return currentFeature.properties.tax_family;
@@ -494,90 +605,112 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
 
       // Title div
       NudiTaxonomy.append("div")
-      .attr("class", "title")
-      .text(function () {
+        .attr("class", "title")
+        .append("h5")
+        .text(function () {
           // Check both conditions in the same level
-          if (((currentFeature.properties.title === "Nudibranchia" && currentFeature.properties.sci_name === "Nudibranchia") ||
-              currentFeature.properties.sci_name === "No information available") ||
-              ((currentFeature.properties.title === "Dexiarchia"))) {
-              return "No information available"; // Return this if any condition is met
+          if (
+            (currentFeature.properties.title === "Nudibranchia" &&
+              currentFeature.properties.sci_name === "Nudibranchia") ||
+            currentFeature.properties.sci_name === "No information available" ||
+            currentFeature.properties.title === "Dexiarchia"
+          ) {
+            return "No information available"; // Return this if any condition is met
           } else {
-              return currentFeature.properties.title; // Return the scientific name otherwise
+            return currentFeature.properties.title; // Return the scientific name otherwise
           }
-      });
+        });
+
+      // Create the AddDetails div to the right of NudiTaxonomy
+      const AddDetails = detailsContainer
+        .append("div")
+        .attr("class", "AddDetails")
+        .style("flex", "1")
+        .style("display", "none");
+
+      // Add content to AddDetails as needed
+      AddDetails.append("h4")
+        .style("padding-bottom", "10px")
+        .text("Additional Details")
+        .style("color", "white");
+
+      const depthValue = d.properties.depth;
+
+      // Use regex to check for valid number formats
+      const numberPattern = /-?\d+(\.\d+)?/; // Matches integers and decimals
+
+      if (!depthValue || depthValue.trim() === "") {
+        // If there are no entries or depthValue is empty
+        AddDetails.append("div")
+          .attr("class", "depth")
+          .append("h5")
+          .text("Depth: ")
+          .append("p")
+          .text("No information available")
+          .style("color", "white")
+          .style("display", "inline-block");
+      } else if (depthValue.match(numberPattern)) {
+        const depths = depthValue.split(" - ").map(Number); // Split and convert to numbers
+        const uniqueDepths = [...new Set(depths)]; // Remove duplicates
+
+        // Check if there's only one unique depth
+        if (uniqueDepths.length === 1) {
+          // If it's a single number, display it without a range
+          AddDetails.append("div")
+            .attr("class", "depth")
+            .append("h5")
+            .text("Depth: ")
+            .append("p")
+            .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show one time with 2 decimals
+            .style("color", "white")
+            .style("display", "inline-block");
+        } else if (uniqueDepths.length > 1) {
+          // If there are multiple depths, check for a range
+          const minDepth = Math.min(...uniqueDepths);
+          const maxDepth = Math.max(...uniqueDepths);
+
+          // If the range is more than one digit, show it
+          if (maxDepth - minDepth > 1) {
+            AddDetails.append("div")
+              .attr("class", "depth")
+              .append("h5")
+              .text("Depth: ")
+              .append("p")
+              .text(`${minDepth.toFixed(2)} - ${maxDepth.toFixed(2)} meters`) // Show the range with 2 decimals
+              .style("color", "white")
+              .style("display", "inline-block");
+          } else {
+            // If the difference is 1 or less, just show the first unique value
+            AddDetails.append("div")
+              .attr("class", "depth")
+              .append("h5")
+              .text("Depth: ")
+              .append("p")
+              .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show the first unique value
+              .style("color", "white")
+              .style("display", "inline-block");
+          }
+        }
+      } else {
+        // Handle cases where depthValue does not match the expected format
+        AddDetails.append("div")
+          .attr("class", "depth")
+          .append("h5")
+          .text("Depth: ")
+          .append("p")
+          .text("No valid depth available")
+          .style("color", "white")
+          .style("display", "inline-block");
       }
-  }
-  );
-}
 
-
-
-/* 
-// This function displays the images and their color palettes
-function displayPalettes(groupedPalettes, palettesDiv) {
-  // Create a container for each image and its swatches
-
-
-  groupedPalettes.forEach(({ url, title, Nudi_id, swatch }) => {
-    const paletteContainer = palettesDiv.append("div")
-      .attr("class", Nudi_id) // Use Nudi_id for class
-      .style("margin", "10px")
-      .style("display", "inline-block")
-      .style("text-align", "center");
-
-    // Add the image
-    paletteContainer.append("img")
-      .attr("src", url)
-      .attr("alt", title)
-      .style("width", "500px")
-      .style("height", "auto");
-
-    // Add title
-    paletteContainer.append("p")
-      .text(title)
-      .style("font-weight", "bold");
-
-    // Add swatches
-    const swatchesDiv = paletteContainer.append("div").style("display", "flex");
-    
-    // Loop through the swatch object for the relevant keys
-    const paletteKeys = [
-      "Vibrant",
-      "DarkVibrant",
-      "LightVibrant",
-      "Muted",
-      "DarkMuted",
-      "LightMuted",
-    ];
-    
-    paletteKeys.forEach(key => {
-      const color = swatch[key];
-      if (color) {
-        // Use the color's hex property directly
-        const hexColor = color.rgb; // or color.rgb if you're using that format
-        swatchesDiv.append("div")
-          .style("background-color", hexColor) // Set background color
-          .style("width", "30px")
-          .style("height", "30px")
-          .style("margin", "2px")
-          .style("border", "1px solid #000");
-      }
-    });
+      AddDetails.append("div")
+        .attr("class", "place")
+        .append("h5")
+        .text("Location: ")
+        .append("p")
+        .text(d.properties.place)
+        .style("color", "white")
+        .style("display", "inline-block");
+    }
   });
-
-//console.log(groupedPalettes)  
-const valuesOfGroupedPalettes = Object.values(groupedPalettes); 
-// flattens the valuesOfGroupedPalettes into a single array
-const concatGroupedPalettes = valuesOfGroupedPalettes.flat();
-
-// traverses over geoData to access every image using Nudi_ID and filters the concatArray to find the corresponding swatch matches based on image ID
-geoData.features.forEach((d, i) => {
-  const nudiBranchImageURL = `./image-data/images/${d.properties.Nudi_id}.jpg`;
-  const correspondingImageSwatches = concatGroupedPalettes.filter(image => image.url === nudiBranchImageURL);
-  // console.log(correspondingImageSwatches)
-})
 }
-
-
-
- */

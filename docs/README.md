@@ -1,3 +1,10 @@
+# Know Your Nudibranchs: A Scuba Diver's Guide to Sea Slugs (Quantitative & Qualitative)
+## GitHub Pages: https://lisasquinley.github.io/MS1-F24-LSQ/
+<img width="2056" alt="Know-Your-Nudibranchs-3" src="https://github.com/user-attachments/assets/775c14bb-3d6a-4eea-b7e6-491dff5cc83e">
+<img width="2056" alt="Know-Your-Nudibranchs-2" src="https://github.com/user-attachments/assets/e122afef-5a03-474c-8253-8aaaf6d75746">
+<img width="2054" alt="Know-Your-Nudibranchs-1" src="https://github.com/user-attachments/assets/4e8d05d7-e377-4599-877d-b041fcac3df3">
+
+
 ## Unveiling the Vibrant Palette of Nudibranchs (Mock for Qualitative)
 [Know-Your-Nudibranchs_Qualitative.pdf](https://github.com/user-attachments/files/17283291/Know-Your-Nudibranchs_Qualitative.pdf)
 

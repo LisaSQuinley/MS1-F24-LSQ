@@ -63,7 +63,7 @@ footer {
 }
 
 img {
-  width: 950px; /* Thumbnail size */
+  width: 100%; /* Thumbnail size */
   height: auto; /* Maintain aspect ratio */
 }
 
@@ -164,12 +164,13 @@ p {
 .mapTooltip {
   display: flex;
   align-items: center;
-  z-index: 2;
+  z-index: 4;
 }
 
 .mapTooltip img {
   width: 100px; /* Thumbnail size */
   height: auto; /* Maintain aspect ratio */
+  z-index: 4;
 }
 
 .map {

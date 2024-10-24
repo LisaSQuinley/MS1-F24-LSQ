@@ -170,6 +170,11 @@ const mapTooltip = d3
   .style("font-weight", "600");
 
 function renderCircles(groupedData) {
+
+  groupedData.forEach(d => {
+    d.selected = false; // New property to track selection
+  });
+
   const circleScale = d3
     .scaleSqrt()
     .domain([0, d3.max(groupedData, (d) => d.count)])
@@ -190,6 +195,7 @@ function renderCircles(groupedData) {
     .attr("fill", "red")
     .attr("opacity", 0.7)
     .attr("class", (d) => d.Nudi_id.join(" "))
+    .attr("stroke", (d) => d.selected ? "yellow" : "none") // Set initial stroke based on selection
     .on("mouseover", function (event, d) {
       const images = d.Nudi_id.map((id) => {
         const nudi = geoData.features.find((f) => f.properties.Nudi_id === id);
@@ -215,21 +221,29 @@ function renderCircles(groupedData) {
       d3.select(this).attr("stroke-width", 3).attr("stroke", "white");
     })
     .on("mouseout", function () {
-      mapTooltip.style("visibility", "hidden");
-      d3.select(this).attr("stroke", "none");
+      if (!d3.select(this).datum().selected) { // Only hide if not selected
+        mapTooltip.style("visibility", "hidden");
+        d3.select(this).attr("stroke", "none");
+      }
     })
     .on("click", function (event, d) {
-      d3.selectAll("rect").attr("stroke", "none");
-      d3.selectAll("circle").attr("stroke", "none");
-      d3.selectAll("div").style("border", "none");
+      // Clear selected state of all circles
+      groupedData.forEach(item => {
+        item.selected = false;
+      });
 
-      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
+      // Reset all circle strokes
+      circles.attr("stroke", "none");
+
+      // Select the clicked circle
+      d.selected = true;
+      d3.select(this)
+        .attr("stroke-width", 3)
+        .attr("stroke", "yellow");
 
       d.Nudi_id.forEach((i) => {
-        d3.selectAll(`rect.${i}`)
-          .attr("stroke-width", 3)
-          .attr("stroke", "yellow");
-        d3.selectAll(`div.${i}`).style("border", "3px solid yellow");
+        d3.selectAll(`rect.${i}`).attr("stroke-width", d.selected ? 3 : 0).attr("stroke", d.selected ? "yellow" : "none");
+        d3.selectAll(`div.${i}`).style("background-color", d.selected ? "yellow" : "none");
       });
     });
 
@@ -442,41 +456,61 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
       const NudiTaxonomy = NudiContainer.append("div")
         .attr("class", "NudiTaxonomy")
         .style("display", "none") // Initially hidden
-        .style("margin-top", "10px")
-        .style("padding", "10px");
+        .style("margin-top", "10px");
 
       // Populate the details div with additional information
       NudiTaxonomy.append("h5").text("Taxonomy");
       NudiTaxonomy.append("div")
         .attr("class", "tax_kingdom")
-        .text(d.properties.tax_kingdom || "No data available");
+        .text(d.properties.tax_kingdom);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_phylum")
-        .text(d.properties.tax_phylum || "No data available");
+        .text(d.properties.tax_phylum);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_class")
-        .text(d.properties.tax_class || "No data available");
+        .text(d.properties.tax_class);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_subclass")
-        .text(d.properties.tax_subclass || "No data available");
+        .text(d.properties.tax_subclass);
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_order")
-        .text(d.properties.tax_order || "No data available");
+        .text(d.properties.tax_order);
+
+      const currentFeature = d; // Store the current feature context
 
       NudiTaxonomy.append("div")
         .attr("class", "tax_family")
-        .text(d.properties.tax_family || "No data available");
+        .text(function () {
+          if ((currentFeature.properties.tax_family === "No information available" && currentFeature.properties.title === "Dexiarchia")) {
+            return currentFeature.properties.title;
+          } else {
+            return currentFeature.properties.tax_family;
+          }
+        });
 
+      // Title div
       NudiTaxonomy.append("div")
-        .attr("class", "title")
-        .text(d.properties.title || "No title available");
-    }
-  });
+      .attr("class", "title")
+      .text(function () {
+          // Check both conditions in the same level
+          if (((currentFeature.properties.title === "Nudibranchia" && currentFeature.properties.sci_name === "Nudibranchia") ||
+              currentFeature.properties.sci_name === "No information available") ||
+              ((currentFeature.properties.title === "Dexiarchia"))) {
+              return "No information available"; // Return this if any condition is met
+          } else {
+              return currentFeature.properties.title; // Return the scientific name otherwise
+          }
+      });
+      }
+  }
+  );
 }
+
+
 
 /* 
 // This function displays the images and their color palettes

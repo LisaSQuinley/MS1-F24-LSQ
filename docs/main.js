@@ -38,7 +38,8 @@ const NudiDivs = d3
   .select("body")
   .append("div")
   .attr("id", "NudiDivs")
-  .style("margin-bottom", "20px");
+  .style("background","black")
+  .style("margin-bottom", "15px");
 
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
@@ -385,7 +386,6 @@ sectionDiv.append("div")
 const Credits = d3.select("body").append("footer"); 
 Credits.attr("id", "footer")
   .style("margin-left", "0px")
-  .style("background-color", "#f1f1f1") // Optional: Add background color for styling
   .style("text-align", "center") // Optional: Center text
   .style("padding", "10px"); // Optional: Add padding
 
@@ -486,8 +486,6 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
         .attr("class", d.properties.Nudi_id)
         .attr("id", "NudiContainers")
         .style("padding", "20px")
-        .style("margin-right", "30px")
-        .style("margin-bottom", "20px")
         .style("display", "inline-block")
         .style("text-align", "center")
         .style("cursor", "pointer"); // Change cursor to pointer on hover

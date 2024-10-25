@@ -49,16 +49,28 @@ footer {
   width: 100%; /* Makes it span the full width */
   margin: 0;
   clear: both; /* Ensure it stays below floated elements */
-  z-index: 10;
 }
 
+footer p, h3 {
+  font-family: "Kodchasan", sans-serif;
+  color: #262262;
+  width: 100%;
+  letter-spacing: 0.1em;
+}
+
+footer h3 {
+  font-size: 10pt;
+}
+footer p {
+  font-size: 9pt;
+}
 
 #NudiDivs {
   z-index: 3;
   position: fixed;
-  top: 5%;
+  top: 68px;
   right: 0;
-  width: 55%;
+  width: 50%;
   overflow-y: auto; 
   height: 100vh;
 }
@@ -78,11 +90,6 @@ img {
   height: auto; /* Maintain aspect ratio */
 }
 
-#footer p, h3 {
-  font-family: "Kodchasan", sans-serif;
-  color: #262262;
-  width: 100%;
-}
 
 /* #section {
   margin: 10px 0; 

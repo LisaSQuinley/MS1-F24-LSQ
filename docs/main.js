@@ -21,7 +21,7 @@ const ProjectTitle = d3.select("header").append("div");
 
 ProjectTitle.attr("id", "title")
   .style("margin-left", "0px")
-  .style("background-color", "#f1f1f1") // Optional: Add background color for styling
+  .style("background-color", "lightgray") // Optional: Add background color for styling
   .style("text-align", "center") // Optional: Center text
   .style("padding", "10px");
 
@@ -38,8 +38,11 @@ const NudiDivs = d3
   .select("body")
   .append("div")
   .attr("id", "NudiDivs")
-  .style("background","black")
-  .style("margin-bottom", "15px");
+  .style("background", "black")
+  .style("margin-bottom", "15px")
+  .transition()
+  .duration(3500)
+  .style("opacity", 1);
 
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
@@ -47,7 +50,7 @@ let mapheight = window.innerHeight; // Height of the viewport
 
 const Nudiprojection = d3
   .geoEquirectangular()
-  .scale(mapwidth / 6.25) // Set initial scale based on width
+  .scale(mapwidth / 6.25)
   .center([0, 0])
   .translate([mapwidth / 2, mapheight / 2]);
 
@@ -62,11 +65,13 @@ const svg = d3
   .attr("height", mapheight);
 
 svg.style("opacity", 0);
+svg.style("margin-top", "10px");
+svg.style("display", "block");
 
-// Add a group for the map layers (countries and ocean)
+// Create a group for the map layers
 const mapGroup = svg.append("g").attr("class", "map-layers");
 
-// // Load and render the countries map
+// Load and render the countries map
 // d3.json("ne_110m_admin_0_countries.json").then((data) => {
 //   mapGroup
 //     .append("g")
@@ -77,9 +82,7 @@ const mapGroup = svg.append("g").attr("class", "map-layers");
 //     .append("path")
 //     .attr("class", "country")
 //     .attr("d", Nudipath)
-//     .attr("fill", "white")
-//     .attr("stroke", "#262262")
-//     .attr("stroke-width", 0.5);
+//     .attr("fill", "white");
 // });
 
 // Load and render the ocean map
@@ -93,11 +96,9 @@ d3.json("ne_10m_ocean.json").then((data) => {
     .append("path")
     .attr("class", "ocean")
     .attr("d", Nudipath)
-    .attr("fill", "#1C75BC")
-    .attr("stroke", "#262262")
-    .attr("opacity", 0.2);
+    .attr("fill", "gray");
 
-  svg.transition().duration(500).style("opacity", 1);
+  svg.transition().duration(1000).style("opacity", 1);
 });
 
 // Create a group for the circles
@@ -190,7 +191,7 @@ function renderCircles(groupedData) {
     .attr("fill", "red")
     .attr("opacity", 0.7)
     .attr("class", (d) => d.Nudi_id.join(" "))
-    .attr("stroke", (d) => (d.selected ? "yellow" : "none")) // Set initial stroke based on selection
+    .attr("stroke", (d) => (d.selected ? "#FFC000" : "none")) // Set initial stroke based on selection
     .on("mouseover", function (event, d) {
       const images = d.Nudi_id.map((id) => {
         const nudi = geoData.features.find((f) => f.properties.Nudi_id === id);
@@ -213,12 +214,13 @@ function renderCircles(groupedData) {
         .style("top", event.pageY - 10 + "px")
         .style("left", event.pageX + 10 + "px");
 
-      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
+      d3.select(this).attr("stroke-width", 3).attr("stroke", "#FFC000");
     })
     .on("mouseout", function () {
+      // Always hide the tooltip when the mouse leaves the circle
+      mapTooltip.style("visibility", "hidden");
+      // Reset stroke for the circle if it is not selected
       if (!d3.select(this).datum().selected) {
-        // Only hide if not selected
-        mapTooltip.style("visibility", "hidden");
         d3.select(this).attr("stroke", "none");
       }
     })
@@ -229,28 +231,41 @@ function renderCircles(groupedData) {
 
         // Reset background color for associated divs
         item.Nudi_id.forEach((i) => {
-          d3.selectAll(`div.${i}`).style("background-color", "black");
+          d3.selectAll(`div.${i}`)
+            .style("border", "20px solid black")
+            .style("background-color", "black");
           d3.selectAll(`div.${i} h4`).style("color", "white");
           d3.selectAll(`div.${i} .AddDetails h5`).style("color", "white");
           d3.selectAll(`div.${i} p`).style("color", "white");
+          d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid black");
+          d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid black");
         });
 
         // Reset stroke for all circles
         d3.select(`circle.${item.Nudi_id.join(".")}`)
           .attr("stroke-width", 0)
-          .attr("stroke", "none");
+          .attr("stroke", "none")
+          .attr("opacity", 0.7);
       });
 
       // Select the clicked circle
       d.selected = true;
-      d3.select(this).attr("stroke-width", 3).attr("stroke", "yellow");
+      d3.select(this)
+        .attr("stroke-width", 3)
+        .attr("stroke", "#FFC000")
+        .attr("fill", "red")
+        .attr("opacity", 1);
 
       // Update background color for associated divs of the selected circle
       d.Nudi_id.forEach((i) => {
-        d3.selectAll(`div.${i}`).style("background-color", "yellow");
-        d3.selectAll(`div.${i} h4`).style("color", "#262262");
-        d3.selectAll(`div.${i} .AddDetails h5`).style("color", "#262262");
-        d3.selectAll(`div.${i} p`).style("color", "#262262");
+        d3.selectAll(`div.${i}`)
+          .style("border", "20px solid #FFC000")
+          .style("background-color", "#FFC000");
+        d3.selectAll(`div.${i} h4`).style("color", "black");
+        d3.selectAll(`div.${i} .AddDetails h5`).style("color", "black");
+        d3.selectAll(`div.${i} p`).style("color", "black");
+        d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid #FFC000");
+        d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid #FFC000");
       });
     });
 
@@ -290,119 +305,89 @@ function renderCircles(groupedData) {
   texts.exit().remove();
 }
 
-/* const ProjectOverview = d3
+// Create a container for the toggleable sections
+const toggleContainer = d3
   .select("body")
   .append("div")
-  .attr("id", "section")
-  .attr("class", "ProjDesc")
-  .style("margin", "0 auto") // Center the div horizontally
-  .append("h3")
-  .text("Project Overview")
-  .append("p")
-  .style("padding-bottom", "20px")
-  .text(
-    "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
-  );
-
-const descriptionTaxonomy = d3
-  .select("body")
-  .append("div")
-  .attr("id", "section")
-  .attr("class", "TaxDesc")
-  .append("h3")
-  .text("The Many Faces and Names of Marine Slugs")
-  .append("p")
-  .text(
-    "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow."
-  );
-
-const PaletteDescription = d3
-  .select("body")
-  .append("div")
-  .attr("id", "section")
-  .attr("class", "PalDesc")
-  .append("h3")
-  .text("Unveiling the Vibrant Palette of Nudies")
-  .append("p")
-  .text(
-    "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
-  );
- */
-
-  // Create a container for the toggleable sections
-const toggleContainer = d3.select("body")
-.append("div")
-.attr("id", "toggleContainer")
-.style("position", "fixed")
-.style("left", "30px")
-.style("bottom", "70px") // Adjust top margin
-.style("width", "42%"); // Width of the toggle container
+  .attr("id", "toggleContainer")
+  .style("position", "fixed")
+  .style("left", "10px")
+  .style("bottom", "30px") // Adjust top margin
+  .style("width", "42%"); // Width of the toggle container
 
 // Create each section with a toggle button
 const sections = [
-{
-  title: "Project Overview",
-  content: "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection."
-},
-{
-  title: "The Many Faces and Names of Marine Slugs",
-  content: "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow."
-},
-{
-  title: "Unveiling the Vibrant Palette of Nudies",
-  content: "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image."
-}
+  {
+    title: "Project Overview",
+    content:
+      "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection.",
+  },
+  {
+    title: "The Many Faces and Names of Marine Slugs",
+    content:
+      "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow.",
+  },
+  {
+    title: "Unveiling the Vibrant Palette of Nudies",
+    content:
+      "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image.",
+  },
 ];
 
 // Iterate through sections to create toggles
-sections.forEach(section => {
-const sectionDiv = toggleContainer.append("div")
-  .attr("class", "toggle-section")
-  .style("margin-bottom", "5px");
+sections.forEach((section) => {
+  const sectionDiv = toggleContainer
+    .append("div")
+    .attr("class", "toggle-section")
+    .style("margin-bottom", "5px");
 
-sectionDiv.append("button")
-  .text(section.title)
-  .style("text-align", "left")
-  .style("padding", "10px")
-  .style("border", "none")
-  .style("background", "white")
-  .style("cursor", "pointer")
-  .on("click", function() {
-    const contentDiv = d3.select(this.parentNode).select(".content");
-    const isVisible = contentDiv.style("display") === "block";
-    contentDiv.style("display", isVisible ? "none" : "block");
-  });
+  sectionDiv
+    .append("button")
+    .text(section.title)
+    .style("text-align", "left")
+    .style("padding-top", "10px")
+    .style("padding-bottom", "10px")
+    .style("padding-left", "15px")
+    .style("padding-right", "15px")
+    .style("border", "none")
+    .style("background", "white")
+    .style("cursor", "pointer")
+    .on("click", function () {
+      const contentDiv = d3.select(this.parentNode).select(".content");
+      const isVisible = contentDiv.style("display") === "block";
+      contentDiv.style("display", isVisible ? "none" : "block");
+    });
 
-sectionDiv.append("div")
-  .attr("class", "content")
-  .style("display", "none") // Initially hidden
-  .style("margin-top", "0px")
-  .style("padding", "10px")
-  .style("background", "#f9f9f9")
-  .text(section.content);
+  sectionDiv
+    .append("div")
+    .attr("class", "content")
+    .style("display", "none") // Initially hidden
+    .style("margin-top", "0px")
+    .style("padding-top", "10px")
+    .style("padding-bottom", "10px")
+    .style("padding-left", "15px")
+    .style("padding-right", "15px")
+    .style("background", "#f9f9f9")
+    .text(section.content);
 });
 
-
-const Credits = d3.select("body").append("footer"); 
+const Credits = d3.select("body").append("footer");
 Credits.attr("id", "footer")
-  .style("margin-left", "0px")
-  .style("text-align", "center") // Optional: Center text
-  .style("padding", "10px"); // Optional: Add padding
+  .style("text-align", "left")
+  .style("padding", "10px")
+  .style("padding-left", "35px")
+  .style("padding-right", "35px");
 
 Credits.append("h3")
   .text("Credits ")
   .style("font-weight", "700")
   .style("margin-top", "0px")
-  .style("margin-left", "0px")
-  .style("margin-right", "0px")
   .style("display", "inline");
 
 Credits.append("p")
   .text(
     "Images and Nudibranch Data from the Smithsonian Institution  |  Map polygons from Natural Earth  |  Visualization created by Lisa Sakai Quinley"
   )
-  .style("margin-left", "0px")
-  .style("margin-right", "0px")
   .style("display", "inline");
 
 // Define the image folder globally
@@ -471,28 +456,49 @@ async function extractPalettes(NudiDivs, geoData) {
   displayPalettes(groupedPalettes, NudiDivs, geoData); // Ensure geoData is passed
 }
 
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 // This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, NudiDivs, geoData) {
   //console.log(groupedPalettes);
-  // Assuming groupedPalettes is already an array, no need to flatten
-  geoData.features.forEach((d) => {
+
+  const shuffledFeatures = shuffle(geoData.features);
+
+  shuffledFeatures.forEach((d) => {
+    // Assuming groupedPalettes is already an array, no need to flatten
+    //  geoData.features.forEach((d) => {
     const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
     const correspondingImageSwatches = groupedPalettes.filter(
       (image) => image.url === nudiBranchImageURL
     );
-    console.log(correspondingImageSwatches);
+    //console.log(correspondingImageSwatches);
     if (correspondingImageSwatches.length > 0) {
       const NudiContainer = NudiDivs.append("div")
         .attr("class", d.properties.Nudi_id)
         .attr("id", "NudiContainers")
-        .style("padding", "20px")
         .style("display", "inline-block")
         .style("text-align", "center")
+        .style("border", "20px solid black")
+        .style("box-sizing", "border-box")
         .style("cursor", "pointer"); // Change cursor to pointer on hover
 
       setTimeout(() => {
         NudiContainer.style("opacity", 1); // Change opacity to 1 for fade-in
-        NudiContainer.style("transition", "opacity 0.5s ease-in"); // Add transition effect
+        NudiContainer.style("transition", "opacity 1.5s ease-in"); // Add transition effect
       }, 0);
 
       // Add click event to toggle the details view
@@ -541,71 +547,201 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
           .style("align-items", "center"); // Center vertically
       });
 
+      const TaxTooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "TaxTooltip")
+        .style("position", "absolute") // Ensure it's positioned absolutely
+        .style("background", "rgba(0, 0, 0, 0.8)")
+        .style("visibility", "hidden")
+        .style("opacity", 0)
+        .style("pointer-events", "none");
+
       // Create a flex container for NudiTaxonomy and AddDetails
       const detailsContainer = NudiContainer.append("div")
-        .style("display", "flex")
-        .style("margin-top", "10px");
+        .style("display", "flex");
 
       // Create the NudiTaxonomy div
       const NudiTaxonomy = detailsContainer
         .append("div")
         .attr("class", "NudiTaxonomy")
+        .style("border-top", "15px solid black")
         .style("flex", "1")
         .style("display", "none");
 
       // Populate the details div with additional information
       NudiTaxonomy.append("h4")
         .text("Taxonomy")
-        .style("color", "white")
-        .style("padding-bottom", "10px");
+        .style("padding-bottom", "7px")
+        .style("color", "white");
 
-      NudiTaxonomy.append("div")
+
+
+      const taxKingdomDiv = NudiTaxonomy.append("div")
         .attr("class", "tax_kingdom")
-        .append("h5")
-        .text(d.properties.tax_kingdom);
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      NudiTaxonomy.append("div")
+      taxKingdomDiv.append("h5").text(d.properties.tax_kingdom);
+
+      // Attach mouse events to the parent div
+      taxKingdomDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Kingdom: " + d.properties.tax_kingdom) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+
+        const taxPhylumDiv = NudiTaxonomy.append("div")
         .attr("class", "tax_phylum")
-        .append("h5")
-        .text(d.properties.tax_phylum);
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      NudiTaxonomy.append("div")
+      taxPhylumDiv.append("h5").text(d.properties.tax_phylum);
+
+      // Attach mouse events to the parent div
+      taxPhylumDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Phylum: " + d.properties.tax_phylum) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+
+        const taxClassDiv = NudiTaxonomy.append("div")
         .attr("class", "tax_class")
-        .append("h5")
-        .text(d.properties.tax_class);
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      NudiTaxonomy.append("div")
+      taxClassDiv.append("h5").text(d.properties.tax_class);
+
+      // Attach mouse events to the parent div
+      taxClassDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Class: " + d.properties.tax_class) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+
+        const taxSubClassDiv = NudiTaxonomy.append("div")
         .attr("class", "tax_subclass")
-        .append("h5")
-        .text(d.properties.tax_subclass);
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      NudiTaxonomy.append("div")
+      taxSubClassDiv.append("h5").text(d.properties.tax_subclass);
+
+      // Attach mouse events to the parent div
+      taxSubClassDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Subclass: " + d.properties.tax_subclass) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+
+        const taxOrderDiv = NudiTaxonomy.append("div")
         .attr("class", "tax_order")
-        .append("h5")
-        .text(d.properties.tax_order);
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+
+      taxOrderDiv.append("h5").text(d.properties.tax_order);
+
+      // Attach mouse events to the parent div
+      taxOrderDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Order: " + d.properties.tax_order) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
 
       const currentFeature = d; // Store the current feature context
 
-      NudiTaxonomy.append("div")
-        .attr("class", "tax_family")
-        .append("h5")
-        .text(function () {
-          if (
-            currentFeature.properties.tax_family ===
-              "No information available" &&
-            currentFeature.properties.title === "Dexiarchia"
-          ) {
-            return currentFeature.properties.title;
-          } else {
-            return currentFeature.properties.tax_family;
-          }
-        });
+      const taxFamilyDiv = NudiTaxonomy.append("div")
+      .attr("class", "tax_family")
+      .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      // Title div
-      NudiTaxonomy.append("div")
-        .attr("class", "title")
-        .append("h5")
-        .text(function () {
+      const familyText = taxFamilyDiv.append("h5").text(function () {
+        if (
+          currentFeature.properties.tax_family === "No information available" &&
+          currentFeature.properties.title === "Dexiarchia"
+        ) {
+          return currentFeature.properties.title;
+        } else {
+          return currentFeature.properties.tax_family;
+        }
+      });
+
+    // Attach mouse events to the parent div
+    taxFamilyDiv
+      .on("mouseover", function (event) {
+        const familyContent = familyText.text();
+        TaxTooltip.html("Family: " + familyContent) // Set tooltip content
+          .style("left", event.pageX + 5 + "px") // Position tooltip
+          .style("top", event.pageY + 5 + "px")
+          .style("visibility", "visible")
+          .style("opacity", 1);
+      })
+      .on("mousemove", function (event) {
+        TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+          .style("top", event.pageY + 5 + "px");
+      })
+      .on("mouseout", function () {
+        TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+      });
+
+
+      const taxTitleDiv = NudiTaxonomy.append("div")
+      .attr("class", "title")
+      .style("position", "relative");
+
+      const titleText = taxTitleDiv.append("h5").text(function () {
           // Check both conditions in the same level
           if (
             (currentFeature.properties.title === "Nudibranchia" &&
@@ -619,10 +755,28 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
           }
         });
 
+        taxTitleDiv
+        .on("mouseover", function (event) {
+          const titleContent = titleText.text();
+          TaxTooltip.html("Genus and Species: " + titleContent) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
       // Create the AddDetails div to the right of NudiTaxonomy
       const AddDetails = detailsContainer
         .append("div")
         .attr("class", "AddDetails")
+        .style("border-top", "15px solid black")
         .style("flex", "1")
         .style("display", "none");
 

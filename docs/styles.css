@@ -1,7 +1,7 @@
 
 
 body {
-  background-color: #DFE5F4;
+  background-color: white;
 }
 
 body {
@@ -13,13 +13,13 @@ body {
 }
 
 .map {
-  position: absolute; /* Allows using top, left, etc. */
-  top: 0; /* Aligns the SVG to the top */
-  left: 0; /* Aligns the SVG to the left */
-  right: 0; /* Makes it stretch to the right */
+  position: fixed; /* Allows using top, left, etc. */
+  top: 0; /* Aligns it to the top */
+  left: 0; /* Aligns it to the left */
+  right: 0; /* Aligns it to the right */
   z-index: 1; /* Lower z-index than header/footer */
   opacity: 0; /* Initially hidden */
-  transition: opacity 0.5s ease-in; /* Fade effect */
+  transition: opacity 2.5s ease-in; /* Fade effect */
 }
 
 header {
@@ -34,7 +34,7 @@ header {
 
 #title h1, h2 {
   font-family: "Kodchasan", sans-serif;
-  color: #262262;
+  color: black;
   display: inline-block;
   text-align: center;
   margin-top: 0;
@@ -46,14 +46,13 @@ footer {
   position: fixed; /* Fixes the footer at the bottom */
   bottom: 0; /* Aligns it to the bottom */
   left: 0; /* Aligns it to the left */
-  width: 100%; /* Makes it span the full width */
-  margin: 0;
+  width: 50%; /* Makes it span the full width */
   clear: both; /* Ensure it stays below floated elements */
 }
 
-footer p, h3 {
+footer h3, p {
   font-family: "Kodchasan", sans-serif;
-  color: #262262;
+  color: gray;
   width: 100%;
   letter-spacing: 0.1em;
 }
@@ -72,11 +71,14 @@ footer p {
   right: 0;
   width: 50%;
   overflow-y: auto; 
-  height: 100vh;
+  max-height: 97vh;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 3.5s ease-in; /* Fade effect */
 }
 
 #NudiContainers {
   background: black;
+  width: 100%;
   font-family: "Kodchasan", sans-serif;
   opacity: 0; /* Initially hidden */
   transition: opacity 0.5s ease-in; /* Fade effect */
@@ -114,7 +116,7 @@ img {
   font-family: "Kodchasan", sans-serif;
   font-weight: 500;
   font-size: 16pt;
-  color: #262262;
+  color: gray;
 }
 
 .content {
@@ -123,7 +125,7 @@ img {
   font-family: "Kodchasan", sans-serif;
   font-weight: 300;
   font-size: 14pt;
-  color: #262262;
+  color: gray;
 }
 
 .NudiTaxonomy div {
@@ -232,6 +234,15 @@ p {
   z-index: 4;
 }
 
+.TaxTooltip {
+  z-index: 1000; /* Make sure it's above other elements */
+  font-family: 'Kodchasan', sans-serif;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
 
 /*
 

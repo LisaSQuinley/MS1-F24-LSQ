@@ -1,5 +1,6 @@
 let geoData = []; // Declare geoData in a higher scope
 let groupedData = []; // Declare groupedData in a higher scope
+let groupedPalettes = []; // Declare groupedPalettes in a higher scope
 
 // Load GeoJSON data
 d3.json("data.geojson").then((data) => {
@@ -15,6 +16,9 @@ d3.json("data.geojson").then((data) => {
   // Load image files and extract palettes
   const NudiDivs = d3.select("#NudiDivs"); // Assuming you have a div for displaying palettes
   extractPalettes(NudiDivs, geoData); // Pass geoData here
+
+  // Call the initialize function somewhere in your code
+  initializeVisualization(NudiDivs, geoData);
 });
 
 const ProjectTitle = d3.select("header").append("div");
@@ -70,20 +74,6 @@ svg.style("display", "block");
 
 // Create a group for the map layers
 const mapGroup = svg.append("g").attr("class", "map-layers");
-
-// Load and render the countries map
-// d3.json("ne_110m_admin_0_countries.json").then((data) => {
-//   mapGroup
-//     .append("g")
-//     .attr("class", "country-layer")
-//     .selectAll("path.country")
-//     .data(data.features)
-//     .enter()
-//     .append("path")
-//     .attr("class", "country")
-//     .attr("d", Nudipath)
-//     .attr("fill", "white");
-// });
 
 // Load and render the ocean map
 d3.json("ne_10m_ocean.json").then((data) => {
@@ -312,8 +302,7 @@ const toggleContainer = d3
   .attr("id", "toggleContainer")
   .style("position", "fixed")
   .style("left", "10px")
-  .style("bottom", "30px") // Adjust top margin
-  .style("width", "42%"); // Width of the toggle container
+  .style("bottom", "55px"); // Adjust top margin
 
 // Create each section with a toggle button
 const sections = [
@@ -371,12 +360,53 @@ sections.forEach((section) => {
     .text(section.content);
 });
 
+const ResetButton = d3
+  .select("header")
+  .append("button")
+  .attr("id", "resetButton")
+  .text("Clear Selections")
+  .on("click", clearSelections)
+  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+  .on("mouseover", function() {
+    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function() {
+    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
+
+function clearSelections() {
+  // Clear selected state of all circles in the data
+  groupedData.forEach((item) => {
+    item.selected = false;
+
+    // Reset background color for associated divs
+    item.Nudi_id.forEach((id) => {
+      d3.selectAll(`div.${id}`)
+        .style("border", "20px solid black")
+        .style("background-color", "black");
+      d3.selectAll(`div.${id} h4`).style("color", "white");
+      d3.selectAll(`div.${id} .AddDetails h5`).style("color", "white");
+      d3.selectAll(`div.${id} p`).style("color", "white");
+      d3.selectAll(`div.${id} .AddDetails`).style("border-top", "15px solid black");
+      d3.selectAll(`div.${id} .NudiTaxonomy`).style("border-top", "15px solid black");
+    });
+
+    // Reset stroke for all circles
+    d3.select(`circle.${item.Nudi_id.join(".")}`)
+      .attr("stroke-width", 0)
+      .attr("stroke", "none")
+      .attr("opacity", 0.7);
+  });
+
+  // Hide the tooltip if it's visible
+  mapTooltip.style("visibility", "hidden");
+}
+
 const Credits = d3.select("body").append("footer");
 Credits.attr("id", "footer")
-  .style("text-align", "left")
-  .style("padding", "10px")
-  .style("padding-left", "35px")
-  .style("padding-right", "35px");
+  .style("text-align", "left");
 
 Credits.append("h3")
   .text("Credits ")
@@ -454,6 +484,51 @@ async function extractPalettes(NudiDivs, geoData) {
 
   // Call the function to display the images and swatches
   displayPalettes(groupedPalettes, NudiDivs, geoData); // Ensure geoData is passed
+  return groupedPalettes; // Return the palettes for further use
+}
+
+function renderColorCircles(colorData) {
+  // Join data for color circles
+  const colorCircles = circlesGroup
+    .selectAll(".color-circle")
+    .data(colorData, d => d.Nudi_id);
+
+  // Enter new color circles
+  colorCircles
+    .enter()
+    .append("circle")
+    .attr("class", "color-circle")
+    .attr("cx", (d) => Nudiprojection([d.longitude, d.latitude])[0])
+    .attr("cy", (d) => Nudiprojection([d.longitude, d.latitude])[1])
+    .attr("r", 10) // Set a fixed radius or scale based on your preference
+    .attr("fill", (d) => `rgb(${d.swatch.getRgb().join(",")})`) // Use the Vibrant color
+    .attr("opacity", 0.7)
+    .on("mouseover", function (event, d) {
+      const tooltipContent = `<strong>${d.title}</strong>`;
+      mapTooltip
+        .html(tooltipContent)
+        .style("visibility", "visible")
+        .style("top", event.pageY - 10 + "px")
+        .style("left", event.pageX + 10 + "px");
+    })
+    .on("mouseout", function () {
+      mapTooltip.style("visibility", "hidden");
+    });
+
+  // Update existing color circles
+  colorCircles
+    .attr("cx", (d) => Nudiprojection([d.longitude, d.latitude])[0])
+    .attr("cy", (d) => Nudiprojection([d.longitude, d.latitude])[1])
+    .attr("fill", (d) => `rgb(${d.swatch.getRgb().join(",")})`); // Update color
+
+  // Remove any color circles that are no longer needed
+  colorCircles.exit().remove();
+}
+
+async function initializeVisualization(NudiDivs, geoData) {
+  const colorData = await extractPalettes(NudiDivs, geoData);
+  renderCircles(groupedData); // Call your existing renderCircles
+  renderColorCircles(colorData); // Call the new renderColorCircles
 }
 
 function shuffle(array) {
@@ -474,7 +549,7 @@ function shuffle(array) {
 
 // This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, NudiDivs, geoData) {
-  //console.log(groupedPalettes);
+  console.log(groupedPalettes);
 
   const shuffledFeatures = shuffle(geoData.features);
 

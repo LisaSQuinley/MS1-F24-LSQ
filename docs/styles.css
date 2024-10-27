@@ -17,19 +17,34 @@ body {
   top: 0; /* Aligns it to the top */
   left: 0; /* Aligns it to the left */
   right: 0; /* Aligns it to the right */
-  z-index: 1; /* Lower z-index than header/footer */
+  z-index: 1; 
   opacity: 0; /* Initially hidden */
   transition: opacity 2.5s ease-in; /* Fade effect */
 }
 
 header {
-  position: fixed; /* Fixes the footer at the bottom */
+  position: fixed;
   top: 0; /* Aligns it to the bottom */
   left: 0; /* Aligns it to the left */
   width: 100%; /* Makes it span the full width */
   margin: 0;
   clear: both; /* Ensure it stays below floated elements */
   z-index: 10;
+}
+
+#resetButton {
+  font-family: "Kodchasan", sans-serif;
+  font-weight: 500;
+  font-size: 10pt;
+  color: gray;
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  padding: 10px 20px; /* Add padding */
+  background-color: #ffcc00; /* Background color */
+  color: black; /* Text color */
+  border: none; /* Remove border */
+  cursor: pointer; /* Pointer cursor */
 }
 
 #title h1, h2 {
@@ -43,24 +58,29 @@ header {
 }
 
 footer {
-  position: fixed; /* Fixes the footer at the bottom */
+  position: fixed; 
+  margin-left: 35px;
+  margin-bottom: 20px;
+  padding-top: 10px;
   bottom: 0; /* Aligns it to the bottom */
   left: 0; /* Aligns it to the left */
-  width: 50%; /* Makes it span the full width */
+  width: 45%; /* Makes it span the full width */
   clear: both; /* Ensure it stays below floated elements */
 }
 
 footer h3, p {
-  font-family: "Kodchasan", sans-serif;
-  color: gray;
   width: 100%;
   letter-spacing: 0.1em;
 }
 
 footer h3 {
+  font-family: "Kodchasan", sans-serif;
+  color: gray;
   font-size: 10pt;
 }
 footer p {
+  font-family: "Kodchasan", sans-serif;
+  color: gray;
   font-size: 9pt;
 }
 
@@ -92,19 +112,10 @@ img {
   height: auto; /* Maintain aspect ratio */
 }
 
-
-/* #section {
-  margin: 10px 0; 
-  position: absolute; 
-  bottom: 60px; 
-  width: 42%; 
-  left: 30px;
-} 
-*/
-
 #toggleContainer {
   z-index: 3; /* Ensure it appears above other content */
   padding-bottom: 10px;
+  width: 23%;
 }
 
 .toggle-section {

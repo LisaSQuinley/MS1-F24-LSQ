@@ -152,9 +152,7 @@ const mapTooltip = d3
   .style("position", "absolute")
   .style("visibility", "hidden")
   .style("background", "black")
-  .style("padding", "5px")
-  .style("font-family", '"Kodchasan", sans-serif')
-  .style("font-weight", "600");
+  .style("padding", "5px");
 
 function renderCircles(groupedData) {
   groupedData.forEach((d) => {
@@ -376,33 +374,39 @@ const ResetButton = d3
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
-function clearSelections() {
-  // Clear selected state of all circles in the data
-  groupedData.forEach((item) => {
-    item.selected = false;
-
-    // Reset background color for associated divs
-    item.Nudi_id.forEach((id) => {
-      d3.selectAll(`div.${id}`)
-        .style("border", "20px solid black")
-        .style("background-color", "black");
-      d3.selectAll(`div.${id} h4`).style("color", "white");
-      d3.selectAll(`div.${id} .AddDetails h5`).style("color", "white");
-      d3.selectAll(`div.${id} p`).style("color", "white");
-      d3.selectAll(`div.${id} .AddDetails`).style("border-top", "15px solid black");
-      d3.selectAll(`div.${id} .NudiTaxonomy`).style("border-top", "15px solid black");
+  function clearSelections() {
+    // Clear selected state of all circles in the data
+    groupedData.forEach((item) => {
+      item.selected = false;
+  
+      // Reset background color for associated divs
+      item.Nudi_id.forEach((id) => {
+        d3.selectAll(`div.${id}`)
+          .style("border", "20px solid black")
+          .style("background-color", "black");
+        d3.selectAll(`div.${id} h4`).style("color", "white");
+        d3.selectAll(`div.${id} .AddDetails h5`).style("color", "white");
+        d3.selectAll(`div.${id} p`).style("color", "white");
+        d3.selectAll(`div.${id} .AddDetails`).style("border-top", "15px solid black");
+        d3.selectAll(`div.${id} .NudiTaxonomy`).style("border-top", "15px solid black");
+      });
+  
+      // Reset stroke for all circles associated with this Nudi_id
+      d3.select(`circle.${item.Nudi_id.join(".")}`)
+        .attr("stroke-width", 0)
+        .attr("stroke", "none")
+        .attr("opacity", 0.7);
     });
-
-    // Reset stroke for all circles
-    d3.select(`circle.${item.Nudi_id.join(".")}`)
+  
+    // Reset stroke and opacity for all circles with the class "single-circle"
+    d3.selectAll('circle.single-circle')
       .attr("stroke-width", 0)
       .attr("stroke", "none")
       .attr("opacity", 0.7);
-  });
-
-  // Hide the tooltip if it's visible
-  mapTooltip.style("visibility", "hidden");
-}
+  
+    // Hide the tooltip if it's visible
+    mapTooltip.style("visibility", "hidden");
+  }
 
 const Credits = d3.select("body").append("footer");
 Credits.attr("id", "footer")
@@ -481,55 +485,166 @@ async function extractPalettes(NudiDivs, geoData) {
       console.error(`Error processing image ${url}:`, err);
     }
   }
-
   // Call the function to display the images and swatches
   displayPalettes(groupedPalettes, NudiDivs, geoData); // Ensure geoData is passed
   return groupedPalettes; // Return the palettes for further use
 }
 
-function renderColorCircles(colorData) {
-  // Join data for color circles
+const NudiTooltip = d3
+  .select("body")
+  .append("div")
+  .attr("class", "NudiTooltip")
+  .style("position", "absolute")
+  .style("visibility", "hidden")
+  .style("background", "black")
+  .style("padding", "5px")
+  .style("font-family", '"Kodchasan", sans-serif')
+  .style("font-weight", "600");
+
+  function renderColorCircles(geoData) {
+    const imageFolder = './image-data/images'; // Set your image folder path here
+  
+    const colorData = geoData.features.map(features => {
+      const nudiId = features.properties.Nudi_id;
+  
+      // Use Nudi_id directly to construct the image URL
+      const imageUrl = nudiId ? `${imageFolder}/${nudiId}.jpg` : null;
+  
+      const swatch = (features.properties.palettes && features.properties.palettes.length > 0) 
+        ? features.properties.palettes[0].swatch 
+        : [0, 0, 0];
+  
+      return {
+        Nudi_id: nudiId,
+        title: features.properties.title,
+        longitude: features.geometry.coordinates[0],
+        latitude: features.geometry.coordinates[1],
+        swatch: swatch,
+        image: imageUrl
+    };
+  });
+
   const colorCircles = circlesGroup
     .selectAll(".color-circle")
     .data(colorData, d => d.Nudi_id);
 
-  // Enter new color circles
-  colorCircles
-    .enter()
+  const positions = new Set();
+
+  colorCircles.enter().each(function(d) {
+    let [x, y] = Nudiprojection([d.longitude, d.latitude]);
+    const radius = 10;
+
+    let colliding = true;
+    while (colliding) {
+      colliding = false;
+
+      for (let pos of positions) {
+        const [px, py] = pos.split(',').map(Number);
+        const distance = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+        if (distance < radius * 2) {
+          colliding = true;
+          x += Math.random() * 20 - 10;
+          y += Math.random() * 20 - 10;
+          break;
+        }
+      }
+    }
+
+    positions.add(`${x},${y}`);
+
+    d3.select(this)
     .append("circle")
-    .attr("class", "color-circle")
-    .attr("cx", (d) => Nudiprojection([d.longitude, d.latitude])[0])
-    .attr("cy", (d) => Nudiprojection([d.longitude, d.latitude])[1])
-    .attr("r", 10) // Set a fixed radius or scale based on your preference
-    .attr("fill", (d) => `rgb(${d.swatch.getRgb().join(",")})`) // Use the Vibrant color
+    .attr("class", `${d.Nudi_id} single-circle`) // Correctly use template literals
+    .attr("cx", x)
+    .attr("cy", y)
+    .attr("r", radius)
+    .attr("fill", `rgb(${d.swatch.join(",")})`)
     .attr("opacity", 0.7)
-    .on("mouseover", function (event, d) {
-      const tooltipContent = `<strong>${d.title}</strong>`;
-      mapTooltip
-        .html(tooltipContent)
+    .on("mouseover", function (event) {
+      d3.select(this).attr("opacity", 1); // Change opacity to 1
+      
+      // Check if title is "Nudibranchia" or "Dexiarchia"
+      const titleText = (d.title === "Nudibranchia" || d.title === "Dexiarchia") 
+        ? "No information available" 
+        : d.title;
+    
+      const tooltipContent = `<span class="tooltip-title">${titleText}</span>`; // Use CSS class for title
+    
+      // Show the image thumbnail, using CSS class
+      const thumbnail = d.image ? `<img src="${d.image}" class="tooltip-image"/>` : '';
+    
+      NudiTooltip
+        .html(tooltipContent + thumbnail)
         .style("visibility", "visible")
         .style("top", event.pageY - 10 + "px")
         .style("left", event.pageX + 10 + "px");
     })
     .on("mouseout", function () {
-      mapTooltip.style("visibility", "hidden");
+      // Check if the circle is selected
+      if (!d3.select(this).datum().selected) {
+        d3.select(this).attr("opacity", 0.7); // Reset opacity only if not selected
+      }
+      NudiTooltip.style("visibility", "hidden");
+    })
+
+    .on("click", function (event, d) {
+      // Clear selected state of all circles
+      colorData.forEach((item) => {
+        // Reset selected state for each item
+        item.selected = false;
+    
+        // Reset background color for associated divs
+        d3.selectAll(`div.${item.Nudi_id}`)
+          .style("border", "20px solid black")
+          .style("background-color", "black");
+        d3.selectAll(`div.${item.Nudi_id} h4`).style("color", "white");
+        d3.selectAll(`div.${item.Nudi_id} .AddDetails h5`).style("color", "white");
+        d3.selectAll(`div.${item.Nudi_id} p`).style("color", "white");
+        d3.selectAll(`div.${item.Nudi_id} .AddDetails`).style("border-top", "15px solid black");
+        d3.selectAll(`div.${item.Nudi_id} .NudiTaxonomy`).style("border-top", "15px solid black");
+    
+        // Reset stroke for all circles
+        d3.select(`circle.${item.Nudi_id}`)
+          .attr("stroke-width", 0)
+          .attr("stroke", "none")
+          .attr("opacity", 0.7); // Reset opacity for unselected circles
+      });
+    
+      // Select the clicked circle
+      d.selected = true;
+      d3.select(this)
+        .attr("stroke-width", 3)
+        .attr("stroke", "white")
+        .attr("opacity", 1); // Set opacity to 1 for the selected circle
+    
+      // Update background color for associated divs of the selected circle
+      d3.selectAll(`div.${d.Nudi_id}`)
+        .style("border", "20px solid white")
+        .style("background-color", "white");
+      d3.selectAll(`div.${d.Nudi_id} h4`).style("color", "black");
+      d3.selectAll(`div.${d.Nudi_id} .AddDetails h5`).style("color", "black");
+      d3.selectAll(`div.${d.Nudi_id} p`).style("color", "black");
+      d3.selectAll(`div.${d.Nudi_id} .AddDetails`).style("border-top", "15px solid white");
+      d3.selectAll(`div.${d.Nudi_id} .NudiTaxonomy`).style("border-top", "15px solid white");
     });
+      });
 
-  // Update existing color circles
-  colorCircles
-    .attr("cx", (d) => Nudiprojection([d.longitude, d.latitude])[0])
-    .attr("cy", (d) => Nudiprojection([d.longitude, d.latitude])[1])
-    .attr("fill", (d) => `rgb(${d.swatch.getRgb().join(",")})`); // Update color
+  colorCircles.attr("fill", (d) => `rgb(${d.swatch.join(",")})`);
 
-  // Remove any color circles that are no longer needed
   colorCircles.exit().remove();
 }
 
-async function initializeVisualization(NudiDivs, geoData) {
-  const colorData = await extractPalettes(NudiDivs, geoData);
-  renderCircles(groupedData); // Call your existing renderCircles
-  renderColorCircles(colorData); // Call the new renderColorCircles
+
+// Initialize the visualization
+function initializeVisualization(NudiDivs, geoData) {
+  // Render the color circles
+  renderColorCircles(geoData);
+
+  // Load image files and extract palettes
+  extractPalettes(NudiDivs, geoData);
 }
+
+
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -549,7 +664,7 @@ function shuffle(array) {
 
 // This function displays the images and their color palettes
 function displayPalettes(groupedPalettes, NudiDivs, geoData) {
-  console.log(groupedPalettes);
+  //onsole.log(groupedPalettes);
 
   const shuffledFeatures = shuffle(geoData.features);
 

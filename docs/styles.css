@@ -239,8 +239,25 @@ p {
   z-index: 4;
 }
 
+.NudiTooltip {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center;    /* Center align the items */
+  z-index: 4;
+}
+.tooltip-title {
+  font-family: 'Kodchasan', sans-serif;
+  color: white;
+}
+
 .mapTooltip img {
   width: 100px; /* Thumbnail size */
+  height: auto; /* Maintain aspect ratio */
+  z-index: 4;
+}
+
+.NudiTooltip img {
+  width: 300px; /* Thumbnail size */
   height: auto; /* Maintain aspect ratio */
   z-index: 4;
 }

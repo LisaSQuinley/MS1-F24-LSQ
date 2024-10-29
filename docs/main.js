@@ -1,6 +1,8 @@
 let geoData = []; // Declare geoData in a higher scope
 let groupedData = []; // Declare groupedData in a higher scope
 let groupedPalettes = []; // Declare groupedPalettes in a higher scope
+// Global variable to track which circles are currently displayed
+let currentRendering = 'circles'; // Default to renderCircles
 
 // Load GeoJSON data
 d3.json("data.geojson").then((data) => {
@@ -307,17 +309,17 @@ const sections = [
   {
     title: "Project Overview",
     content:
-      "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. Four highlights are visible here – a geographical map for location, a dot plot for illustrating depth at which these marine slugs can be found, its taxonomic name, and an image from the Smithsonian's collection.",
+      "Nudibranchs are often tiny, toxic sea slugs that are brightly colored. They're a favorite for scuba divers who like little things to look at. New ones are being discovered all the time. The Smithsonian's invertebrate zoology collection has a number of specimens which include nudibranchia. The data available for this Order includes location, taxonomic name, depth found (and others) – some of these aspects are explored in my data visualization. A few highlights are visible here – a geographical map for location which is also viewable by the most vibrant color in the nudie image (as analyzed through Vibrant.js), the taxonomic name of these marine slugs, and an image from the Smithsonian's collection.",
   },
   {
     title: "The Many Faces and Names of Marine Slugs",
     content:
-      "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any dot to view associated taxonomic names, that will highlight the levels in yellow.",
+      "This displays the scientific system of classification for these lovely little sea slugs. Included are their taxonomic levels and a brief overview. Click on any image to toggle down for more information. Hover over each label within the taxonomy to see the scientific name and the specific level.",
   },
   {
     title: "Unveiling the Vibrant Palette of Nudies",
     content:
-      "Using Vibrant.js to extract color palettes from images of nudibranchs, I then grouped each swatch from the palettes by a dominant color category. Each image had a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from. Click on any color palette to view the colors extracted from the image.",
+      "Using Vibrant.js to extract color palettes from images of nudibranchs, I took the Vibrant swatch of each nudie and displayed it on the geographical map. Each image has a palette of six swatches generated: Vibrant, Muted, Dark Vibrant, Dark Muted, Light Vibrant, Light Muted. Hover over a color to see what nudibranch image it's generated from.",
   },
 ];
 
@@ -559,7 +561,7 @@ const NudiTooltip = d3
     .attr("cy", y)
     .attr("r", radius)
     .attr("fill", `rgb(${d.swatch.join(",")})`)
-    .attr("opacity", 0.7)
+    .attr("opacity", 0)
     .on("mouseover", function (event) {
       d3.select(this).attr("opacity", 1); // Change opacity to 1
       
@@ -580,10 +582,6 @@ const NudiTooltip = d3
         .style("left", event.pageX + 10 + "px");
     })
     .on("mouseout", function () {
-      // Check if the circle is selected
-      if (!d3.select(this).datum().selected) {
-        d3.select(this).attr("opacity", 0.7); // Reset opacity only if not selected
-      }
       NudiTooltip.style("visibility", "hidden");
     })
 
@@ -607,7 +605,7 @@ const NudiTooltip = d3
         d3.select(`circle.${item.Nudi_id}`)
           .attr("stroke-width", 0)
           .attr("stroke", "none")
-          .attr("opacity", 0.7); // Reset opacity for unselected circles
+          .attr("opacity", 1); // Reset opacity for unselected circles
       });
     
       // Select the clicked circle
@@ -643,6 +641,75 @@ function initializeVisualization(NudiDivs, geoData) {
   // Load image files and extract palettes
   extractPalettes(NudiDivs, geoData);
 }
+
+// Function to show the circles
+function showCircles() {
+  if (currentRendering === 'circles') return; // No action if already rendering circles
+
+  // Clear existing circles and text
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll("text").remove(); // Clear any existing text
+
+  // Render the circles
+  renderCircles(groupedData); // Pass the appropriate data
+  currentRendering = 'circles'; // Update current rendering state
+}
+
+// Update the showColorCircles function
+function showColorCircles() {
+  if (currentRendering === 'colorCircles') return;
+
+  // Clear existing circles and text
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll("text").remove();
+
+  // Render the color circles
+  renderColorCircles(geoData);
+
+  // Make circles visible
+  circlesGroup.selectAll("circle").attr("opacity", 1); // Set opacity to 1
+
+  currentRendering = 'colorCircles';
+}
+
+const showCirclesButton = d3
+  .select("header")
+  .append("button")
+  .attr("id", "showCirclesButton")
+  .text("Show Locations")
+  .on("click", showCircles) // Call the showCircles function
+  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+  .on("mouseover", function() {
+    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function() {
+    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
+
+const showColorCirclesButton = d3
+  .select("header")
+  .append("button")
+  .attr("id", "showColorCirclesButton")
+  .text("Show Vibrant Swatches")
+  .on("click", showColorCircles) // Call the showColorCircles function
+  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+  .on("mouseover", function() {
+    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function() {
+    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
+
+// Event listeners for buttons
+document.getElementById("showCircles").addEventListener("click", showCircles);
+document.getElementById("showColorCircles").addEventListener("click", showColorCircles);
+
+// Initial rendering
+showCircles(); // Show circles by default
 
 
 

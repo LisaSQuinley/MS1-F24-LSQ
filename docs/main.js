@@ -28,11 +28,12 @@ const ProjectTitle = d3.select("header").append("div");
 ProjectTitle.attr("id", "title")
   .style("margin-left", "0px")
   .style("background-color", "lightgray") // Optional: Add background color for styling
-  .style("text-align", "center") // Optional: Center text
+  .style("text-align", "left") // Optional: Center text
   .style("padding", "10px");
 
 ProjectTitle.append("h1")
   .text("Know Your Nudibranchs")
+  .style("padding-left", "15px")
   .style("display", "inline");
 
 ProjectTitle.append("h2")
@@ -275,6 +276,7 @@ function renderCircles(groupedData) {
   texts
     .enter()
     .append("text")
+    .attr("class", "count-label")
     .attr("x", (d) => Nudiprojection([d.longitude, d.latitude])[0])
     .attr("y", (d) => Nudiprojection([d.longitude, d.latitude])[1])
     .attr("dy", ".35em") // Vertical alignment
@@ -635,9 +637,6 @@ const NudiTooltip = d3
 
 // Initialize the visualization
 function initializeVisualization(NudiDivs, geoData) {
-  // Render the color circles
-  renderColorCircles(geoData);
-
   // Load image files and extract palettes
   extractPalettes(NudiDivs, geoData);
 }
@@ -650,9 +649,11 @@ function showCircles() {
   circlesGroup.selectAll("circle").remove();
   circlesGroup.selectAll("text").remove(); // Clear any existing text
 
+
   // Render the circles
   renderCircles(groupedData); // Pass the appropriate data
   currentRendering = 'circles'; // Update current rendering state
+
 }
 
 // Update the showColorCircles function
@@ -661,7 +662,8 @@ function showColorCircles() {
 
   // Clear existing circles and text
   circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll("text").remove();
+  circlesGroup.selectAll(".count-label, circle").remove();
+  circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
 
   // Render the color circles
   renderColorCircles(geoData);

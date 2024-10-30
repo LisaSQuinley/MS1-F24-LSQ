@@ -70,6 +70,11 @@ header {
   max-width: 1920px;
 }
 
+#title h2 {
+  margin-left: 25px;
+  font-weight: 400;
+}
+
 footer {
   position: fixed; 
   margin-left: 35px;
@@ -208,12 +213,11 @@ img {
 h1 {
   font-weight: 700;
   font-size: 28pt;
-  color: #262262;
+  color: black;
 }
 
-h2 {
+.TaxTooltip h2 {
   margin-top: 0;
-  margin-left: 25px;
   font-weight: 400;
   font-size: 18pt;
   color: #262262;
@@ -284,6 +288,60 @@ p {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
+
+@media (max-width: 1024px) {
+  /* Styles for tablets */
+
+  header {
+    position: fixed;
+    top: 0; /* Aligns it to the bottom */
+    left: 0; /* Aligns it to the left */
+    width: 50%; /* Makes it span the full width */
+    margin: 0;
+    clear: both; /* Ensure it stays below floated elements */
+    z-index: 10;
+  }
+
+  #NudiDivs {
+    z-index: 3;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 50%;
+    overflow-y: auto; 
+    max-height: 100vh;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 3.5s ease-in; /* Fade effect */
+  }
+
+  #resetButton {
+    font-family: "Kodchasan", sans-serif;
+    font-weight: 500;
+    font-size: 9pt;
+    color: gray;
+    position: fixed;
+    padding: 5px 10px; /* Add padding */
+    background-color: #ffcc00; /* Background color */
+    color: black; /* Text color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer cursor */
+  }
+  
+  #resetButton {
+    top: 115px;
+    left: 15px;
+    width: 150px;
+  }
+  
+  #showCirclesButton, #showColorCirclesButton {
+    display: none;
+  }
+
+}
+
+
+
 
 /*
 

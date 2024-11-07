@@ -25,6 +25,7 @@ d3.json("data.geojson").then((data) => {
 
 const ProjectTitle = d3.select("header").append("div");
 
+
 ProjectTitle.attr("id", "title")
   .style("margin-left", "0px")
   .style("background-color", "lightgray") // Optional: Add background color for styling
@@ -56,12 +57,38 @@ let mapwidth = window.innerWidth; // Width of the viewport
 let mapheight = window.innerHeight; // Height of the viewport
 
 const Nudiprojection = d3
-  .geoEquirectangular()
+  .geoMercator()
   .scale(mapwidth / 6.25)
   .center([0, 0])
   .translate([mapwidth / 2, mapheight / 2]);
 
 const Nudipath = d3.geoPath(Nudiprojection);
+
+// Create the graticule
+const graticule = d3.geoGraticule10();
+
+// Set up the SVG container
+const mapsvg = d3
+  .select("body")
+  .append("svg")
+  .attr("class", "map")
+  .attr("width", mapwidth)
+  .attr("height", mapheight);
+
+// Style the SVG
+mapsvg.style("opacity", 1);
+mapsvg.style("margin-top", "10px");
+mapsvg.style("display", "block");
+
+// Append a group element to hold map layers (like graticule lines)
+const graticuleGroup = mapsvg.append("g").attr("class", "map-layers").attr("class", "graticule");
+
+// Draw the graticule lines
+graticuleGroup
+  .append("path")
+  .datum(graticule) // Bind the graticule data
+  .attr("d", Nudipath); // Generate the path using the projection
+
 
 // Create a single SVG element
 const svg = d3
@@ -304,7 +331,7 @@ const toggleContainer = d3
   .attr("id", "toggleContainer")
   .style("position", "fixed")
   .style("left", "10px")
-  .style("bottom", "55px"); // Adjust top margin
+  .style("bottom", "80px"); // Adjust top margin
 
 // Create each section with a toggle button
 const sections = [
@@ -416,13 +443,15 @@ const Credits = d3.select("body").append("footer");
 Credits.attr("id", "footer")
   .style("text-align", "left");
 
-Credits.append("h3")
+const creditsDiv = Credits.append("div").attr("id", "creditsDiv");
+
+creditsDiv.append("h3")
   .text("Credits ")
   .style("font-weight", "700")
   .style("margin-top", "0px")
   .style("display", "inline");
 
-Credits.append("p")
+creditsDiv.append("p")
   .text(
     "Images and Nudibranch Data from the Smithsonian Institution  |  Map polygons from Natural Earth  |  Visualization created by Lisa Sakai Quinley"
   )
@@ -634,6 +663,122 @@ const NudiTooltip = d3
   colorCircles.exit().remove();
 }
 
+function renderColorSquares(geoData) {
+  const imageFolder = './image-data/images'; // Set your image folder path here
+
+  // Create an array of color data based on geoData
+  const colorData = geoData.features.map(features => {
+      const nudiId = features.properties.Nudi_id;
+
+      // Use Nudi_id directly to construct the image URL
+      const imageUrl = nudiId ? `${imageFolder}/${nudiId}.jpg` : null;
+
+      const swatch = (features.properties.palettes && features.properties.palettes.length > 0) 
+          ? features.properties.palettes[0].swatch 
+          : [0, 0, 0];
+
+      return {
+          Nudi_id: nudiId,
+          title: features.properties.title,
+          swatch: swatch,
+          image: imageUrl
+      };
+  });
+
+  // Create the palette container div and append it to the body
+  const paletteContainer = d3.select("body").append("div").attr("id", "paletteContainer");
+  paletteContainer
+      .style("width", "800px")    // Set width
+      .style("height", "600px")   // Set height
+      .style("background-color", "#f0f0f0") // Set background color for visibility
+      .style("border", "2px solid #ccc") // Optional: Border to make the container visible
+      .style("position", "relative")  // Ensure that child elements (squares) are positioned within it
+      .style("visibility", "visible");
+
+  const containerWidth = paletteContainer.node().clientWidth;  // Get container width
+  const containerHeight = paletteContainer.node().clientHeight; // Get container height  
+
+  const squareSize = 40;  // Define square size (width and height)
+  const columns = Math.floor(containerWidth / squareSize); // Number of columns
+  const rows = Math.floor(containerHeight / squareSize); // Number of rows
+
+  let currentRow = 0;  // Start placing squares from the top
+  let currentColumn = 0;  // Start placing squares from the left
+
+  // Loop through the color data and create squares
+  colorData.forEach(d => {
+      // If we've filled up the current row, move to the next row
+      if (currentColumn >= columns) {
+          currentColumn = 0;
+          currentRow++;
+      }
+
+      // Calculate the position based on row and column
+      const x = currentColumn * squareSize;
+      const y = currentRow * squareSize;
+
+      // Create a new div as a square
+      const square = paletteContainer
+          .append("div")
+          .attr("class", `${d.Nudi_id} single-square`) // Use Nudi_id as class
+          .style("position", "absolute")
+          .style("left", `${x}px`)
+          .style("top", `${y}px`)
+          .style("width", `${squareSize}px`)
+          .style("height", `${squareSize}px`)
+          .style("background-color", `rgb(${d.swatch.join(",")})`)
+          .style("opacity", 1) // Set opacity to 1 so squares are visible initially
+          .style("cursor", "pointer");  // Optional: Set pointer cursor for squares
+
+      // Move to the next column for the next square
+      currentColumn++;
+
+      // Add interactions for mouseover, mouseout, and click
+      square
+          .on("mouseover", function (event) {
+              d3.select(this).style("opacity", 0.8);  // Show the square with reduced opacity on hover
+              const titleText = (d.title === "Nudibranchia" || d.title === "Dexiarchia") 
+                  ? "No information available" 
+                  : d.title;
+              
+              const tooltipContent = `<span class="tooltip-title">${titleText}</span>`; // Use CSS class for title
+              const thumbnail = d.image ? `<img src="${d.image}" class="tooltip-image"/>` : '';
+              
+              NudiTooltip
+                  .html(tooltipContent + thumbnail)
+                  .style("visibility", "visible")
+                  .style("top", event.pageY - 10 + "px")
+                  .style("left", event.pageX + 10 + "px");
+          })
+          .on("mouseout", function () {
+              d3.select(this).style("opacity", 1);  // Reset opacity on mouse out
+              NudiTooltip.style("visibility", "hidden");  // Hide tooltip on mouse out
+          })
+          .on("click", function () {
+              // Clear selected state of all squares
+              colorData.forEach((item) => {
+                  item.selected = false;
+                  d3.selectAll(`div.${item.Nudi_id}`)
+                      .style("border", "2px solid #ccc") // Reset border color
+                      .style("background-color", `rgb(${item.swatch.join(",")})`); // Reset background color
+              });
+
+              // Select the clicked square
+              d.selected = true;
+              d3.select(this)
+                  .style("border", "3px solid white")  // Highlight the clicked square
+                  .style("background-color", "white");  // Change background color of clicked square
+
+              // Update background color for associated divs of the selected square
+              d3.selectAll(`div.${d.Nudi_id}`)
+                  .style("border", "3px solid white")
+                  .style("background-color", "white");
+          });
+  });
+}
+
+
+
 
 // Initialize the visualization
 function initializeVisualization(NudiDivs, geoData) {
@@ -800,7 +945,7 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
           )
           .style("flex", "1 1 auto")
           .style("height", "30px")
-          .text(formattedPaletteKey)
+          //.text(formattedPaletteKey)
           .style("display", "flex") // Enable flexbox
           .style("justify-content", "center") // Center horizontally
           .style("align-items", "center"); // Center vertically

@@ -22,6 +22,12 @@ body {
   transition: opacity 2.5s ease-in; /* Fade effect */
 }
 
+.graticule {
+  stroke-width: 0.5px;
+  stroke: lightgray;
+  fill: none;
+}
+
 header {
   position: fixed;
   top: 0; /* Aligns it to the bottom */
@@ -77,17 +83,14 @@ header {
 
 footer {
   position: fixed; 
-  margin-left: 35px;
-  margin-bottom: 20px;
-  padding-top: 10px;
   bottom: 0; /* Aligns it to the bottom */
   left: 0; /* Aligns it to the left */
-  width: 45%; /* Makes it span the full width */
+  width: 50%; /* Makes it span the full width */
   clear: both; /* Ensure it stays below floated elements */
+  z-index: 10;
 }
 
 footer h3, p {
-  width: 100%;
   letter-spacing: 0.1em;
 }
 
@@ -100,6 +103,14 @@ footer p {
   font-family: "Kodchasan", sans-serif;
   color: gray;
   font-size: 9pt;
+}
+
+#creditsDiv {
+  background-color: white;
+  padding-left: 35px;
+  padding-right: 35px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 #NudiDivs {
@@ -133,7 +144,7 @@ img {
 #toggleContainer {
   z-index: 3; /* Ensure it appears above other content */
   padding-bottom: 10px;
-  width: 23%;
+  width: 25%;
 }
 
 .toggle-section {
@@ -151,7 +162,7 @@ img {
 .content {
   margin-top: 5px; /* Space between button and content */
   margin-left: 10px;
-  font-family: "Kodchasan", sans-serif;
+  font-family: "Fraunces", serif;
   font-weight: 300;
   font-size: 14pt;
   color: gray;
@@ -417,4 +428,18 @@ p {
   font-weight: 700;
   font-style: italic;
 }
+
+// <uniquifier>: Use a unique and descriptive class name
+// <weight>: Use a value from 100 to 900
+
+.fraunces-<uniquifier> {
+  font-family: "Fraunces", serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+  font-variation-settings:
+    "SOFT" 0,
+    "WONK" 0;
+}
+
 */

@@ -1,3 +1,19 @@
+# Know Your Nudibranchs: A Scuba Diver's Guide to Sea Slugs (Interactive or Narrative)
+## Dive Wish List (Interactive)
+![Know-Your-Nudibranchs_Interactive-1](https://github.com/user-attachments/assets/b39c0c37-29e4-4821-8615-62536356aeb5)
+Questions to Explore: Where can I go to see these nudibranchs? How can I save a list for myself with the necessary information?
+Purpose: Scuba divers can use this as a resource for exploring and discovering nudibranchs they have yet to see on their dive trips, since currently no great database exists yet to display information for them
+Reason for interactivity: Allows users to save the locations of their nudibranch preferences
+Dataset used: Smithsonian's Invertebrate Zoology Department collection under the search "nudibranch"
+
+## Branching Out: Decoding Nudibranch Taxonomy
+![Know-Your-Nudibranchs_Interactive-2](https://github.com/user-attachments/assets/8de1cae5-44bf-458b-bc6e-7d047f5c5e7e)
+Questions to Explore: What are nudibranchs? What is taxonomy? Where do nudibranchs fall compared to us humans? Why does this matter?
+Purpose: Scuba divers or students can use this as a resource for exploring and discovering nudibranchs as an educational reference, since currently no great database exists yet to display information for nudibranchs
+Reason for narrative: A story or animation that walks through nudibranchs and what they are, how we connect to them, and their importance to marine ecosystems provides necessary background information and education about these interesting sea slugs
+Dataset used: Smithsonian's Invertebrate Zoology Department collection under the search "nudibranch"
+
+
 # Know Your Nudibranchs: A Scuba Diver's Guide to Sea Slugs (Quantitative & Qualitative)
 ## GitHub Pages: https://lisasquinley.github.io/MS1-F24-LSQ/
 <img width="2056" alt="Know-Your-Nudibranchs-3" src="https://github.com/user-attachments/assets/775c14bb-3d6a-4eea-b7e6-491dff5cc83e">

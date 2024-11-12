@@ -285,6 +285,14 @@ function renderCircles(groupedData) {
         d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid #FFC000");
         d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid #FFC000");
       });
+      // Reorder the associated divs to the top (move them to the top in the DOM)
+      d.Nudi_id.forEach((id) => {
+        const divs = d3.selectAll(`div.${id}`).nodes(); // Get all divs with class Nudi_id
+        divs.forEach((div) => {
+          const parent = div.parentNode; // Get the parent element
+          parent.insertBefore(div, parent.firstChild); // Move div to the beginning of its parent's child list (top in the visual order)
+        });
+      });
     });
 
   // Update existing circles
@@ -323,6 +331,7 @@ function renderCircles(groupedData) {
   // Remove any text labels that are no longer needed
   texts.exit().remove();
 }
+
 
 // Create a container for the toggleable sections
 const toggleContainer = d3
@@ -396,48 +405,48 @@ const ResetButton = d3
   .text("Clear Selections")
   .on("click", clearSelections)
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
-  .on("mouseover", function() {
+  .on("mouseover", function () {
     d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
-  .on("mouseout", function() {
+  .on("mouseout", function () {
     d3.select(this).style("background-color", "#FFC000"); // Original color
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
-  function clearSelections() {
-    // Clear selected state of all circles in the data
-    groupedData.forEach((item) => {
-      item.selected = false;
-  
-      // Reset background color for associated divs
-      item.Nudi_id.forEach((id) => {
-        d3.selectAll(`div.${id}`)
-          .style("border", "20px solid black")
-          .style("background-color", "black");
-        d3.selectAll(`div.${id} h4`).style("color", "white");
-        d3.selectAll(`div.${id} .AddDetails h5`).style("color", "white");
-        d3.selectAll(`div.${id} p`).style("color", "white");
-        d3.selectAll(`div.${id} .AddDetails`).style("border-top", "15px solid black");
-        d3.selectAll(`div.${id} .NudiTaxonomy`).style("border-top", "15px solid black");
-      });
-  
-      // Reset stroke for all circles associated with this Nudi_id
-      d3.select(`circle.${item.Nudi_id.join(".")}`)
-        .attr("stroke-width", 0)
-        .attr("stroke", "none")
-        .attr("opacity", 0.7);
+function clearSelections() {
+  // Clear selected state of all circles in the data
+  groupedData.forEach((item) => {
+    item.selected = false;
+
+    // Reset background color for associated divs
+    item.Nudi_id.forEach((id) => {
+      d3.selectAll(`div.${id}`)
+        .style("border", "20px solid black")
+        .style("background-color", "black");
+      d3.selectAll(`div.${id} h4`).style("color", "white");
+      d3.selectAll(`div.${id} .AddDetails h5`).style("color", "white");
+      d3.selectAll(`div.${id} p`).style("color", "white");
+      d3.selectAll(`div.${id} .AddDetails`).style("border-top", "15px solid black");
+      d3.selectAll(`div.${id} .NudiTaxonomy`).style("border-top", "15px solid black");
     });
-  
-    // Reset stroke and opacity for all circles with the class "single-circle"
-    d3.selectAll('circle.single-circle')
+
+    // Reset stroke for all circles associated with this Nudi_id
+    d3.select(`circle.${item.Nudi_id.join(".")}`)
       .attr("stroke-width", 0)
       .attr("stroke", "none")
       .attr("opacity", 0.7);
-  
-    // Hide the tooltip if it's visible
-    mapTooltip.style("visibility", "hidden");
-  }
+  });
+
+  // Reset stroke and opacity for all circles with the class "single-circle"
+  d3.selectAll('circle.single-circle')
+    .attr("stroke-width", 0)
+    .attr("stroke", "none")
+    .attr("opacity", 0.7);
+
+  // Hide the tooltip if it's visible
+  mapTooltip.style("visibility", "hidden");
+}
 
 const Credits = d3.select("body").append("footer");
 Credits.attr("id", "footer")
@@ -501,7 +510,6 @@ async function extractPalettes(NudiDivs, geoData) {
         "DarkMuted",
         "LightMuted",
       ];
-
       for (const key of paletteKeys) {
         const swatch = palette[key];
         if (swatch) {
@@ -514,12 +522,27 @@ async function extractPalettes(NudiDivs, geoData) {
           });
         }
       }
+
     } catch (err) {
       console.error(`Error processing image ${url}:`, err);
     }
   }
   // Call the function to display the images and swatches
-  displayPalettes(groupedPalettes, NudiDivs, geoData); // Ensure geoData is passed
+  // setTimeout(() => {
+    // I was calling groupedPalettes here when I was also returning it. didn't give it time to resolve. Soumya added setTimeout to add a pause until displayPalettes was called.
+  //   displayPalettes(groupedPalettes, NudiDivs, geoData);
+  //  }, 1000) // Ensure geoData is passed
+
+  // const groupedPaletterString = JSON.stringify(groupedPalettes);
+  // console.log(groupedPaletterString); 
+  // const fs = require('fs');
+
+  //   fs.writeFile("vibrant.json", groupedPaletterString, (err) => {
+  //     if(err){
+  //       console.log("error writing file", err);
+  //     }
+  // }); 
+  //console.log(groupedPalettes)
   return groupedPalettes; // Return the palettes for further use
 }
 
@@ -534,26 +557,26 @@ const NudiTooltip = d3
   .style("font-family", '"Kodchasan", sans-serif')
   .style("font-weight", "600");
 
-  function renderColorCircles(geoData) {
-    const imageFolder = './image-data/images'; // Set your image folder path here
-  
-    const colorData = geoData.features.map(features => {
-      const nudiId = features.properties.Nudi_id;
-  
-      // Use Nudi_id directly to construct the image URL
-      const imageUrl = nudiId ? `${imageFolder}/${nudiId}.jpg` : null;
-  
-      const swatch = (features.properties.palettes && features.properties.palettes.length > 0) 
-        ? features.properties.palettes[0].swatch 
-        : [0, 0, 0];
-  
-      return {
-        Nudi_id: nudiId,
-        title: features.properties.title,
-        longitude: features.geometry.coordinates[0],
-        latitude: features.geometry.coordinates[1],
-        swatch: swatch,
-        image: imageUrl
+function renderColorCircles(geoData) {
+  const imageFolder = './image-data/images'; // Set your image folder path here
+
+  const colorData = geoData.features.map(features => {
+    const nudiId = features.properties.Nudi_id;
+
+    // Use Nudi_id directly to construct the image URL
+    const imageUrl = nudiId ? `${imageFolder}/${nudiId}.jpg` : null;
+
+    const swatch = (features.properties.palettes && features.properties.palettes.length > 0)
+      ? features.properties.palettes[0].swatch
+      : [0, 0, 0];
+
+    return {
+      Nudi_id: nudiId,
+      title: features.properties.title,
+      longitude: features.geometry.coordinates[0],
+      latitude: features.geometry.coordinates[1],
+      swatch: swatch,
+      image: imageUrl
     };
   });
 
@@ -563,7 +586,7 @@ const NudiTooltip = d3
 
   const positions = new Set();
 
-  colorCircles.enter().each(function(d) {
+  colorCircles.enter().each(function (d) {
     let [x, y] = Nudiprojection([d.longitude, d.latitude]);
     const radius = 10;
 
@@ -586,566 +609,456 @@ const NudiTooltip = d3
     positions.add(`${x},${y}`);
 
     d3.select(this)
-    .append("circle")
-    .attr("class", `${d.Nudi_id} single-circle`) // Correctly use template literals
-    .attr("cx", x)
-    .attr("cy", y)
-    .attr("r", radius)
-    .attr("fill", `rgb(${d.swatch.join(",")})`)
-    .attr("opacity", 0)
-    .on("mouseover", function (event) {
-      d3.select(this).attr("opacity", 1); // Change opacity to 1
-      
-      // Check if title is "Nudibranchia" or "Dexiarchia"
-      const titleText = (d.title === "Nudibranchia" || d.title === "Dexiarchia") 
-        ? "No information available" 
-        : d.title;
-    
-      const tooltipContent = `<span class="tooltip-title">${titleText}</span>`; // Use CSS class for title
-    
-      // Show the image thumbnail, using CSS class
-      const thumbnail = d.image ? `<img src="${d.image}" class="tooltip-image"/>` : '';
-    
-      NudiTooltip
-        .html(tooltipContent + thumbnail)
-        .style("visibility", "visible")
-        .style("top", event.pageY - 10 + "px")
-        .style("left", event.pageX + 10 + "px");
-    })
-    .on("mouseout", function () {
-      NudiTooltip.style("visibility", "hidden");
-    })
+      .append("circle")
+      .attr("class", `${d.Nudi_id} single-circle`) // Correctly use template literals
+      .attr("cx", x)
+      .attr("cy", y)
+      .attr("r", radius)
+      .attr("fill", `rgb(${d.swatch.join(",")})`)
+      .attr("opacity", 0)
+      .on("mouseover", function (event) {
+        d3.select(this).attr("opacity", 1); // Change opacity to 1
 
-    .on("click", function (event, d) {
-      // Clear selected state of all circles
-      colorData.forEach((item) => {
-        // Reset selected state for each item
-        item.selected = false;
-    
-        // Reset background color for associated divs
-        d3.selectAll(`div.${item.Nudi_id}`)
-          .style("border", "20px solid black")
-          .style("background-color", "black");
-        d3.selectAll(`div.${item.Nudi_id} h4`).style("color", "white");
-        d3.selectAll(`div.${item.Nudi_id} .AddDetails h5`).style("color", "white");
-        d3.selectAll(`div.${item.Nudi_id} p`).style("color", "white");
-        d3.selectAll(`div.${item.Nudi_id} .AddDetails`).style("border-top", "15px solid black");
-        d3.selectAll(`div.${item.Nudi_id} .NudiTaxonomy`).style("border-top", "15px solid black");
-    
-        // Reset stroke for all circles
-        d3.select(`circle.${item.Nudi_id}`)
-          .attr("stroke-width", 0)
-          .attr("stroke", "none")
-          .attr("opacity", 1); // Reset opacity for unselected circles
+        // Check if title is "Nudibranchia" or "Dexiarchia"
+        const titleText = (d.title === "Nudibranchia" || d.title === "Dexiarchia")
+          ? "No information available"
+          : d.title;
+
+        const tooltipContent = `<span class="tooltip-title">${titleText}</span>`; // Use CSS class for title
+
+        // Show the image thumbnail, using CSS class
+        const thumbnail = d.image ? `<img src="${d.image}" class="tooltip-image"/>` : '';
+
+        NudiTooltip
+          .html(tooltipContent + thumbnail)
+          .style("visibility", "visible")
+          .style("top", event.pageY - 10 + "px")
+          .style("left", event.pageX + 10 + "px");
+      })
+      .on("mouseout", function () {
+        NudiTooltip.style("visibility", "hidden");
+      })
+
+      .on("click", function (event, d) {
+        // Clear selected state of all circles
+        colorData.forEach((item) => {
+          // Reset selected state for each item
+          item.selected = false;
+
+          // Reset background color for associated divs
+          d3.selectAll(`div.${item.Nudi_id}`)
+            .style("border", "20px solid black")
+            .style("background-color", "black");
+          d3.selectAll(`div.${item.Nudi_id} h4`).style("color", "white");
+          d3.selectAll(`div.${item.Nudi_id} .AddDetails h5`).style("color", "white");
+          d3.selectAll(`div.${item.Nudi_id} p`).style("color", "white");
+          d3.selectAll(`div.${item.Nudi_id} .AddDetails`).style("border-top", "15px solid black");
+          d3.selectAll(`div.${item.Nudi_id} .NudiTaxonomy`).style("border-top", "15px solid black");
+
+          // Reset stroke for all circles
+          d3.select(`circle.${item.Nudi_id}`)
+            .attr("stroke-width", 0)
+            .attr("stroke", "none")
+            .attr("opacity", 1); // Reset opacity for unselected circles
+        });
+
+        // Select the clicked circle
+        d.selected = true;
+        d3.select(this)
+          .attr("stroke-width", 3)
+          .attr("stroke", "white")
+          .attr("opacity", 1); // Set opacity to 1 for the selected circle
+
+        // Update background color for associated divs of the selected circle
+        d3.selectAll(`div.${d.Nudi_id}`)
+          .style("border", "20px solid white")
+          .style("background-color", "white");
+        d3.selectAll(`div.${d.Nudi_id} h4`).style("color", "black");
+        d3.selectAll(`div.${d.Nudi_id} .AddDetails h5`).style("color", "black");
+        d3.selectAll(`div.${d.Nudi_id} p`).style("color", "black");
+        d3.selectAll(`div.${d.Nudi_id} .AddDetails`).style("border-top", "15px solid white");
+        d3.selectAll(`div.${d.Nudi_id} .NudiTaxonomy`).style("border-top", "15px solid white");
+        // Move the associated divs to the beginning of the parent container
+        const divs = d3.selectAll(`div.${d.Nudi_id}`).nodes(); // Get all divs with class Nudi_id
+        divs.forEach((div) => {
+          const parent = div.parentNode; // Get the parent element
+          parent.insertBefore(div, parent.firstChild); // Move div to the beginning of the parent's child list (top in the visual order)
+
+        });
       });
-    
-      // Select the clicked circle
-      d.selected = true;
-      d3.select(this)
-        .attr("stroke-width", 3)
-        .attr("stroke", "white")
-        .attr("opacity", 1); // Set opacity to 1 for the selected circle
-    
-      // Update background color for associated divs of the selected circle
-      d3.selectAll(`div.${d.Nudi_id}`)
-        .style("border", "20px solid white")
-        .style("background-color", "white");
-      d3.selectAll(`div.${d.Nudi_id} h4`).style("color", "black");
-      d3.selectAll(`div.${d.Nudi_id} .AddDetails h5`).style("color", "black");
-      d3.selectAll(`div.${d.Nudi_id} p`).style("color", "black");
-      d3.selectAll(`div.${d.Nudi_id} .AddDetails`).style("border-top", "15px solid white");
-      d3.selectAll(`div.${d.Nudi_id} .NudiTaxonomy`).style("border-top", "15px solid white");
-    });
-      });
 
-  colorCircles.attr("fill", (d) => `rgb(${d.swatch.join(",")})`);
-
-  colorCircles.exit().remove();
-}
-
-function renderColorSquares(geoData) {
-  const imageFolder = './image-data/images'; // Set your image folder path here
-
-  // Create an array of color data based on geoData
-  const colorData = geoData.features.map(features => {
-      const nudiId = features.properties.Nudi_id;
-
-      // Use Nudi_id directly to construct the image URL
-      const imageUrl = nudiId ? `${imageFolder}/${nudiId}.jpg` : null;
-
-      const swatch = (features.properties.palettes && features.properties.palettes.length > 0) 
-          ? features.properties.palettes[0].swatch 
-          : [0, 0, 0];
-
-      return {
-          Nudi_id: nudiId,
-          title: features.properties.title,
-          swatch: swatch,
-          image: imageUrl
-      };
   });
 
-  // Create the palette container div and append it to the body
-  const paletteContainer = d3.select("body").append("div").attr("id", "paletteContainer");
-  paletteContainer
-      .style("width", "800px")    // Set width
-      .style("height", "600px")   // Set height
-      .style("background-color", "#f0f0f0") // Set background color for visibility
-      .style("border", "2px solid #ccc") // Optional: Border to make the container visible
-      .style("position", "relative")  // Ensure that child elements (squares) are positioned within it
-      .style("visibility", "visible");
+    colorCircles.attr("fill", (d) => `rgb(${d.swatch.join(",")})`);
 
-  const containerWidth = paletteContainer.node().clientWidth;  // Get container width
-  const containerHeight = paletteContainer.node().clientHeight; // Get container height  
-
-  const squareSize = 40;  // Define square size (width and height)
-  const columns = Math.floor(containerWidth / squareSize); // Number of columns
-  const rows = Math.floor(containerHeight / squareSize); // Number of rows
-
-  let currentRow = 0;  // Start placing squares from the top
-  let currentColumn = 0;  // Start placing squares from the left
-
-  // Loop through the color data and create squares
-  colorData.forEach(d => {
-      // If we've filled up the current row, move to the next row
-      if (currentColumn >= columns) {
-          currentColumn = 0;
-          currentRow++;
-      }
-
-      // Calculate the position based on row and column
-      const x = currentColumn * squareSize;
-      const y = currentRow * squareSize;
-
-      // Create a new div as a square
-      const square = paletteContainer
-          .append("div")
-          .attr("class", `${d.Nudi_id} single-square`) // Use Nudi_id as class
-          .style("position", "absolute")
-          .style("left", `${x}px`)
-          .style("top", `${y}px`)
-          .style("width", `${squareSize}px`)
-          .style("height", `${squareSize}px`)
-          .style("background-color", `rgb(${d.swatch.join(",")})`)
-          .style("opacity", 1) // Set opacity to 1 so squares are visible initially
-          .style("cursor", "pointer");  // Optional: Set pointer cursor for squares
-
-      // Move to the next column for the next square
-      currentColumn++;
-
-      // Add interactions for mouseover, mouseout, and click
-      square
-          .on("mouseover", function (event) {
-              d3.select(this).style("opacity", 0.8);  // Show the square with reduced opacity on hover
-              const titleText = (d.title === "Nudibranchia" || d.title === "Dexiarchia") 
-                  ? "No information available" 
-                  : d.title;
-              
-              const tooltipContent = `<span class="tooltip-title">${titleText}</span>`; // Use CSS class for title
-              const thumbnail = d.image ? `<img src="${d.image}" class="tooltip-image"/>` : '';
-              
-              NudiTooltip
-                  .html(tooltipContent + thumbnail)
-                  .style("visibility", "visible")
-                  .style("top", event.pageY - 10 + "px")
-                  .style("left", event.pageX + 10 + "px");
-          })
-          .on("mouseout", function () {
-              d3.select(this).style("opacity", 1);  // Reset opacity on mouse out
-              NudiTooltip.style("visibility", "hidden");  // Hide tooltip on mouse out
-          })
-          .on("click", function () {
-              // Clear selected state of all squares
-              colorData.forEach((item) => {
-                  item.selected = false;
-                  d3.selectAll(`div.${item.Nudi_id}`)
-                      .style("border", "2px solid #ccc") // Reset border color
-                      .style("background-color", `rgb(${item.swatch.join(",")})`); // Reset background color
-              });
-
-              // Select the clicked square
-              d.selected = true;
-              d3.select(this)
-                  .style("border", "3px solid white")  // Highlight the clicked square
-                  .style("background-color", "white");  // Change background color of clicked square
-
-              // Update background color for associated divs of the selected square
-              d3.selectAll(`div.${d.Nudi_id}`)
-                  .style("border", "3px solid white")
-                  .style("background-color", "white");
-          });
-  });
-}
-
-
+    colorCircles.exit().remove();
+  }
 
 
 // Initialize the visualization
-function initializeVisualization(NudiDivs, geoData) {
-  // Load image files and extract palettes
-  extractPalettes(NudiDivs, geoData);
+async function initializeVisualization(NudiDivs, geoData) {
+  // Wait for extractPalettes to resolve before continuing
+  const groupedData = await extractPalettes(NudiDivs, geoData);
+  // I was calling displayPalettes here, but it should be called after the promise resolves
+  // Once the promise resolves, call displayPalettes
+  displayPalettes(groupedData, NudiDivs, geoData);
 }
+
 
 // Function to show the circles
 function showCircles() {
-  if (currentRendering === 'circles') return; // No action if already rendering circles
+      if (currentRendering === 'circles') return; // No action if already rendering circles
 
-  // Clear existing circles and text
-  circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll("text").remove(); // Clear any existing text
+      // Clear existing circles and text
+      circlesGroup.selectAll("circle").remove();
+      circlesGroup.selectAll("text").remove(); // Clear any existing text
 
 
-  // Render the circles
-  renderCircles(groupedData); // Pass the appropriate data
-  currentRendering = 'circles'; // Update current rendering state
+      // Render the circles
+      renderCircles(groupedData); // Pass the appropriate data
+      currentRendering = 'circles'; // Update current rendering state
 
-}
+    }
 
 // Update the showColorCircles function
 function showColorCircles() {
-  if (currentRendering === 'colorCircles') return;
+      if (currentRendering === 'colorCircles') return;
 
-  // Clear existing circles and text
-  circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll(".count-label, circle").remove();
-  circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
+      // Clear existing circles and text
+      circlesGroup.selectAll("circle").remove();
+      circlesGroup.selectAll(".count-label, circle").remove();
+      circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
 
-  // Render the color circles
-  renderColorCircles(geoData);
+      // Render the color circles
+      renderColorCircles(geoData);
 
-  // Make circles visible
-  circlesGroup.selectAll("circle").attr("opacity", 1); // Set opacity to 1
+      // Make circles visible
+      circlesGroup.selectAll("circle").attr("opacity", 1); // Set opacity to 1
 
-  currentRendering = 'colorCircles';
-}
+      currentRendering = 'colorCircles';
+    }
 
 const showCirclesButton = d3
-  .select("header")
-  .append("button")
-  .attr("id", "showCirclesButton")
-  .text("Show Locations")
-  .on("click", showCircles) // Call the showCircles function
-  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
-  .on("mouseover", function() {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
-    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
-  })
-  .on("mouseout", function() {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
-    d3.select(this).style("transform", "scale(1)"); // Reset scale
-  });
+    .select("header")
+    .append("button")
+    .attr("id", "showCirclesButton")
+    .text("Show Locations")
+    .on("click", showCircles) // Call the showCircles function
+    .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+    .on("mouseover", function () {
+      d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+      d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+    })
+    .on("mouseout", function () {
+      d3.select(this).style("background-color", "#FFC000"); // Original color
+      d3.select(this).style("transform", "scale(1)"); // Reset scale
+    });
 
-const showColorCirclesButton = d3
-  .select("header")
-  .append("button")
-  .attr("id", "showColorCirclesButton")
-  .text("Show Vibrant Swatches")
-  .on("click", showColorCircles) // Call the showColorCircles function
-  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
-  .on("mouseover", function() {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
-    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
-  })
-  .on("mouseout", function() {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
-    d3.select(this).style("transform", "scale(1)"); // Reset scale
-  });
+  const showColorCirclesButton = d3
+    .select("header")
+    .append("button")
+    .attr("id", "showColorCirclesButton")
+    .text("Show Vibrant Swatches")
+    .on("click", showColorCircles) // Call the showColorCircles function
+    .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+    .on("mouseover", function () {
+      d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+      d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+    })
+    .on("mouseout", function () {
+      d3.select(this).style("background-color", "#FFC000"); // Original color
+      d3.select(this).style("transform", "scale(1)"); // Reset scale
+    });
 
-// Event listeners for buttons
-document.getElementById("showCircles").addEventListener("click", showCircles);
-document.getElementById("showColorCircles").addEventListener("click", showColorCircles);
+  // Event listeners for buttons
+  document.getElementById("showCircles").addEventListener("click", showCircles);
+  document.getElementById("showColorCircles").addEventListener("click", showColorCircles);
 
-// Initial rendering
-showCircles(); // Show circles by default
+  // Initial rendering
+  showCircles(); // Show circles by default
 
 
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
-  return array;
-}
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
+  // This function displays the images and their color palettes
+  function displayPalettes(groupedPalettes, NudiDivs, geoData) {
+    console.log(groupedPalettes); 
 
-// This function displays the images and their color palettes
-function displayPalettes(groupedPalettes, NudiDivs, geoData) {
-  //onsole.log(groupedPalettes);
+    const shuffledFeatures = shuffle(geoData.features);
 
-  const shuffledFeatures = shuffle(geoData.features);
+    console.log(shuffledFeatures.length)
 
-  shuffledFeatures.forEach((d) => {
-    // Assuming groupedPalettes is already an array, no need to flatten
-    //  geoData.features.forEach((d) => {
-    const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
-    const correspondingImageSwatches = groupedPalettes.filter(
-      (image) => image.url === nudiBranchImageURL
-    );
-    //console.log(correspondingImageSwatches);
-    if (correspondingImageSwatches.length > 0) {
-      const NudiContainer = NudiDivs.append("div")
-        .attr("class", d.properties.Nudi_id)
-        .attr("id", "NudiContainers")
-        .style("display", "inline-block")
-        .style("text-align", "center")
-        .style("border", "20px solid black")
-        .style("box-sizing", "border-box")
-        .style("cursor", "pointer"); // Change cursor to pointer on hover
+    shuffledFeatures.forEach((d) => {
+      // Assuming groupedPalettes is already an array, no need to flatten
+      //  geoData.features.forEach((d) => {
+      const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
+      const correspondingImageSwatches = groupedPalettes.filter(
+        (image) => image.url === nudiBranchImageURL
+      );
+      //console.log(correspondingImageSwatches);
+      if (correspondingImageSwatches.length > 0) {
+        const NudiContainer = NudiDivs.append("div")
+          .attr("class", d.properties.Nudi_id)
+          .attr("id", "NudiContainers")
+          .style("display", "inline-block")
+          .style("text-align", "center")
+          .style("border", "20px solid black")
+          .style("box-sizing", "border-box")
+          .style("cursor", "pointer"); // Change cursor to pointer on hover
 
-      setTimeout(() => {
-        NudiContainer.style("opacity", 1); // Change opacity to 1 for fade-in
-        NudiContainer.style("transition", "opacity 1.5s ease-in"); // Add transition effect
-      }, 0);
+        setTimeout(() => {
+          NudiContainer.style("opacity", 1); // Change opacity to 1 for fade-in
+          NudiContainer.style("transition", "opacity 1.5s ease-in"); // Add transition effect
+        }, 0);
 
-      // Add click event to toggle the details view
-      NudiContainer.on("click", function () {
-        const NudiTaxonomy = d3.select(this).select(".NudiTaxonomy");
-        const isTaxVisible = NudiTaxonomy.style("display") === "block";
-        NudiTaxonomy.style("display", isTaxVisible ? "none" : "block");
-        const AddDetails = d3.select(this).select(".AddDetails");
-        const isAddDVisible = AddDetails.style("display") === "block";
-        AddDetails.style("display", isAddDVisible ? "none" : "block");
-      });
-
-      NudiContainer.append("h4")
-        .style("padding-bottom", "15px")
-        .text(d.properties.sci_name)
-        .style("color", "white");
-
-      NudiContainer.append("img")
-        .attr("src", nudiBranchImageURL)
-        .attr("alt", d.properties.title)
-        .style("display", "block");
-
-      const swatchesDiv = NudiContainer.append("div").style("display", "flex");
-
-      correspondingImageSwatches.forEach((swatch) => {
-        const keys = Object.keys(swatch.swatch);
-
-        const rgbColor = swatch.swatch._rgb;
-
-        const formattedPaletteKey = swatch.key
-          .replace(/([A-Z])/g, " $1") // Adds space before capital letters
-          .replace(/_/g, " ") // Replaces underscores with spaces
-          .trim(); // Removes leading/trailing spaces
-
-        swatchesDiv
-          .append("div")
-          .style(
-            "background-color",
-            `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`
-          )
-          .style("flex", "1 1 auto")
-          .style("height", "30px")
-          //.text(formattedPaletteKey)
-          .style("display", "flex") // Enable flexbox
-          .style("justify-content", "center") // Center horizontally
-          .style("align-items", "center"); // Center vertically
-      });
-
-      const TaxTooltip = d3
-        .select("body")
-        .append("div")
-        .attr("class", "TaxTooltip")
-        .style("position", "absolute") // Ensure it's positioned absolutely
-        .style("background", "rgba(0, 0, 0, 0.8)")
-        .style("visibility", "hidden")
-        .style("opacity", 0)
-        .style("pointer-events", "none");
-
-      // Create a flex container for NudiTaxonomy and AddDetails
-      const detailsContainer = NudiContainer.append("div")
-        .style("display", "flex");
-
-      // Create the NudiTaxonomy div
-      const NudiTaxonomy = detailsContainer
-        .append("div")
-        .attr("class", "NudiTaxonomy")
-        .style("border-top", "15px solid black")
-        .style("flex", "1")
-        .style("display", "none");
-
-      // Populate the details div with additional information
-      NudiTaxonomy.append("h4")
-        .text("Taxonomy")
-        .style("padding-bottom", "7px")
-        .style("color", "white");
-
-
-
-      const taxKingdomDiv = NudiTaxonomy.append("div")
-        .attr("class", "tax_kingdom")
-        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-      taxKingdomDiv.append("h5").text(d.properties.tax_kingdom);
-
-      // Attach mouse events to the parent div
-      taxKingdomDiv
-        .on("mouseover", function (event) {
-          TaxTooltip.html("Kingdom: " + d.properties.tax_kingdom) // Set tooltip content
-            .style("left", event.pageX + 5 + "px") // Position tooltip
-            .style("top", event.pageY + 5 + "px")
-            .style("visibility", "visible")
-            .style("opacity", 1);
-        })
-        .on("mousemove", function (event) {
-          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-            .style("top", event.pageY + 5 + "px");
-        })
-        .on("mouseout", function () {
-          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        // Add click event to toggle the details view
+        NudiContainer.on("click", function () {
+          const NudiTaxonomy = d3.select(this).select(".NudiTaxonomy");
+          const isTaxVisible = NudiTaxonomy.style("display") === "block";
+          NudiTaxonomy.style("display", isTaxVisible ? "none" : "block");
+          const AddDetails = d3.select(this).select(".AddDetails");
+          const isAddDVisible = AddDetails.style("display") === "block";
+          AddDetails.style("display", isAddDVisible ? "none" : "block");
         });
+
+        NudiContainer.append("h4")
+          .style("padding-bottom", "15px")
+          .text(d.properties.sci_name)
+          .style("color", "white");
+
+        NudiContainer.append("img")
+          .attr("src", nudiBranchImageURL)
+          .attr("alt", d.properties.title)
+          .style("display", "block");
+
+        const swatchesDiv = NudiContainer.append("div").style("display", "flex");
+
+        correspondingImageSwatches.forEach((swatch) => {
+          const keys = Object.keys(swatch.swatch);
+
+          const rgbColor = swatch.swatch._rgb;
+
+          const formattedPaletteKey = swatch.key
+            .replace(/([A-Z])/g, " $1") // Adds space before capital letters
+            .replace(/_/g, " ") // Replaces underscores with spaces
+            .trim(); // Removes leading/trailing spaces
+
+          swatchesDiv
+            .append("div")
+            .style(
+              "background-color",
+              `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`
+            )
+            .style("flex", "1 1 auto")
+            .style("height", "30px")
+            //.text(formattedPaletteKey)
+            .style("display", "flex") // Enable flexbox
+            .style("justify-content", "center") // Center horizontally
+            .style("align-items", "center"); // Center vertically
+        });
+
+        const TaxTooltip = d3
+          .select("body")
+          .append("div")
+          .attr("class", "TaxTooltip")
+          .style("position", "absolute") // Ensure it's positioned absolutely
+          .style("background", "rgba(0, 0, 0, 0.8)")
+          .style("visibility", "hidden")
+          .style("opacity", 0)
+          .style("pointer-events", "none");
+
+        // Create a flex container for NudiTaxonomy and AddDetails
+        const detailsContainer = NudiContainer.append("div")
+          .style("display", "flex");
+
+        // Create the NudiTaxonomy div
+        const NudiTaxonomy = detailsContainer
+          .append("div")
+          .attr("class", "NudiTaxonomy")
+          .style("border-top", "15px solid black")
+          .style("flex", "1")
+          .style("display", "none");
+
+        // Populate the details div with additional information
+        NudiTaxonomy.append("h4")
+          .text("Taxonomy")
+          .style("padding-bottom", "7px")
+          .style("color", "white");
+
+
+
+        const taxKingdomDiv = NudiTaxonomy.append("div")
+          .attr("class", "tax_kingdom")
+          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+
+        taxKingdomDiv.append("h5").text(d.properties.tax_kingdom);
+
+        // Attach mouse events to the parent div
+        taxKingdomDiv
+          .on("mouseover", function (event) {
+            TaxTooltip.html("Kingdom: " + d.properties.tax_kingdom) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
 
 
 
         const taxPhylumDiv = NudiTaxonomy.append("div")
-        .attr("class", "tax_phylum")
-        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+          .attr("class", "tax_phylum")
+          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      taxPhylumDiv.append("h5").text(d.properties.tax_phylum);
+        taxPhylumDiv.append("h5").text(d.properties.tax_phylum);
 
-      // Attach mouse events to the parent div
-      taxPhylumDiv
-        .on("mouseover", function (event) {
-          TaxTooltip.html("Phylum: " + d.properties.tax_phylum) // Set tooltip content
-            .style("left", event.pageX + 5 + "px") // Position tooltip
-            .style("top", event.pageY + 5 + "px")
-            .style("visibility", "visible")
-            .style("opacity", 1);
-        })
-        .on("mousemove", function (event) {
-          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-            .style("top", event.pageY + 5 + "px");
-        })
-        .on("mouseout", function () {
-          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-        });
+        // Attach mouse events to the parent div
+        taxPhylumDiv
+          .on("mouseover", function (event) {
+            TaxTooltip.html("Phylum: " + d.properties.tax_phylum) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
 
 
 
         const taxClassDiv = NudiTaxonomy.append("div")
-        .attr("class", "tax_class")
-        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+          .attr("class", "tax_class")
+          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      taxClassDiv.append("h5").text(d.properties.tax_class);
+        taxClassDiv.append("h5").text(d.properties.tax_class);
 
-      // Attach mouse events to the parent div
-      taxClassDiv
-        .on("mouseover", function (event) {
-          TaxTooltip.html("Class: " + d.properties.tax_class) // Set tooltip content
-            .style("left", event.pageX + 5 + "px") // Position tooltip
-            .style("top", event.pageY + 5 + "px")
-            .style("visibility", "visible")
-            .style("opacity", 1);
-        })
-        .on("mousemove", function (event) {
-          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-            .style("top", event.pageY + 5 + "px");
-        })
-        .on("mouseout", function () {
-          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-        });
+        // Attach mouse events to the parent div
+        taxClassDiv
+          .on("mouseover", function (event) {
+            TaxTooltip.html("Class: " + d.properties.tax_class) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
 
 
 
         const taxSubClassDiv = NudiTaxonomy.append("div")
-        .attr("class", "tax_subclass")
-        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+          .attr("class", "tax_subclass")
+          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      taxSubClassDiv.append("h5").text(d.properties.tax_subclass);
+        taxSubClassDiv.append("h5").text(d.properties.tax_subclass);
 
-      // Attach mouse events to the parent div
-      taxSubClassDiv
-        .on("mouseover", function (event) {
-          TaxTooltip.html("Subclass: " + d.properties.tax_subclass) // Set tooltip content
-            .style("left", event.pageX + 5 + "px") // Position tooltip
-            .style("top", event.pageY + 5 + "px")
-            .style("visibility", "visible")
-            .style("opacity", 1);
-        })
-        .on("mousemove", function (event) {
-          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-            .style("top", event.pageY + 5 + "px");
-        })
-        .on("mouseout", function () {
-          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-        });
+        // Attach mouse events to the parent div
+        taxSubClassDiv
+          .on("mouseover", function (event) {
+            TaxTooltip.html("Subclass: " + d.properties.tax_subclass) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
 
 
 
         const taxOrderDiv = NudiTaxonomy.append("div")
-        .attr("class", "tax_order")
-        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+          .attr("class", "tax_order")
+          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-      taxOrderDiv.append("h5").text(d.properties.tax_order);
+        taxOrderDiv.append("h5").text(d.properties.tax_order);
 
-      // Attach mouse events to the parent div
-      taxOrderDiv
-        .on("mouseover", function (event) {
-          TaxTooltip.html("Order: " + d.properties.tax_order) // Set tooltip content
-            .style("left", event.pageX + 5 + "px") // Position tooltip
-            .style("top", event.pageY + 5 + "px")
-            .style("visibility", "visible")
-            .style("opacity", 1);
-        })
-        .on("mousemove", function (event) {
-          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-            .style("top", event.pageY + 5 + "px");
-        })
-        .on("mouseout", function () {
-          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        // Attach mouse events to the parent div
+        taxOrderDiv
+          .on("mouseover", function (event) {
+            TaxTooltip.html("Order: " + d.properties.tax_order) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
+
+
+        const currentFeature = d; // Store the current feature context
+
+        const taxFamilyDiv = NudiTaxonomy.append("div")
+          .attr("class", "tax_family")
+          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+
+        const familyText = taxFamilyDiv.append("h5").text(function () {
+          if (
+            currentFeature.properties.tax_family === "No information available" &&
+            currentFeature.properties.title === "Dexiarchia"
+          ) {
+            return currentFeature.properties.title;
+          } else {
+            return currentFeature.properties.tax_family;
+          }
         });
 
-
-      const currentFeature = d; // Store the current feature context
-
-      const taxFamilyDiv = NudiTaxonomy.append("div")
-      .attr("class", "tax_family")
-      .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-      const familyText = taxFamilyDiv.append("h5").text(function () {
-        if (
-          currentFeature.properties.tax_family === "No information available" &&
-          currentFeature.properties.title === "Dexiarchia"
-        ) {
-          return currentFeature.properties.title;
-        } else {
-          return currentFeature.properties.tax_family;
-        }
-      });
-
-    // Attach mouse events to the parent div
-    taxFamilyDiv
-      .on("mouseover", function (event) {
-        const familyContent = familyText.text();
-        TaxTooltip.html("Family: " + familyContent) // Set tooltip content
-          .style("left", event.pageX + 5 + "px") // Position tooltip
-          .style("top", event.pageY + 5 + "px")
-          .style("visibility", "visible")
-          .style("opacity", 1);
-      })
-      .on("mousemove", function (event) {
-        TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-          .style("top", event.pageY + 5 + "px");
-      })
-      .on("mouseout", function () {
-        TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-      });
+        // Attach mouse events to the parent div
+        taxFamilyDiv
+          .on("mouseover", function (event) {
+            const familyContent = familyText.text();
+            TaxTooltip.html("Family: " + familyContent) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
 
 
-      const taxTitleDiv = NudiTaxonomy.append("div")
-      .attr("class", "title")
-      .style("position", "relative");
+        const taxTitleDiv = NudiTaxonomy.append("div")
+          .attr("class", "title")
+          .style("position", "relative");
 
-      const titleText = taxTitleDiv.append("h5").text(function () {
+        const titleText = taxTitleDiv.append("h5").text(function () {
           // Check both conditions in the same level
           if (
             (currentFeature.properties.title === "Nudibranchia" &&
@@ -1160,113 +1073,113 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
         });
 
         taxTitleDiv
-        .on("mouseover", function (event) {
-          const titleContent = titleText.text();
-          TaxTooltip.html("Genus and Species: " + titleContent) // Set tooltip content
-            .style("left", event.pageX + 5 + "px") // Position tooltip
-            .style("top", event.pageY + 5 + "px")
-            .style("visibility", "visible")
-            .style("opacity", 1);
-        })
-        .on("mousemove", function (event) {
-          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-            .style("top", event.pageY + 5 + "px");
-        })
-        .on("mouseout", function () {
-          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-        });
+          .on("mouseover", function (event) {
+            const titleContent = titleText.text();
+            TaxTooltip.html("Genus and Species: " + titleContent) // Set tooltip content
+              .style("left", event.pageX + 5 + "px") // Position tooltip
+              .style("top", event.pageY + 5 + "px")
+              .style("visibility", "visible")
+              .style("opacity", 1);
+          })
+          .on("mousemove", function (event) {
+            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+              .style("top", event.pageY + 5 + "px");
+          })
+          .on("mouseout", function () {
+            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+          });
 
-      // Create the AddDetails div to the right of NudiTaxonomy
-      const AddDetails = detailsContainer
-        .append("div")
-        .attr("class", "AddDetails")
-        .style("border-top", "15px solid black")
-        .style("flex", "1")
-        .style("display", "none");
+        // Create the AddDetails div to the right of NudiTaxonomy
+        const AddDetails = detailsContainer
+          .append("div")
+          .attr("class", "AddDetails")
+          .style("border-top", "15px solid black")
+          .style("flex", "1")
+          .style("display", "none");
 
-      // Add content to AddDetails as needed
-      AddDetails.append("h4")
-        .style("padding-bottom", "10px")
-        .text("Additional Details")
-        .style("color", "white");
+        // Add content to AddDetails as needed
+        AddDetails.append("h4")
+          .style("padding-bottom", "10px")
+          .text("Additional Details")
+          .style("color", "white");
 
-      const depthValue = d.properties.depth;
+        const depthValue = d.properties.depth;
 
-      // Use regex to check for valid number formats
-      const numberPattern = /-?\d+(\.\d+)?/; // Matches integers and decimals
+        // Use regex to check for valid number formats
+        const numberPattern = /-?\d+(\.\d+)?/; // Matches integers and decimals
 
-      if (!depthValue || depthValue.trim() === "") {
-        // If there are no entries or depthValue is empty
-        AddDetails.append("div")
-          .attr("class", "depth")
-          .append("h5")
-          .text("Depth: ")
-          .append("p")
-          .text("No information available")
-          .style("color", "white")
-          .style("display", "inline-block");
-      } else if (depthValue.match(numberPattern)) {
-        const depths = depthValue.split(" - ").map(Number); // Split and convert to numbers
-        const uniqueDepths = [...new Set(depths)]; // Remove duplicates
-
-        // Check if there's only one unique depth
-        if (uniqueDepths.length === 1) {
-          // If it's a single number, display it without a range
+        if (!depthValue || depthValue.trim() === "") {
+          // If there are no entries or depthValue is empty
           AddDetails.append("div")
             .attr("class", "depth")
             .append("h5")
             .text("Depth: ")
             .append("p")
-            .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show one time with 2 decimals
+            .text("No information available")
             .style("color", "white")
             .style("display", "inline-block");
-        } else if (uniqueDepths.length > 1) {
-          // If there are multiple depths, check for a range
-          const minDepth = Math.min(...uniqueDepths);
-          const maxDepth = Math.max(...uniqueDepths);
+        } else if (depthValue.match(numberPattern)) {
+          const depths = depthValue.split(" - ").map(Number); // Split and convert to numbers
+          const uniqueDepths = [...new Set(depths)]; // Remove duplicates
 
-          // If the range is more than one digit, show it
-          if (maxDepth - minDepth > 1) {
+          // Check if there's only one unique depth
+          if (uniqueDepths.length === 1) {
+            // If it's a single number, display it without a range
             AddDetails.append("div")
               .attr("class", "depth")
               .append("h5")
               .text("Depth: ")
               .append("p")
-              .text(`${minDepth.toFixed(2)} - ${maxDepth.toFixed(2)} meters`) // Show the range with 2 decimals
+              .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show one time with 2 decimals
               .style("color", "white")
               .style("display", "inline-block");
-          } else {
-            // If the difference is 1 or less, just show the first unique value
-            AddDetails.append("div")
-              .attr("class", "depth")
-              .append("h5")
-              .text("Depth: ")
-              .append("p")
-              .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show the first unique value
-              .style("color", "white")
-              .style("display", "inline-block");
+          } else if (uniqueDepths.length > 1) {
+            // If there are multiple depths, check for a range
+            const minDepth = Math.min(...uniqueDepths);
+            const maxDepth = Math.max(...uniqueDepths);
+
+            // If the range is more than one digit, show it
+            if (maxDepth - minDepth > 1) {
+              AddDetails.append("div")
+                .attr("class", "depth")
+                .append("h5")
+                .text("Depth: ")
+                .append("p")
+                .text(`${minDepth.toFixed(2)} - ${maxDepth.toFixed(2)} meters`) // Show the range with 2 decimals
+                .style("color", "white")
+                .style("display", "inline-block");
+            } else {
+              // If the difference is 1 or less, just show the first unique value
+              AddDetails.append("div")
+                .attr("class", "depth")
+                .append("h5")
+                .text("Depth: ")
+                .append("p")
+                .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show the first unique value
+                .style("color", "white")
+                .style("display", "inline-block");
+            }
           }
+        } else {
+          // Handle cases where depthValue does not match the expected format
+          AddDetails.append("div")
+            .attr("class", "depth")
+            .append("h5")
+            .text("Depth: ")
+            .append("p")
+            .text("No valid depth available")
+            .style("color", "white")
+            .style("display", "inline-block");
         }
-      } else {
-        // Handle cases where depthValue does not match the expected format
+
         AddDetails.append("div")
-          .attr("class", "depth")
+          .attr("class", "place")
           .append("h5")
-          .text("Depth: ")
+          .text("Location: ")
           .append("p")
-          .text("No valid depth available")
+          .text(d.properties.place)
           .style("color", "white")
           .style("display", "inline-block");
       }
-
-      AddDetails.append("div")
-        .attr("class", "place")
-        .append("h5")
-        .text("Location: ")
-        .append("p")
-        .text(d.properties.place)
-        .style("color", "white")
-        .style("display", "inline-block");
-    }
-  });
-}
+    });
+  }

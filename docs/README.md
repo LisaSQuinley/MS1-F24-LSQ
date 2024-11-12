@@ -1,16 +1,23 @@
 # Know Your Nudibranchs: A Scuba Diver's Guide to Sea Slugs (Interactive or Narrative)
 ## Dive Wish List (Interactive)
-![Know-Your-Nudibranchs_Interactive-1](https://github.com/user-attachments/assets/b39c0c37-29e4-4821-8615-62536356aeb5)
+![Sketch-3_Interactive](https://github.com/user-attachments/assets/b6033ab9-e9b5-4ec1-88a8-7427e14dee25)
 Questions to Explore: Where can I go to see these nudibranchs? How can I save a list for myself with the necessary information?
 Purpose: Scuba divers can use this as a resource for exploring and discovering nudibranchs they have yet to see on their dive trips, since currently no great database exists yet to display information for them.
 Reason for interactivity: Allows users to save the locations of their nudibranch preferences.
 Dataset used: Smithsonian's Invertebrate Zoology Department collection under the search "nudibranch".
 
 ## Branching Out: Decoding Nudibranch Taxonomy
-![Know-Your-Nudibranchs_Interactive-2](https://github.com/user-attachments/assets/8de1cae5-44bf-458b-bc6e-7d047f5c5e7e)
+![Sketch-2_Interactive](https://github.com/user-attachments/assets/25f0981a-18c7-46ce-94d0-63b7b22e9393)
 Questions to Explore: What are nudibranchs? What is taxonomy? Where do nudibranchs fall compared to us humans? Why does this matter?
 Purpose: Scuba divers or students can use this as a resource for exploring and discovering nudibranchs as an educational reference, since currently no great database exists yet to display information for nudibranchs.
 Reason for narrative: A story or animation that walks through nudibranchs and what they are, how we connect to them, and their importance to marine ecosystems provides necessary background information and education about these interesting sea slugs.
+Dataset used: Smithsonian's Invertebrate Zoology Department collection under the search "nudibranch".
+
+## Unveiling the Vibrant Palette of Nudies (Interactive)
+![Sketch-1_Interactive](https://github.com/user-attachments/assets/31b22bca-7bce-4880-bb7b-a83536227c27)
+Questions to Explore: What are the main colors of nudibranchs? Are they all the same or all different?
+Purpose: Nudibranchs are not very known underwater sea creatures, unless you are a scuba diver. This data visualization allows viewers to explore nudibranchs in a more approachable way: colors!
+Reason for interactivity: Allows users to pick and choose color combinations in order to explore the nudibranchs since scrolling through a gallery of images already exists and can become boring quickly.
 Dataset used: Smithsonian's Invertebrate Zoology Department collection under the search "nudibranch".
 
 

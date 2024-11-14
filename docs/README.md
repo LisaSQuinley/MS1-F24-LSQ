@@ -1,4 +1,5 @@
 ## Unveiling the Vibrant Palette of Nudibranchs (Mock for Interactive)
+[Know-Your-Nudibranchs_Interactive.pdf](https://github.com/user-attachments/files/17742572/Know-Your-Nudibranchs_Interactive.pdf)
 
 
 # Know Your Nudibranchs: A Scuba Diver's Guide to Sea Slugs (Interactive or Narrative)

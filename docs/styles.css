@@ -162,8 +162,8 @@ img {
 .content {
   margin-top: 5px; /* Space between button and content */
   margin-left: 10px;
-  font-family: "Fraunces", serif;
-  font-weight: 300;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 200;
   font-size: 14pt;
   color: gray;
 }

@@ -1,3 +1,6 @@
+## Unveiling the Vibrant Palette of Nudibranchs (Mock for Interactive)
+
+
 # Know Your Nudibranchs: A Scuba Diver's Guide to Sea Slugs (Interactive or Narrative)
 ## Dive Wish List (Interactive)
 ![Sketch-3_Interactive](https://github.com/user-attachments/assets/b6033ab9-e9b5-4ec1-88a8-7427e14dee25)

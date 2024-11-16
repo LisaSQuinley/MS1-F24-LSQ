@@ -125,6 +125,18 @@ footer p {
   transition: opacity 3.5s ease-in; /* Fade effect */
 }
 
+#NudiColors {
+  z-index: 3;
+  position: fixed;
+  top: 68px;
+  left: 0;
+  width: 50%;
+  overflow-y: auto; 
+  max-height: 97vh;
+  opacity: 0; /* Initially hidden */
+  transition: opacity 3.5s ease-in; /* Fade effect */
+}
+
 #NudiContainers {
   background: black;
   width: 100%;

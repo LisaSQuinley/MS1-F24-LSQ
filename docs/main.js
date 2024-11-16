@@ -19,8 +19,12 @@ d3.json("data.geojson").then((data) => {
   const NudiDivs = d3.select("#NudiDivs"); // Assuming you have a div for displaying palettes
   extractPalettes(NudiDivs, geoData); // Pass geoData here
 
+/*   // Display the palettes WHAT AM I DOING WRONG HERE?
+  const NudiColors = d3.select("#NudiColors"); // Assuming you have a div for displaying palettes
+  CategorizedSwatches(NudiColors, geoData); // Pass geoData here */
+
   // Call the initialize function somewhere in your code
-  initializeVisualization(NudiDivs, geoData);
+  initializeVisualization(NudiDivs, NudiColors, geoData);
 });
 
 const ProjectTitle = d3.select("header").append("div");
@@ -51,6 +55,14 @@ const NudiDivs = d3
   .transition()
   .duration(3500)
   .style("opacity", 1);
+
+const NudiColors = d3
+  .select("body")
+  .append("div")
+  .attr("id", "NudiColors")
+  .style("background", "white")
+  .style("margin-bottom", "15px")
+  .style("opacity", 1);  
 
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
@@ -143,6 +155,7 @@ function updateProjection() {
 
 // Add resize event listener
 window.addEventListener("resize", updateProjection);
+
 
 function groupDataByLocation(data, threshold = 2) {
   const grouped = [];
@@ -441,8 +454,7 @@ function clearSelections() {
   // Reset stroke and opacity for all circles with the class "single-circle"
   d3.selectAll('circle.single-circle')
     .attr("stroke-width", 0)
-    .attr("stroke", "none")
-    .attr("opacity", 0.7);
+    .attr("stroke", "none");
 
   // Hide the tooltip if it's visible
   mapTooltip.style("visibility", "hidden");
@@ -492,7 +504,7 @@ async function getImageFiles() {
 }
 
 // This function extracts color palettes using Vibrant.js
-async function extractPalettes(NudiDivs, geoData) {
+async function extractPalettes() {
   // Ensure geoData is passed
   const imageFiles = await getImageFiles();
   const groupedPalettes = [];
@@ -523,26 +535,11 @@ async function extractPalettes(NudiDivs, geoData) {
         }
       }
 
-    } catch (err) {
-      console.error(`Error processing image ${url}:`, err);
+    } 
+    catch (err) {
+    //   console.error(`Error processing image ${url}:`, err);
     }
   }
-  // Call the function to display the images and swatches
-  // setTimeout(() => {
-    // I was calling groupedPalettes here when I was also returning it. didn't give it time to resolve. Soumya added setTimeout to add a pause until displayPalettes was called.
-  //   displayPalettes(groupedPalettes, NudiDivs, geoData);
-  //  }, 1000) // Ensure geoData is passed
-
-  // const groupedPaletterString = JSON.stringify(groupedPalettes);
-  // console.log(groupedPaletterString); 
-  // const fs = require('fs');
-
-  //   fs.writeFile("vibrant.json", groupedPaletterString, (err) => {
-  //     if(err){
-  //       console.log("error writing file", err);
-  //     }
-  // }); 
-  //console.log(groupedPalettes)
   return groupedPalettes; // Return the palettes for further use
 }
 
@@ -696,12 +693,13 @@ function renderColorCircles(geoData) {
 
 
 // Initialize the visualization
-async function initializeVisualization(NudiDivs, geoData) {
+async function initializeVisualization(NudiDivs, NudiColors, geoData) {
   // Wait for extractPalettes to resolve before continuing
   const groupedData = await extractPalettes(NudiDivs, geoData);
   // I was calling displayPalettes here, but it should be called after the promise resolves
   // Once the promise resolves, call displayPalettes
   displayPalettes(groupedData, NudiDivs, geoData);
+  CategorizedSwatches(NudiColors, geoData); // Pass geoData here
 }
 
 
@@ -787,13 +785,42 @@ const showCirclesButton = d3
     return array;
   }
 
+  const CategorizedSwatches = (geoData, NudiColors) => {
+    //console.log(NudiColors);
+    // Loop through each feature in the GeoJSON
+    geoData.features.forEach((feature) => {
+      // Check if this feature has palettes, and if it does, process each swatch
+      const swatches = feature.properties.palettes ? feature.properties.palettes.map((palette) => {
+        return {
+          Nudi_id: feature.properties.Nudi_id,
+          swatch: palette.swatch, // RGB color values
+          tax_family: feature.properties.tax_family, // Taxonomy family
+          key: palette.key // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
+        };
+      }) : []; // Return an empty array if no palettes exist
+  
+      // For each swatch, create a rectangle and append it to the #NudiColors div
+      swatches.forEach((swatch) => {
+        const ColorContainer = NudiColors
+          .append("rect")
+          .attr("class", `${swatch.tax_family}-${swatch.Nudi_id}-${swatch.key}`) // Class includes tax_family, Nudi_id, and key
+          .style("fill", `rgb(${swatch.swatch.join(",")})`)         // Set the fill color using RGB
+          .style("width", "50px")                                   // Set the width of each swatch
+          .style("height", "50px")                                  // Set the height of each swatch
+          .style("margin", "5px")                                   // Add margin between swatches
+          .style("display", "inline-block")                         // Arrange swatches horizontally
+          .attr("title", `Nudi ID: ${swatch.Nudi_id}, Key: ${swatch.key}`); // Tooltip shows Nudi ID and key
+      });
+    });
+  };
+
   // This function displays the images and their color palettes
   function displayPalettes(groupedPalettes, NudiDivs, geoData) {
-    console.log(groupedPalettes); 
+    //console.log(groupedPalettes); 
 
     const shuffledFeatures = shuffle(geoData.features);
 
-    console.log(shuffledFeatures.length)
+    //console.log(shuffledFeatures.length)
 
     shuffledFeatures.forEach((d) => {
       // Assuming groupedPalettes is already an array, no need to flatten
@@ -1183,3 +1210,4 @@ const showCirclesButton = d3
       }
     });
   }
+

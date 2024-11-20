@@ -16,12 +16,12 @@ d3.json("data.geojson").then((data) => {
   renderCircles(groupedData);
 
   // Load image files and extract palettes
-  const NudiDivs = d3.select("#NudiDivs"); // Assuming you have a div for displaying palettes
+  const NudiDivs = d3.select("#NudiDivs");
   extractPalettes(NudiDivs, geoData); // Pass geoData here
 
-/*   // Display the palettes WHAT AM I DOING WRONG HERE?
-  const NudiColors = d3.select("#NudiColors"); // Assuming you have a div for displaying palettes
-  CategorizedSwatches(NudiColors, geoData); // Pass geoData here */
+  // Display the palettes WHAT AM I DOING WRONG HERE?
+  const NudiColors = d3.select("#NudiColors");
+  CategorizedSwatches(NudiColors, geoData); // Pass geoData here
 
   // Call the initialize function somewhere in your code
   initializeVisualization(NudiDivs, NudiColors, geoData);
@@ -51,7 +51,7 @@ const NudiDivs = d3
   .append("div")
   .attr("id", "NudiDivs")
   .style("background", "black")
-  .style("margin-bottom", "15px")
+  .style("margin-bottom", "45px")
   .transition()
   .duration(3500)
   .style("opacity", 1);
@@ -59,10 +59,12 @@ const NudiDivs = d3
 const NudiColors = d3
   .select("body")
   .append("div")
-  .attr("id", "NudiColors")
   .style("background", "white")
+  .attr("id", "NudiColors")
   .style("margin-bottom", "15px")
-  .style("opacity", 1);  
+  .transition()
+  .duration(3500)
+  .style("opacity", 1);
 
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
@@ -699,6 +701,7 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
   // I was calling displayPalettes here, but it should be called after the promise resolves
   // Once the promise resolves, call displayPalettes
   displayPalettes(groupedData, NudiDivs, geoData);
+  // this function calls categorizeSwatches, which is not defined?
   CategorizedSwatches(NudiColors, geoData); // Pass geoData here
 }
 
@@ -785,31 +788,48 @@ const showCirclesButton = d3
     return array;
   }
 
-  const CategorizedSwatches = (geoData, NudiColors) => {
+  async function CategorizedSwatches (NudiColors, geoData) {
     //console.log(NudiColors);
     // Loop through each feature in the GeoJSON
     geoData.features.forEach((feature) => {
       // Check if this feature has palettes, and if it does, process each swatch
-      const swatches = feature.properties.palettes ? feature.properties.palettes.map((palette) => {
+      const swatches = feature.properties.palettes ? feature.properties.palettes.map((palettes) => {
+        let taxFamily = (
+          feature.properties.tax_family === "No information available" && 
+          feature.properties.title === "Dexiarchia"
+        ) ? feature.properties.title : feature.properties.tax_family;
+    
+        // Secondary condition: if tax_family is "No information available", set it to "unknown"
+        if (taxFamily === "No information available") {
+          taxFamily = "unknown";
+        }
+    
         return {
           Nudi_id: feature.properties.Nudi_id,
-          swatch: palette.swatch, // RGB color values
-          tax_family: feature.properties.tax_family, // Taxonomy family
-          key: palette.key // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
+          swatch: palettes.swatch, // RGB color values
+          tax_family: taxFamily, // Final tax_family value after both conditions
+          key: palettes.key // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
         };
       }) : []; // Return an empty array if no palettes exist
   
       // For each swatch, create a rectangle and append it to the #NudiColors div
       swatches.forEach((swatch) => {
+        //console.log(swatch);
         const ColorContainer = NudiColors
-          .append("rect")
-          .attr("class", `${swatch.tax_family}-${swatch.Nudi_id}-${swatch.key}`) // Class includes tax_family, Nudi_id, and key
-          .style("fill", `rgb(${swatch.swatch.join(",")})`)         // Set the fill color using RGB
-          .style("width", "50px")                                   // Set the width of each swatch
-          .style("height", "50px")                                  // Set the height of each swatch
-          .style("margin", "5px")                                   // Add margin between swatches
-          .style("display", "inline-block")                         // Arrange swatches horizontally
-          .attr("title", `Nudi ID: ${swatch.Nudi_id}, Key: ${swatch.key}`); // Tooltip shows Nudi ID and key
+        .append("svg")
+        .attr("class", `${swatch.tax_family} ${swatch.Nudi_id} ${swatch.key} svg-rect`) 
+        .attr("width", 50)  // Set the width of the SVG to match the rect
+        .attr("height", 50) // Set the height of the SVG to match the rect
+        .append("rect")
+        .attr("fill", `rgb(${swatch.swatch.join(",")})`) 
+        .style("fill-opacity", 1)        
+        .style("width", "50px")                     
+        .style("height", "50px")            
+        .style("display", "flex")
+        .style("justify-content", "center") // Horizontally center the items
+        .style("align-items", "center") // Vertically center the items
+        .style("z-index", 10); 
+          ; 
       });
     });
   };

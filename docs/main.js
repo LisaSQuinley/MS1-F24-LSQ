@@ -56,16 +56,11 @@ const NudiDivs = d3
   .duration(3500)
   .style("opacity", 1);
 
-const NudiColors = d3
+  const NudiColors = d3
   .select("body")
   .append("div")
-  .style("background", "white")
   .attr("id", "NudiColors")
-  .style("margin-bottom", "15px")
-  .transition()
-  .duration(3500)
-  .style("opacity", 1);
-
+  .style("background", "white");
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
 let mapheight = window.innerHeight; // Height of the viewport
@@ -136,7 +131,9 @@ d3.json("ne_10m_ocean.json").then((data) => {
 });
 
 // Create a group for the circles
-const circlesGroup = svg.append("g").attr("class", "circles-layer");
+const circlesGroup = svg
+.append("g")
+.attr("id", "circles-layer");
 
 // Update projection function
 function updateProjection() {
@@ -258,6 +255,7 @@ function renderCircles(groupedData) {
       }
     })
     .on("click", function (event, d) {
+      console.log(click);
       // Clear selected state of all circles
       groupedData.forEach((item) => {
         item.selected = false;
@@ -556,7 +554,7 @@ const NudiTooltip = d3
   .style("font-family", '"Kodchasan", sans-serif')
   .style("font-weight", "600");
 
-function renderColorCircles(geoData) {
+/* function renderColorCircles(geoData) {
   const imageFolder = './image-data/images'; // Set your image folder path here
 
   const colorData = geoData.features.map(features => {
@@ -691,7 +689,7 @@ function renderColorCircles(geoData) {
     colorCircles.attr("fill", (d) => `rgb(${d.swatch.join(",")})`);
 
     colorCircles.exit().remove();
-  }
+  } */
 
 
 // Initialize the visualization
@@ -713,7 +711,7 @@ function showCircles() {
       // Clear existing circles and text
       circlesGroup.selectAll("circle").remove();
       circlesGroup.selectAll("text").remove(); // Clear any existing text
-
+      d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
 
       // Render the circles
       renderCircles(groupedData); // Pass the appropriate data
@@ -721,8 +719,26 @@ function showCircles() {
 
     }
 
+    function showColorPalettes() {
+      if (currentRendering === 'colorPalettes') return;
+
+      // Clear existing circles and text
+      circlesGroup.selectAll("circle").remove();
+      circlesGroup.selectAll(".count-label").remove();
+      circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
+
+      // Render the color palettes
+      CategorizedSwatches(geoData);
+
+      // Make circles visible
+      circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
+      d3.select('#NudiColors').style("opacity", 1); // Set opacity to 1
+
+      currentRendering = 'colorPalettes';
+    }
+
 // Update the showColorCircles function
-function showColorCircles() {
+/* function showColorCircles() {
       if (currentRendering === 'colorCircles') return;
 
       // Clear existing circles and text
@@ -737,7 +753,7 @@ function showColorCircles() {
       circlesGroup.selectAll("circle").attr("opacity", 1); // Set opacity to 1
 
       currentRendering = 'colorCircles';
-    }
+    } */
 
 const showCirclesButton = d3
     .select("header")
@@ -755,7 +771,26 @@ const showCirclesButton = d3
       d3.select(this).style("transform", "scale(1)"); // Reset scale
     });
 
-  const showColorCirclesButton = d3
+    const showColorSwatchesButton = d3
+    .select("header")
+    .append("button")
+    .attr("id", "showColorSwatchesButton")
+    .text("Show Swatches")
+    .on("click", function() {
+      // Trigger the CategorizedSwatches function on button click
+      showColorPalettes(geoData); // Pass geoData or relevant data, not NudiColors
+    })
+    .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+    .on("mouseover", function () {
+      d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+      d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+    })
+    .on("mouseout", function () {
+      d3.select(this).style("background-color", "#FFC000"); // Original color
+      d3.select(this).style("transform", "scale(1)"); // Reset scale
+    });
+
+/*   const showColorCirclesButton = d3
     .select("header")
     .append("button")
     .attr("id", "showColorCirclesButton")
@@ -769,11 +804,12 @@ const showCirclesButton = d3
     .on("mouseout", function () {
       d3.select(this).style("background-color", "#FFC000"); // Original color
       d3.select(this).style("transform", "scale(1)"); // Reset scale
-    });
+    }); */
 
   // Event listeners for buttons
   document.getElementById("showCircles").addEventListener("click", showCircles);
-  document.getElementById("showColorCircles").addEventListener("click", showColorCircles);
+  document.getElementById("showColorPalettes").addEventListener("click", showColorPalettes);
+  //document.getElementById("showColorCircles").addEventListener("click", showColorCircles);
 
   // Initial rendering
   showCircles(); // Show circles by default
@@ -792,6 +828,8 @@ const showCirclesButton = d3
     //console.log(NudiColors);
     // Loop through each feature in the GeoJSON
     geoData.features.forEach((feature) => {
+      //console.log(geoData.features);
+      //console.log(feature);
       // Check if this feature has palettes, and if it does, process each swatch
       const swatches = feature.properties.palettes ? feature.properties.palettes.map((palettes) => {
         let taxFamily = (
@@ -826,13 +864,29 @@ const showCirclesButton = d3
         .style("width", "50px")                     
         .style("height", "50px")            
         .style("display", "flex")
-        .style("justify-content", "center") // Horizontally center the items
-        .style("align-items", "center") // Vertically center the items
-        .style("z-index", 10); 
-          ; 
-      });
-    });
-  };
+        .style("z-index", 10);
+/*         .on("click", function (event, d) {
+          console.log(swatch.Nudi_id);
+          d.Nudi_id.forEach((i) => {
+            d3.selectAll(`div.${i}`)
+              .style("border", "20px solid #FFC000")
+              .style("background-color", "#FFC000");
+            d3.selectAll(`div.${i} h4`).style("color", "black");
+            d3.selectAll(`div.${i} .AddDetails h5`).style("color", "black");
+            d3.selectAll(`div.${i} p`).style("color", "black");
+            d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid #FFC000");
+            d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid #FFC000");
+          });
+          // Reorder the associated divs to the top (move them to the top in the DOM)
+          d.Nudi_id.forEach((id) => {
+            const divs = d3.selectAll(`div.${id}`).nodes(); // Get all divs with class Nudi_id
+            divs.forEach((div) => {
+              const parent = div.parentNode; // Get the parent element
+              parent.insertBefore(div, parent.firstChild); // Move div to the beginning of its parent's child list (top in the visual order) */
+            });
+          });
+        };
+
 
   // This function displays the images and their color palettes
   function displayPalettes(groupedPalettes, NudiDivs, geoData) {

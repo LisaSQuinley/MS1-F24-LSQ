@@ -1,10 +1,13 @@
 {
   "dependencies": {
+    "@material/web": "^2.2.0",
     "d3-geo-projection": "^4.0.0",
     "express": "^4.21.0",
     "fs-extra": "^11.2.0",
+    "install": "^0.13.0",
     "node-fetch": "^3.3.2",
     "node-vibrant": "^3.2.1-alpha.1",
+    "npm": "^10.9.0",
     "vibrant": "^0.0.1"
   },
   "type": "module",

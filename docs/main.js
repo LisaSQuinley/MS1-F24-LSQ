@@ -255,7 +255,6 @@ function renderCircles(groupedData) {
       }
     })
     .on("click", function (event, d) {
-      console.log(click);
       // Clear selected state of all circles
       groupedData.forEach((item) => {
         item.selected = false;

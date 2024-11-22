@@ -56,11 +56,46 @@ const NudiDivs = d3
   .duration(3500)
   .style("opacity", 1);
 
-  const NudiColors = d3
+const NudiColors = d3
   .select("body")
   .append("div")
   .attr("id", "NudiColors")
-  .style("background", "white");
+  .attr("align", "center")
+  .style("z-index", "100")
+  .style("padding-top", "10px")
+  .style("background", "black");
+
+  const checkboxes = NudiColors
+  .append("form")
+  .selectAll("div") // Wrap each checkbox in a div
+  .data(["Red", "Purple", "Blue", "Green", "Yellow", "Orange", "Black", "White"]) // Array of options for checkboxes
+  .enter()
+  .append("div")
+  .attr("class", "checkbox")
+  .style("display", "inline-flex") // Display checkboxes side by side
+  .style("align-items", "center") // Align checkbox and label vertically
+  .style("padding", "5px")
+  .style("margin", "5px") // Space between checkboxes
+  .append("label") // Append label first
+  .style("display", "inline-flex") // Make label display inline-flex
+  .style("align-items", "center") // Align items vertically within label
+
+  // Now append the md-switch within the label (checkbox comes first)
+  .append("md-checkbox") 
+  .attr("class", function(d) { return `checkbox-${d}`; })
+
+  // Append the label text after the checkbox (text on the right side)
+  .each(function(d) {
+    d3.select(this.parentNode) // Select the parent label
+      .append("span") // Add a span for the text
+      .style("margin-left", "5px")
+      .style("color", "white")
+      .text(d); // Use the data for the text label
+  });
+
+
+
+
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
 let mapheight = window.innerHeight; // Height of the viewport
@@ -80,6 +115,7 @@ const graticule = d3.geoGraticule10();
 const mapsvg = d3
   .select("body")
   .append("svg")
+  .attr("id", "globalMap")
   .attr("class", "map")
   .attr("width", mapwidth)
   .attr("height", mapheight);
@@ -132,8 +168,8 @@ d3.json("ne_10m_ocean.json").then((data) => {
 
 // Create a group for the circles
 const circlesGroup = svg
-.append("g")
-.attr("id", "circles-layer");
+  .append("g")
+  .attr("id", "circles-layer");
 
 // Update projection function
 function updateProjection() {
@@ -534,9 +570,9 @@ async function extractPalettes() {
         }
       }
 
-    } 
+    }
     catch (err) {
-    //   console.error(`Error processing image ${url}:`, err);
+      //   console.error(`Error processing image ${url}:`, err);
     }
   }
   return groupedPalettes; // Return the palettes for further use
@@ -698,6 +734,13 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
   // I was calling displayPalettes here, but it should be called after the promise resolves
   // Once the promise resolves, call displayPalettes
   displayPalettes(groupedData, NudiDivs, geoData);
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", true); 
+  globalMap.classed("not-clickable", false); 
+  const nudiColorsDiv = d3.select("#NudiColors"); 
+ nudiColorsDiv.classed("clickable",false); // Add clickable class
+ nudiColorsDiv.classed("not-clickable", true); 
+
   // this function calls categorizeSwatches, which is not defined?
   CategorizedSwatches(NudiColors, geoData); // Pass geoData here
 }
@@ -705,36 +748,54 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
 
 // Function to show the circles
 function showCircles() {
-      if (currentRendering === 'circles') return; // No action if already rendering circles
+  if (currentRendering === 'circles') return; // No action if already rendering circles
 
-      // Clear existing circles and text
-      circlesGroup.selectAll("circle").remove();
-      circlesGroup.selectAll("text").remove(); // Clear any existing text
-      d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
+  // Clear existing circles and text
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll("text").remove(); // Clear any existing text
+  d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
 
-      // Render the circles
-      renderCircles(groupedData); // Pass the appropriate data
-      currentRendering = 'circles'; // Update current rendering state
 
-    }
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", true); 
+  globalMap.classed("not-clickable", false); 
 
-    function showColorPalettes() {
-      if (currentRendering === 'colorPalettes') return;
+  const nudiColorsDiv = d3.select("#NudiColors"); 
+ nudiColorsDiv.classed("clickable",false); // Add clickable class
+ nudiColorsDiv.classed("not-clickable", true); 
 
-      // Clear existing circles and text
-      circlesGroup.selectAll("circle").remove();
-      circlesGroup.selectAll(".count-label").remove();
-      circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
+  // Render the circles
+  renderCircles(groupedData); // Pass the appropriate data
+  currentRendering = 'circles'; // Update current rendering state
 
-      // Render the color palettes
-      CategorizedSwatches(geoData);
+}
 
-      // Make circles visible
-      circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
-      d3.select('#NudiColors').style("opacity", 1); // Set opacity to 1
+function showColorPalettes() {
+  if (currentRendering === 'colorPalettes') return;
 
-      currentRendering = 'colorPalettes';
-    }
+  // Clear existing circles and text
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll(".count-label").remove();
+  circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
+
+  const nudiColorsDiv = d3.select("#NudiColors"); 
+  // Render the color palettes
+  CategorizedSwatches(NudiColors, geoData);
+
+  // Make circles visible
+  circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
+  
+  nudiColorsDiv.style("opacity", 1); // Set opacity to 1
+//   
+ nudiColorsDiv.classed("clickable", true); // Add clickable class
+ nudiColorsDiv.classed("not-clickable", false); 
+
+ const globalMap = d3.select("#globalMap");
+ globalMap.classed("clickable", false); 
+ globalMap.classed("not-clickable", true); 
+
+  currentRendering = 'colorPalettes';
+}
 
 // Update the showColorCircles function
 /* function showColorCircles() {
@@ -755,39 +816,39 @@ function showCircles() {
     } */
 
 const showCirclesButton = d3
-    .select("header")
-    .append("button")
-    .attr("id", "showCirclesButton")
-    .text("Show Locations")
-    .on("click", showCircles) // Call the showCircles function
-    .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
-    .on("mouseover", function () {
-      d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
-      d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
-    })
-    .on("mouseout", function () {
-      d3.select(this).style("background-color", "#FFC000"); // Original color
-      d3.select(this).style("transform", "scale(1)"); // Reset scale
-    });
+  .select("header")
+  .append("button")
+  .attr("id", "showCirclesButton")
+  .text("Show Locations")
+  .on("click", showCircles) // Call the showCircles function
+  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+  .on("mouseover", function () {
+    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function () {
+    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
 
-    const showColorSwatchesButton = d3
-    .select("header")
-    .append("button")
-    .attr("id", "showColorSwatchesButton")
-    .text("Show Swatches")
-    .on("click", function() {
-      // Trigger the CategorizedSwatches function on button click
-      showColorPalettes(geoData); // Pass geoData or relevant data, not NudiColors
-    })
-    .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
-    .on("mouseover", function () {
-      d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
-      d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
-    })
-    .on("mouseout", function () {
-      d3.select(this).style("background-color", "#FFC000"); // Original color
-      d3.select(this).style("transform", "scale(1)"); // Reset scale
-    });
+const showColorSwatchesButton = d3
+  .select("header")
+  .append("button")
+  .attr("id", "showColorSwatchesButton")
+  .text("Show Swatches")
+  .on("click", function () {
+    // Trigger the CategorizedSwatches function on button click
+    showColorPalettes(geoData); // Pass geoData or relevant data, not NudiColors
+  })
+  .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
+  .on("mouseover", function () {
+    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function () {
+    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
 
 /*   const showColorCirclesButton = d3
     .select("header")
@@ -805,482 +866,484 @@ const showCirclesButton = d3
       d3.select(this).style("transform", "scale(1)"); // Reset scale
     }); */
 
-  // Event listeners for buttons
-  document.getElementById("showCircles").addEventListener("click", showCircles);
-  document.getElementById("showColorPalettes").addEventListener("click", showColorPalettes);
-  //document.getElementById("showColorCircles").addEventListener("click", showColorCircles);
 
-  // Initial rendering
-  showCircles(); // Show circles by default
+// Initial rendering
+showCircles(); // Show circles by default
 
 
 
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
+  return array;
+}
 
-  async function CategorizedSwatches (NudiColors, geoData) {
-    //console.log(NudiColors);
-    // Loop through each feature in the GeoJSON
-    geoData.features.forEach((feature) => {
-      //console.log(geoData.features);
-      //console.log(feature);
-      // Check if this feature has palettes, and if it does, process each swatch
-      const swatches = feature.properties.palettes ? feature.properties.palettes.map((palettes) => {
-        let taxFamily = (
-          feature.properties.tax_family === "No information available" && 
-          feature.properties.title === "Dexiarchia"
-        ) ? feature.properties.title : feature.properties.tax_family;
-    
-        // Secondary condition: if tax_family is "No information available", set it to "unknown"
-        if (taxFamily === "No information available") {
-          taxFamily = "unknown";
-        }
-    
-        return {
-          Nudi_id: feature.properties.Nudi_id,
-          swatch: palettes.swatch, // RGB color values
-          tax_family: taxFamily, // Final tax_family value after both conditions
-          key: palettes.key // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
-        };
-      }) : []; // Return an empty array if no palettes exist
-  
-      // For each swatch, create a rectangle and append it to the #NudiColors div
-      swatches.forEach((swatch) => {
-        //console.log(swatch);
-        const ColorContainer = NudiColors
+async function CategorizedSwatches(NudiColors, geoData) {
+  // console.log("");
+  //console.log(NudiColors);
+  // Loop through each feature in the GeoJSON
+  geoData.features.forEach((feature) => {
+    //console.log(geoData.features);
+    //console.log(feature);
+    // Check if this feature has palettes, and if it does, process each swatch
+    const swatches = feature.properties.palettes ? feature.properties.palettes.map((palettes) => {
+      let taxFamily = (
+        feature.properties.tax_family === "No information available" &&
+        feature.properties.title === "Dexiarchia"
+      ) ? feature.properties.title : feature.properties.tax_family;
+
+      // Secondary condition: if tax_family is "No information available", set it to "unknown"
+      if (taxFamily === "No information available") {
+        taxFamily = "unknown";
+      }
+
+      return {
+        Nudi_id: feature.properties.Nudi_id,
+        swatch: palettes.swatch, // RGB color values
+        tax_family: taxFamily, // Final tax_family value after both conditions
+        key: palettes.key // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
+      };
+    }) : []; // Return an empty array if no palettes exist
+
+    // For each swatch, create a rectangle and append it to the #NudiColors div
+    swatches.forEach((swatch) => {
+      //console.log(swatch);
+      const ColorContainer = NudiColors
         .append("svg")
-        .attr("class", `${swatch.tax_family} ${swatch.Nudi_id} ${swatch.key} svg-rect`) 
+        .style("margin", "10px")
+        .attr("class", `${swatch.tax_family} ${swatch.Nudi_id} ${swatch.key} svg-rect`)
         .attr("width", 50)  // Set the width of the SVG to match the rect
         .attr("height", 50) // Set the height of the SVG to match the rect
         .append("rect")
-        .attr("fill", `rgb(${swatch.swatch.join(",")})`) 
-        .style("fill-opacity", 1)        
-        .style("width", "50px")                     
-        .style("height", "50px")            
+        .attr("fill", `rgb(${swatch.swatch.join(",")})`)
+        .style("fill-opacity", 1)
+        .style("width", "50px")
+        .style("height", "50px")
         .style("display", "flex")
-        .style("z-index", 10);
-/*         .on("click", function (event, d) {
-          console.log(swatch.Nudi_id);
-          d.Nudi_id.forEach((i) => {
-            d3.selectAll(`div.${i}`)
-              .style("border", "20px solid #FFC000")
-              .style("background-color", "#FFC000");
-            d3.selectAll(`div.${i} h4`).style("color", "black");
-            d3.selectAll(`div.${i} .AddDetails h5`).style("color", "black");
-            d3.selectAll(`div.${i} p`).style("color", "black");
-            d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid #FFC000");
-            d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid #FFC000");
-          });
-          // Reorder the associated divs to the top (move them to the top in the DOM)
-          d.Nudi_id.forEach((id) => {
-            const divs = d3.selectAll(`div.${id}`).nodes(); // Get all divs with class Nudi_id
-            divs.forEach((div) => {
-              const parent = div.parentNode; // Get the parent element
-              parent.insertBefore(div, parent.firstChild); // Move div to the beginning of its parent's child list (top in the visual order) */
-            });
-          });
-        };
-
-
-  // This function displays the images and their color palettes
-  function displayPalettes(groupedPalettes, NudiDivs, geoData) {
-    //console.log(groupedPalettes); 
-
-    const shuffledFeatures = shuffle(geoData.features);
-
-    //console.log(shuffledFeatures.length)
-
-    shuffledFeatures.forEach((d) => {
-      // Assuming groupedPalettes is already an array, no need to flatten
-      //  geoData.features.forEach((d) => {
-      const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
-      const correspondingImageSwatches = groupedPalettes.filter(
-        (image) => image.url === nudiBranchImageURL
-      );
-      //console.log(correspondingImageSwatches);
-      if (correspondingImageSwatches.length > 0) {
-        const NudiContainer = NudiDivs.append("div")
-          .attr("class", d.properties.Nudi_id)
-          .attr("id", "NudiContainers")
-          .style("display", "inline-block")
-          .style("text-align", "center")
-          .style("border", "20px solid black")
-          .style("box-sizing", "border-box")
-          .style("cursor", "pointer"); // Change cursor to pointer on hover
-
-        setTimeout(() => {
-          NudiContainer.style("opacity", 1); // Change opacity to 1 for fade-in
-          NudiContainer.style("transition", "opacity 1.5s ease-in"); // Add transition effect
-        }, 0);
-
-        // Add click event to toggle the details view
-        NudiContainer.on("click", function () {
-          const NudiTaxonomy = d3.select(this).select(".NudiTaxonomy");
-          const isTaxVisible = NudiTaxonomy.style("display") === "block";
-          NudiTaxonomy.style("display", isTaxVisible ? "none" : "block");
-          const AddDetails = d3.select(this).select(".AddDetails");
-          const isAddDVisible = AddDetails.style("display") === "block";
-          AddDetails.style("display", isAddDVisible ? "none" : "block");
+        .style("z-index", 10)
+        .on("click", function (event, d) {
+          console.log(swatch.Nudi_id, d);
+          // d.Nudi_id.forEach((i) => {
+          //   d3.selectAll(`div.${i}`)
+          //     .style("border", "20px solid #FFC000")
+          //     .style("background-color", "#FFC000");
+          //   d3.selectAll(`div.${i} h4`).style("color", "black");
+          //   d3.selectAll(`div.${i} .AddDetails h5`).style("color", "black");
+          //   d3.selectAll(`div.${i} p`).style("color", "black");
+          //   d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid #FFC000");
+          //   d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid #FFC000");
+          // });
+          // // Reorder the associated divs to the top (move them to the top in the DOM)
+          // d.Nudi_id.forEach((id) => {
+          //   const divs = d3.selectAll(`div.${id}`).nodes(); // Get all divs with class Nudi_id
+          //   divs.forEach((div) => {
+          //     const parent = div.parentNode; // Get the parent element
+          //     parent.insertBefore(div, parent.firstChild); // Move div to the beginning of its parent's child list (top in the visual order)
+          //   }
+          //   );
+          // });
         });
+    });
+  });
+}
 
-        NudiContainer.append("h4")
-          .style("padding-bottom", "15px")
-          .text(d.properties.sci_name)
-          .style("color", "white");
 
-        NudiContainer.append("img")
-          .attr("src", nudiBranchImageURL)
-          .attr("alt", d.properties.title)
-          .style("display", "block");
 
-        const swatchesDiv = NudiContainer.append("div").style("display", "flex");
+// This function displays the images and their color palettes
+function displayPalettes(groupedPalettes, NudiDivs, geoData) {
+  //console.log(groupedPalettes); 
 
-        correspondingImageSwatches.forEach((swatch) => {
-          const keys = Object.keys(swatch.swatch);
+  const shuffledFeatures = shuffle(geoData.features);
 
-          const rgbColor = swatch.swatch._rgb;
+  //console.log(shuffledFeatures.length)
 
-          const formattedPaletteKey = swatch.key
-            .replace(/([A-Z])/g, " $1") // Adds space before capital letters
-            .replace(/_/g, " ") // Replaces underscores with spaces
-            .trim(); // Removes leading/trailing spaces
+  shuffledFeatures.forEach((d) => {
+    // Assuming groupedPalettes is already an array, no need to flatten
+    const nudiBranchImageURL = `${imageFolder}/${d.properties.Nudi_id}.jpg`; // Use global imageFolder
+    const correspondingImageSwatches = groupedPalettes.filter(
+      (image) => image.url === nudiBranchImageURL
+    );
+    //console.log(correspondingImageSwatches);
+    if (correspondingImageSwatches.length > 0) {
+      const NudiContainer = NudiDivs.append("div")
+        .attr("class", d.properties.Nudi_id)
+        .attr("id", "NudiContainers")
+        .style("display", "inline-block")
+        .style("text-align", "center")
+        .style("border", "20px solid black")
+        .style("box-sizing", "border-box")
+        .style("cursor", "pointer"); // Change cursor to pointer on hover
 
-          swatchesDiv
-            .append("div")
-            .style(
-              "background-color",
-              `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`
-            )
-            .style("flex", "1 1 auto")
-            .style("height", "30px")
-            //.text(formattedPaletteKey)
-            .style("display", "flex") // Enable flexbox
-            .style("justify-content", "center") // Center horizontally
-            .style("align-items", "center"); // Center vertically
-        });
+      setTimeout(() => {
+        NudiContainer.style("opacity", 1); // Change opacity to 1 for fade-in
+        NudiContainer.style("transition", "opacity 1.5s ease-in"); // Add transition effect
+      }, 0);
 
-        const TaxTooltip = d3
-          .select("body")
+      // Add click event to toggle the details view
+      NudiContainer.on("click", function () {
+        const NudiTaxonomy = d3.select(this).select(".NudiTaxonomy");
+        const isTaxVisible = NudiTaxonomy.style("display") === "block";
+        NudiTaxonomy.style("display", isTaxVisible ? "none" : "block");
+        const AddDetails = d3.select(this).select(".AddDetails");
+        const isAddDVisible = AddDetails.style("display") === "block";
+        AddDetails.style("display", isAddDVisible ? "none" : "block");
+      });
+
+      NudiContainer.append("h4")
+        .style("padding-bottom", "15px")
+        .text(d.properties.sci_name)
+        .style("color", "white");
+
+      NudiContainer.append("img")
+        .attr("src", nudiBranchImageURL)
+        .attr("alt", d.properties.title)
+        .style("display", "block");
+
+      const swatchesDiv = NudiContainer.append("div").style("display", "flex");
+
+      correspondingImageSwatches.forEach((swatch) => {
+        const keys = Object.keys(swatch.swatch);
+
+        const rgbColor = swatch.swatch._rgb;
+
+        const formattedPaletteKey = swatch.key
+          .replace(/([A-Z])/g, " $1") // Adds space before capital letters
+          .replace(/_/g, " ") // Replaces underscores with spaces
+          .trim(); // Removes leading/trailing spaces
+
+        swatchesDiv
           .append("div")
-          .attr("class", "TaxTooltip")
-          .style("position", "absolute") // Ensure it's positioned absolutely
-          .style("background", "rgba(0, 0, 0, 0.8)")
-          .style("visibility", "hidden")
-          .style("opacity", 0)
-          .style("pointer-events", "none");
+          .style(
+            "background-color",
+            `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`
+          )
+          .style("flex", "1 1 auto")
+          .style("height", "30px")
+          //.text(formattedPaletteKey)
+          .style("display", "flex") // Enable flexbox
+          .style("justify-content", "center") // Center horizontally
+          .style("align-items", "center"); // Center vertically
+      });
 
-        // Create a flex container for NudiTaxonomy and AddDetails
-        const detailsContainer = NudiContainer.append("div")
-          .style("display", "flex");
+      const TaxTooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "TaxTooltip")
+        .style("position", "absolute") // Ensure it's positioned absolutely
+        .style("background", "rgba(0, 0, 0, 0.8)")
+        .style("visibility", "hidden")
+        .style("opacity", 0)
+        .style("pointer-events", "none");
 
-        // Create the NudiTaxonomy div
-        const NudiTaxonomy = detailsContainer
-          .append("div")
-          .attr("class", "NudiTaxonomy")
-          .style("border-top", "15px solid black")
-          .style("flex", "1")
-          .style("display", "none");
+      // Create a flex container for NudiTaxonomy and AddDetails
+      const detailsContainer = NudiContainer.append("div")
+        .style("display", "flex");
 
-        // Populate the details div with additional information
-        NudiTaxonomy.append("h4")
-          .text("Taxonomy")
-          .style("padding-bottom", "7px")
-          .style("color", "white");
+      // Create the NudiTaxonomy div
+      const NudiTaxonomy = detailsContainer
+        .append("div")
+        .attr("class", "NudiTaxonomy")
+        .style("border-top", "15px solid black")
+        .style("flex", "1")
+        .style("display", "none");
 
-
-
-        const taxKingdomDiv = NudiTaxonomy.append("div")
-          .attr("class", "tax_kingdom")
-          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-        taxKingdomDiv.append("h5").text(d.properties.tax_kingdom);
-
-        // Attach mouse events to the parent div
-        taxKingdomDiv
-          .on("mouseover", function (event) {
-            TaxTooltip.html("Kingdom: " + d.properties.tax_kingdom) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
+      // Populate the details div with additional information
+      NudiTaxonomy.append("h4")
+        .text("Taxonomy")
+        .style("padding-bottom", "7px")
+        .style("color", "white");
 
 
 
-        const taxPhylumDiv = NudiTaxonomy.append("div")
-          .attr("class", "tax_phylum")
-          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+      const taxKingdomDiv = NudiTaxonomy.append("div")
+        .attr("class", "tax_kingdom")
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-        taxPhylumDiv.append("h5").text(d.properties.tax_phylum);
+      taxKingdomDiv.append("h5").text(d.properties.tax_kingdom);
 
-        // Attach mouse events to the parent div
-        taxPhylumDiv
-          .on("mouseover", function (event) {
-            TaxTooltip.html("Phylum: " + d.properties.tax_phylum) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
-
-
-
-        const taxClassDiv = NudiTaxonomy.append("div")
-          .attr("class", "tax_class")
-          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-        taxClassDiv.append("h5").text(d.properties.tax_class);
-
-        // Attach mouse events to the parent div
-        taxClassDiv
-          .on("mouseover", function (event) {
-            TaxTooltip.html("Class: " + d.properties.tax_class) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
-
-
-
-        const taxSubClassDiv = NudiTaxonomy.append("div")
-          .attr("class", "tax_subclass")
-          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-        taxSubClassDiv.append("h5").text(d.properties.tax_subclass);
-
-        // Attach mouse events to the parent div
-        taxSubClassDiv
-          .on("mouseover", function (event) {
-            TaxTooltip.html("Subclass: " + d.properties.tax_subclass) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
-
-
-
-        const taxOrderDiv = NudiTaxonomy.append("div")
-          .attr("class", "tax_order")
-          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-        taxOrderDiv.append("h5").text(d.properties.tax_order);
-
-        // Attach mouse events to the parent div
-        taxOrderDiv
-          .on("mouseover", function (event) {
-            TaxTooltip.html("Order: " + d.properties.tax_order) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
-
-
-        const currentFeature = d; // Store the current feature context
-
-        const taxFamilyDiv = NudiTaxonomy.append("div")
-          .attr("class", "tax_family")
-          .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
-
-        const familyText = taxFamilyDiv.append("h5").text(function () {
-          if (
-            currentFeature.properties.tax_family === "No information available" &&
-            currentFeature.properties.title === "Dexiarchia"
-          ) {
-            return currentFeature.properties.title;
-          } else {
-            return currentFeature.properties.tax_family;
-          }
+      // Attach mouse events to the parent div
+      taxKingdomDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Kingdom: " + d.properties.tax_kingdom) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
         });
 
-        // Attach mouse events to the parent div
-        taxFamilyDiv
-          .on("mouseover", function (event) {
-            const familyContent = familyText.text();
-            TaxTooltip.html("Family: " + familyContent) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
 
 
-        const taxTitleDiv = NudiTaxonomy.append("div")
-          .attr("class", "title")
-          .style("position", "relative");
+      const taxPhylumDiv = NudiTaxonomy.append("div")
+        .attr("class", "tax_phylum")
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-        const titleText = taxTitleDiv.append("h5").text(function () {
-          // Check both conditions in the same level
-          if (
-            (currentFeature.properties.title === "Nudibranchia" &&
-              currentFeature.properties.sci_name === "Nudibranchia") ||
-            currentFeature.properties.sci_name === "No information available" ||
-            currentFeature.properties.title === "Dexiarchia"
-          ) {
-            return "No information available"; // Return this if any condition is met
-          } else {
-            return currentFeature.properties.title; // Return the scientific name otherwise
-          }
+      taxPhylumDiv.append("h5").text(d.properties.tax_phylum);
+
+      // Attach mouse events to the parent div
+      taxPhylumDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Phylum: " + d.properties.tax_phylum) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
         });
 
-        taxTitleDiv
-          .on("mouseover", function (event) {
-            const titleContent = titleText.text();
-            TaxTooltip.html("Genus and Species: " + titleContent) // Set tooltip content
-              .style("left", event.pageX + 5 + "px") // Position tooltip
-              .style("top", event.pageY + 5 + "px")
-              .style("visibility", "visible")
-              .style("opacity", 1);
-          })
-          .on("mousemove", function (event) {
-            TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
-              .style("top", event.pageY + 5 + "px");
-          })
-          .on("mouseout", function () {
-            TaxTooltip.style("visibility", "hidden").style("opacity", 0);
-          });
 
-        // Create the AddDetails div to the right of NudiTaxonomy
-        const AddDetails = detailsContainer
-          .append("div")
-          .attr("class", "AddDetails")
-          .style("border-top", "15px solid black")
-          .style("flex", "1")
-          .style("display", "none");
 
-        // Add content to AddDetails as needed
-        AddDetails.append("h4")
-          .style("padding-bottom", "10px")
-          .text("Additional Details")
-          .style("color", "white");
+      const taxClassDiv = NudiTaxonomy.append("div")
+        .attr("class", "tax_class")
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
 
-        const depthValue = d.properties.depth;
+      taxClassDiv.append("h5").text(d.properties.tax_class);
 
-        // Use regex to check for valid number formats
-        const numberPattern = /-?\d+(\.\d+)?/; // Matches integers and decimals
+      // Attach mouse events to the parent div
+      taxClassDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Class: " + d.properties.tax_class) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
 
-        if (!depthValue || depthValue.trim() === "") {
-          // If there are no entries or depthValue is empty
+
+
+      const taxSubClassDiv = NudiTaxonomy.append("div")
+        .attr("class", "tax_subclass")
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+
+      taxSubClassDiv.append("h5").text(d.properties.tax_subclass);
+
+      // Attach mouse events to the parent div
+      taxSubClassDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Subclass: " + d.properties.tax_subclass) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+
+      const taxOrderDiv = NudiTaxonomy.append("div")
+        .attr("class", "tax_order")
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+
+      taxOrderDiv.append("h5").text(d.properties.tax_order);
+
+      // Attach mouse events to the parent div
+      taxOrderDiv
+        .on("mouseover", function (event) {
+          TaxTooltip.html("Order: " + d.properties.tax_order) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+      const currentFeature = d; // Store the current feature context
+
+      const taxFamilyDiv = NudiTaxonomy.append("div")
+        .attr("class", "tax_family")
+        .style("position", "relative"); // Ensure it can contain absolute positioned tooltip
+
+      const familyText = taxFamilyDiv.append("h5").text(function () {
+        if (
+          currentFeature.properties.tax_family === "No information available" &&
+          currentFeature.properties.title === "Dexiarchia"
+        ) {
+          return currentFeature.properties.title;
+        } else {
+          return currentFeature.properties.tax_family;
+        }
+      });
+
+      // Attach mouse events to the parent div
+      taxFamilyDiv
+        .on("mouseover", function (event) {
+          const familyContent = familyText.text();
+          TaxTooltip.html("Family: " + familyContent) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+
+      const taxTitleDiv = NudiTaxonomy.append("div")
+        .attr("class", "title")
+        .style("position", "relative");
+
+      const titleText = taxTitleDiv.append("h5").text(function () {
+        // Check both conditions in the same level
+        if (
+          (currentFeature.properties.title === "Nudibranchia" &&
+            currentFeature.properties.sci_name === "Nudibranchia") ||
+          currentFeature.properties.sci_name === "No information available" ||
+          currentFeature.properties.title === "Dexiarchia"
+        ) {
+          return "No information available"; // Return this if any condition is met
+        } else {
+          return currentFeature.properties.title; // Return the scientific name otherwise
+        }
+      });
+
+      taxTitleDiv
+        .on("mouseover", function (event) {
+          const titleContent = titleText.text();
+          TaxTooltip.html("Genus and Species: " + titleContent) // Set tooltip content
+            .style("left", event.pageX + 5 + "px") // Position tooltip
+            .style("top", event.pageY + 5 + "px")
+            .style("visibility", "visible")
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          TaxTooltip.style("left", event.pageX + 5 + "px") // Update position on mouse move
+            .style("top", event.pageY + 5 + "px");
+        })
+        .on("mouseout", function () {
+          TaxTooltip.style("visibility", "hidden").style("opacity", 0);
+        });
+
+      // Create the AddDetails div to the right of NudiTaxonomy
+      const AddDetails = detailsContainer
+        .append("div")
+        .attr("class", "AddDetails")
+        .style("border-top", "15px solid black")
+        .style("flex", "1")
+        .style("display", "none");
+
+      // Add content to AddDetails as needed
+      AddDetails.append("h4")
+        .style("padding-bottom", "10px")
+        .text("Additional Details")
+        .style("color", "white");
+
+      const depthValue = d.properties.depth;
+
+      // Use regex to check for valid number formats
+      const numberPattern = /-?\d+(\.\d+)?/; // Matches integers and decimals
+
+      if (!depthValue || depthValue.trim() === "") {
+        // If there are no entries or depthValue is empty
+        AddDetails.append("div")
+          .attr("class", "depth")
+          .append("h5")
+          .text("Depth: ")
+          .append("p")
+          .text("No information available")
+          .style("color", "white")
+          .style("display", "inline-block");
+      } else if (depthValue.match(numberPattern)) {
+        const depths = depthValue.split(" - ").map(Number); // Split and convert to numbers
+        const uniqueDepths = [...new Set(depths)]; // Remove duplicates
+
+        // Check if there's only one unique depth
+        if (uniqueDepths.length === 1) {
+          // If it's a single number, display it without a range
           AddDetails.append("div")
             .attr("class", "depth")
             .append("h5")
             .text("Depth: ")
             .append("p")
-            .text("No information available")
+            .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show one time with 2 decimals
             .style("color", "white")
             .style("display", "inline-block");
-        } else if (depthValue.match(numberPattern)) {
-          const depths = depthValue.split(" - ").map(Number); // Split and convert to numbers
-          const uniqueDepths = [...new Set(depths)]; // Remove duplicates
+        } else if (uniqueDepths.length > 1) {
+          // If there are multiple depths, check for a range
+          const minDepth = Math.min(...uniqueDepths);
+          const maxDepth = Math.max(...uniqueDepths);
 
-          // Check if there's only one unique depth
-          if (uniqueDepths.length === 1) {
-            // If it's a single number, display it without a range
+          // If the range is more than one digit, show it
+          if (maxDepth - minDepth > 1) {
             AddDetails.append("div")
               .attr("class", "depth")
               .append("h5")
               .text("Depth: ")
               .append("p")
-              .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show one time with 2 decimals
+              .text(`${minDepth.toFixed(2)} - ${maxDepth.toFixed(2)} meters`) // Show the range with 2 decimals
               .style("color", "white")
               .style("display", "inline-block");
-          } else if (uniqueDepths.length > 1) {
-            // If there are multiple depths, check for a range
-            const minDepth = Math.min(...uniqueDepths);
-            const maxDepth = Math.max(...uniqueDepths);
-
-            // If the range is more than one digit, show it
-            if (maxDepth - minDepth > 1) {
-              AddDetails.append("div")
-                .attr("class", "depth")
-                .append("h5")
-                .text("Depth: ")
-                .append("p")
-                .text(`${minDepth.toFixed(2)} - ${maxDepth.toFixed(2)} meters`) // Show the range with 2 decimals
-                .style("color", "white")
-                .style("display", "inline-block");
-            } else {
-              // If the difference is 1 or less, just show the first unique value
-              AddDetails.append("div")
-                .attr("class", "depth")
-                .append("h5")
-                .text("Depth: ")
-                .append("p")
-                .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show the first unique value
-                .style("color", "white")
-                .style("display", "inline-block");
-            }
+          } else {
+            // If the difference is 1 or less, just show the first unique value
+            AddDetails.append("div")
+              .attr("class", "depth")
+              .append("h5")
+              .text("Depth: ")
+              .append("p")
+              .text(`${uniqueDepths[0].toFixed(2)} meters`) // Show the first unique value
+              .style("color", "white")
+              .style("display", "inline-block");
           }
-        } else {
-          // Handle cases where depthValue does not match the expected format
-          AddDetails.append("div")
-            .attr("class", "depth")
-            .append("h5")
-            .text("Depth: ")
-            .append("p")
-            .text("No valid depth available")
-            .style("color", "white")
-            .style("display", "inline-block");
         }
-
+      } else {
+        // Handle cases where depthValue does not match the expected format
         AddDetails.append("div")
-          .attr("class", "place")
+          .attr("class", "depth")
           .append("h5")
-          .text("Location: ")
+          .text("Depth: ")
           .append("p")
-          .text(d.properties.place)
+          .text("No valid depth available")
           .style("color", "white")
           .style("display", "inline-block");
       }
-    });
-  }
+
+      AddDetails.append("div")
+        .attr("class", "place")
+        .append("h5")
+        .text("Location: ")
+        .append("p")
+        .text(d.properties.place)
+        .style("color", "white")
+        .style("display", "inline-block");
+    }
+  });
+}
 

@@ -141,6 +141,93 @@ footer p {
   transition: opacity 3.5s ease-in; /* Fade effect */
 }
 
+.clickable {
+  pointer-events: all;
+  cursor: pointer; 
+}
+
+.not-clickable {
+  pointer-events: none;
+  cursor: default; 
+}
+
+.checkbox {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 400;
+}
+
+
+.checkbox-Red {
+  background-color: red;
+}
+.checkbox-Purple {
+  background-color: purple;
+}
+.checkbox-Blue {
+  background-color: blue;
+}
+.checkbox-Green {
+  background-color: green;
+}
+.checkbox-Yellow {
+  background-color: yellow;
+}
+.checkbox-Orange {
+  background-color: orange;
+}
+.checkbox-White {
+  background-color: white;
+}
+
+:root {
+  --md-sys-color-on-primary: #ffffff;
+  --md-checkbox-outline-color: rgb(59, 59, 59);
+  --md-checkbox-outline-width: 1px;
+  --md-checkbox-container-shape: 0px;
+  --md-checkbox-pressed-outline-color: white;
+  --md-checkbox-pressed-outline-width: 1px;
+}
+
+/* Ensure the checkbox's checked state changes correctly */
+.checkbox-Red .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: red; /* Color when checked */
+}
+
+.checkbox-Purple .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: purple; /* Color when checked */
+}
+
+.checkbox-Blue .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: blue; /* Color when checked */
+}
+
+.checkbox-Green .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: green; /* Color when checked */
+}
+
+.checkbox-Yellow .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: yellow; /* Color when checked */
+}
+
+.checkbox-Orange .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: orange; /* Color when checked */
+}
+
+.checkbox-White .mdc-checkbox input:checked + .mdc-checkbox__background {
+  fill: white; /* Color when checked */
+}
+
+
+    /* Customizing the checkmark */
+    .mdc-checkbox__checkmark-path {
+      stroke: white; /* Custom checkmark color */
+    }
+
+    /* Optional: Hover effect */
+    .mdc-checkbox:hover .mdc-checkbox__background {
+      fill: white; /* Color on hover */
+    }
+
 #NudiContainers {
   background: black;
   width: 100%;

@@ -93,9 +93,6 @@ const NudiColors = d3
       .text(d); // Use the data for the text label
   });
 
-
-
-
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
 let mapheight = window.innerHeight; // Height of the viewport

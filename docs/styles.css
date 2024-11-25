@@ -77,7 +77,7 @@ header {
 }
 
 #title h2 {
-  margin-left: 25px;
+  margin-left: 15px;
   font-weight: 400;
 }
 
@@ -123,6 +123,8 @@ footer p {
   max-height: 97vh;
   opacity: 0; /* Initially hidden */
   transition: opacity 3.5s ease-in; /* Fade effect */
+  box-sizing: border-box;
+  padding-bottom: 20px;
 }
 
 #NudiColors {
@@ -135,8 +137,8 @@ footer p {
   max-height: 97vh;
   opacity: 0; /* Initially hidden */
   transition: opacity 3.5s ease-in; /* Fade effect */
-  padding-bottom: 50px;
   box-sizing: border-box;
+  padding-bottom: 15px;
 }
 
 .clickable {
@@ -155,88 +157,111 @@ footer p {
 }
 
 
-.checkbox-Red {
+.checkbox-Reds {
+  --md-checkbox-selected-container-color: red;
+  --md-checkbox-selected-hover-container-color: orangered;
+  --md-checkbox-selected-focus-container-color: red;
+  --md-checkbox-selected-pressed-container-color: orangered;
+  --md-checkbox-selected-pressed-icon-color: white;
   background-color: red;
 }
-.checkbox-Purple {
-  background-color: purple;
+.checkbox-Purples {
+  --md-checkbox-selected-container-color: purple;
+  --md-checkbox-selected-hover-container-color: mediumorchid;
+  --md-checkbox-selected-focus-container-color: purple;
+  --md-checkbox-selected-pressed-container-color: mediumorchid;
+  --md-checkbox-selected-pressed-icon-color: white;
+    background-color: purple;
 }
-.checkbox-Blue {
+.checkbox-Blues {
+  --md-checkbox-selected-container-color: blue;
+  --md-checkbox-selected-hover-container-color: dodgerblue;
+  --md-checkbox-selected-focus-container-color: blue;
+  --md-checkbox-selected-pressed-container-color: dodgerblue;
+  --md-checkbox-selected-pressed-icon-color: white;
   background-color: blue;
 }
-.checkbox-Green {
+.checkbox-Greens {
+  --md-checkbox-selected-container-color: green;
+  --md-checkbox-selected-hover-container-color: lightgreen;
+  --md-checkbox-selected-focus-container-color: green;
+  --md-checkbox-selected-pressed-container-color: lightgreen;
+  --md-checkbox-selected-pressed-icon-color: white;
   background-color: green;
 }
-.checkbox-Yellow {
+.checkbox-Blacks {
+  --md-checkbox-selected-container-color: black;
+  --md-checkbox-selected-hover-container-color: dimgray;
+  --md-checkbox-selected-focus-container-color: black;
+  --md-checkbox-selected-pressed-container-color: dimgray;
+  --md-checkbox-selected-pressed-icon-color: white;
+  background-color: black;
+}
+.checkbox-Browns {
+  --md-checkbox-selected-container-color: brown;
+  --md-checkbox-selected-hover-container-color: chocolate;
+  --md-checkbox-selected-focus-container-color: brown;
+  --md-checkbox-selected-pressed-container-color: chocolate;
+  --md-checkbox-selected-pressed-icon-color: white;
+  background-color: brown;
+}
+.checkbox-Other {
+  --md-checkbox-selected-container-color: gray;
+  --md-checkbox-selected-hover-container-color: darkgray;
+  --md-checkbox-selected-focus-container-color: gray;
+  --md-checkbox-selected-pressed-container-color: darkgray;
+  --md-checkbox-selected-pressed-icon-color: white;
+  background-color: gray;
+}
+.checkbox-Yellows {
+  --md-checkbox-selected-container-color: yellow;
+  --md-checkbox-selected-hover-container-color: lightgoldenrodyellow;
+  --md-checkbox-selected-focus-container-color: yellow;
+  --md-checkbox-selected-icon-color: black;
+  --md-checkbox-selected-pressed-container-color: lightgoldenrodyellow;
+  --md-checkbox-selected-pressed-icon-color: black;
+  --md-checkbox-selected-focus-icon-color: black;
   background-color: yellow;
 }
-.checkbox-Orange {
+.checkbox-Oranges {
+  --md-checkbox-selected-container-color: orange;
+  --md-checkbox-selected-hover-container-color: gold;
+  --md-checkbox-selected-focus-container-color: orange;
+  --md-checkbox-selected-icon-color: black;
+  --md-checkbox-selected-pressed-container-color: gold;
+  --md-checkbox-selected-pressed-icon-color: black;
+  --md-checkbox-selected-focus-icon-color: black;
   background-color: orange;
 }
-.checkbox-White {
-  background-color: white;
-}
-
-:root {
-  --md-sys-color-on-primary: #ffffff;
-  --md-checkbox-outline-color: rgb(59, 59, 59);
-  --md-checkbox-outline-width: 1px;
-  --md-checkbox-container-shape: 0px;
-  --md-checkbox-pressed-outline-color: white;
-  --md-checkbox-pressed-outline-width: 1px;
-}
-
-/* Ensure the checkbox's checked state changes correctly */
-.checkbox-Red .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: red; /* Color when checked */
-}
-
-.checkbox-Purple .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: purple; /* Color when checked */
-}
-
-.checkbox-Blue .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: blue; /* Color when checked */
-}
-
-.checkbox-Green .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: green; /* Color when checked */
-}
-
-.checkbox-Yellow .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: yellow; /* Color when checked */
-}
-
-.checkbox-Orange .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: orange; /* Color when checked */
-}
-
-.checkbox-White .mdc-checkbox input:checked + .mdc-checkbox__background {
-  fill: white; /* Color when checked */
+.checkbox-Whites {
+  --md-checkbox-selected-container-color: white;
+  --md-checkbox-selected-hover-container-color: whitesmoke;
+  --md-checkbox-selected-focus-container-color: white;
+  --md-checkbox-selected-icon-color: black;
+  --md-checkbox-selected-pressed-container-color: whitesmoke;
+  --md-checkbox-selected-pressed-icon-color: black;
+  --md-checkbox-selected-focus-icon-color: black;
+    background-color: white;
 }
 
 
-    /* Customizing the checkmark */
-    .mdc-checkbox__checkmark-path {
-      stroke: white; /* Custom checkmark color */
-    }
-
-    /* Optional: Hover effect */
-    .mdc-checkbox:hover .mdc-checkbox__background {
-      fill: white; /* Color on hover */
-    }
+/* :root {
+  --md-checkbox-selected-container-color: yellow;
+  --md-checkbox-selected-icon-color: black;
+  --md-checkbox-selected-hover-container-color: hotpink;
+  --md-checkbox-selected-focus-container-color: green;
+} */
 
 #NudiContainers {
   background: black;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   max-height: 100vh;
   font-family: "Kodchasan", sans-serif;
   opacity: 0; /* Initially hidden */
   transition: opacity 0.5s ease-in; /* Fade effect */
-  overflow-y: auto;
-  margin-bottom: 60px;
 }
 
 .NudiContainers.visible {

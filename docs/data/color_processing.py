@@ -20,7 +20,7 @@ def get_color_name(rgb_value):
         return closest_color(rgb_value)
 
 # Load the GeoJSON file
-with open('input.geojson', 'r') as f:
+with open('data.geojson', 'r') as f:
     geojson_data = json.load(f)
 
 # Iterate through each feature in the GeoJSON

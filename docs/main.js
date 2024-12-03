@@ -677,6 +677,8 @@ function clearSelections() {
       .attr("opacity", 0.7);
   });
 
+  d3.selectAll("rect").attr("stroke-width", 0);
+
   // Reset stroke and opacity for all circles with the class "single-circle"
   d3.selectAll('circle.single-circle')
     .attr("stroke-width", 0)
@@ -796,7 +798,7 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
  nudiColorsDiv.classed("not-clickable", true); 
 
   // this function calls categorizeSwatches, which is not defined?
-  CategorizedSwatches(NudiColors, geoData); // Pass geoData here
+  // CategorizedSwatches(NudiColors, geoData); // Pass geoData here
 }
 
 
@@ -834,7 +836,7 @@ function showColorPalettes() {
 
   const nudiColorsDiv = d3.select("#NudiColors"); 
   // Render the color palettes
-  CategorizedSwatches(NudiColors, geoData);
+  // CategorizedSwatches(NudiColors, geoData);
 
   // Make circles visible
   circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
@@ -904,6 +906,9 @@ async function CategorizedSwatches(NudiColors, geoData) {
   // console.log("");
   //console.log(NudiColors);
   // Loop through each feature in the GeoJSON
+
+  const swatchBox = NudiColors.append("div").attr("id", "swatchBox");
+
   geoData.features.forEach((feature) => {
     //console.log(geoData.features);
     //console.log(feature);
@@ -930,9 +935,10 @@ async function CategorizedSwatches(NudiColors, geoData) {
 
     // For each swatch, create a rectangle and append it to the #NudiColors div
     swatches.forEach((swatch) => {
-      //console.log(swatch);
-      const ColorContainer = NudiColors
+      // console.log(swatch);
+      const ColorContainer = swatchBox
         .append("svg")
+        .data([swatch])
         .style("margin", "10px")
         .attr("class", `${swatch.tax_family} ${swatch.Nudi_id} ${swatch.key} ${swatch.category} svg-rect`)
         .attr("width", 50)  // Set the width of the SVG to match the rect
@@ -945,51 +951,48 @@ async function CategorizedSwatches(NudiColors, geoData) {
         .style("display", "flex")
         .style("z-index", 10)
         .on("click", function (event, d) {
-      // Clear selected state of all circles
-      groupedData.forEach((item) => {
-        item.selected = false;
 
-        // Reset background color for associated divs
-        item.Nudi_id.forEach((i) => {
-          d3.selectAll(`div.${i}`)
-            .style("border", "20px solid black")
-            .style("background-color", "black");
-          d3.selectAll(`div.${i} h4`).style("color", "white");
-          d3.selectAll(`div.${i} .AddDetails h5`).style("color", "white");
-          d3.selectAll(`div.${i} p`).style("color", "white");
-          d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid black");
-          d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid black");
+          const nudiDivs = d3.select("#NudiDivs");
+          const nudiDivNode = nudiDivs.node();
+          const nudiDivCurrentChild = nudiDivs.select(`div.${d.Nudi_id}`);
+          const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
+
+      // Clear selected state of all rect except for the clicked one
+      d3.selectAll("rect").each(function (d) {
+        d3.select(this).attr("stroke-width", 0);
+      });
+
+      // clear selected state of all previous divs except for the clicked one
+
+      nudiDivs.select("div").each(function (d) {
+        d3.select(this).style("border", "20px solid black")
+          .style("background-color", "black");
+        d3.select("h4").style("color", "white");
+        d3.select(".AddDetails h5").style("color", "white");
+        d3.select("p").style("color", "white");
+        d3.select(".AddDetails").style("border-top", "15px solid black");
+        d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
+      });
+
+          d3.select(this)
+            .attr("stroke-width", 5)
+            .attr("stroke", "white")
+            .attr("opacity", 1);
+
+          // Update background color for associated divs of the selected swatch
+         nudiDivCurrentChild
+          .style("border", "20px solid white")
+          .style("background-color", "white")
+          .selectAll("h4").style("color", "black");
+          nudiDivCurrentChild.selectAll(".AddDetails h5").style("color", "black")
+          .selectAll("p").style("color", "black");
+          nudiDivCurrentChild.select(".AddDetails").style("border-top", "15px solid white");
+          nudiDivCurrentChild.select(".NudiTaxonomy").style("border-top", "15px solid white");
+
+          // Reorder the associated divs to the top (move them to the top in the DOM
+          nudiDivNode.insertBefore(nudiDivCurrentChildNode, nudiDivNode.firstChild); // Move div to the beginning of its parent's child list (top in the visual order)
+   
         });
-      });
-
-      // Select the clicked circle
-      d.selected = true;
-      d3.select(this)
-        .attr("stroke-width", 3)
-        .attr("stroke", "#FFC000")
-        .attr("fill", "red")
-        .attr("opacity", 1);
-
-      // Update background color for associated divs of the selected circle
-      d.Nudi_id.forEach((i) => {
-        d3.selectAll(`div.${i}`)
-          .style("border", "20px solid #FFC000")
-          .style("background-color", "#FFC000");
-        d3.selectAll(`div.${i} h4`).style("color", "black");
-        d3.selectAll(`div.${i} .AddDetails h5`).style("color", "black");
-        d3.selectAll(`div.${i} p`).style("color", "black");
-        d3.selectAll(`div.${i} .AddDetails`).style("border-top", "15px solid #FFC000");
-        d3.selectAll(`div.${i} .NudiTaxonomy`).style("border-top", "15px solid #FFC000");
-      });
-      // Reorder the associated divs to the top (move them to the top in the DOM)
-      d.Nudi_id.forEach((id) => {
-        const divs = d3.selectAll(`div.${id}`).nodes(); // Get all divs with class Nudi_id
-        divs.forEach((div) => {
-          const parent = div.parentNode; // Get the parent element
-          parent.insertBefore(div, parent.firstChild); // Move div to the beginning of its parent's child list (top in the visual order)
-        });
-      });
-    });
     });
   });
 }

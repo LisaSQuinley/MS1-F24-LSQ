@@ -84,18 +84,39 @@ const checkboxes = NudiColors
   .on("change", function(event, d) {
     const checkbox = d3.select(this);
     const isChecked = checkbox.property("checked");
+    const nudiColorsDiv = d3.select("#swatchBox"); 
+    const nudiColorsDivNode = nudiColorsDiv.node();  
+    // console.log(nudiColorsDiv); 
 
     // If the "Red" checkbox is clicked
     if (d === "Reds") {
       const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon"); // Select both firebrick and maroon swatches
 
+
+      const selectedSwatches = groupSwatchesByNudiId(redSwatches); 
+
+      console.log(selectedSwatches); 
+
       if (isChecked) {
+
+        selectedSwatches.forEach((swatch) => {  
+          swatch[1].forEach((s) => {
+            console.log(s); 
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // conspo
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
+        }); 
+
         // Move selected swatches to the top
-        redSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
-        });
+        // redSwatches.each(function() {
+        //   const swatch = d3.select(this);
+        //   const parent = swatch.node().parentNode; // Get the parent container of the swatch
+        //   parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+        // });
       } else {
         // If unchecked, you can either leave the swatches in place, or perform any other action
         // Example: Reset order (this is optional and depends on your use case)
@@ -278,14 +299,19 @@ const checkboxes = NudiColors
       .text(d); // Use the data for the text label
   });
 
-/* const taxFamCounter = NudiColors
-  .append("div")
-  .attr("id", "taxFamCounter")
-  .selectAll("div")
-  .data([geoData])
-  .enter()
-  .append("div")
-  ; */
+  function groupSwatchesByNudiId(swatchesArray){
+    const groupedByNudiId = d3.rollup(
+      swatchesArray.data(),  // The bound data
+      v => v,  // Extract the nudi_id from each element
+      d => d.Nudi_id  // Group by nudi_id
+    );
+
+    const sortedByGroupLength = Array.from(groupedByNudiId)  // Convert Map to array
+      .sort(([, a], [, b]) => a.length - b.length); 
+
+    return sortedByGroupLength; 
+  }
+
 
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
@@ -907,35 +933,59 @@ async function CategorizedSwatches(NudiColors, geoData) {
   //console.log(NudiColors);
   // Loop through each feature in the GeoJSON
 
+  const geoDataSplitArray = []; 
+
+  // split up geoData into an array which should be six times the length of geoData 
+ geoData.features.forEach((feature) => {
+  const featureProperties = feature.properties; 
+  if(featureProperties.palettes) {
+  featureProperties.palettes.forEach((p) => {
+    geoDataSplitArray.push({
+      Nudi_id: featureProperties.Nudi_id,
+      color: p, // RGB color values
+      tax_family: featureProperties.tax_family, // Final tax_family value after both conditions
+      key: p.key, // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
+      category: p.category // Category for the palette (e.g., 'Vibrant', 'DarkVibrant') 
+    })
+   });
+  } 
+ })
+
   const swatchBox = NudiColors.append("div").attr("id", "swatchBox");
 
-  geoData.features.forEach((feature) => {
-    //console.log(geoData.features);
-    //console.log(feature);
-    // Check if this feature has palettes, and if it does, process each swatch
-    const swatches = feature.properties.palettes ? feature.properties.palettes.map((palettes) => {
-      let taxFamily = (
-        feature.properties.tax_family === "No information available" &&
-        feature.properties.title === "Dexiarchia"
-      ) ? feature.properties.title : feature.properties.tax_family;
+  const shuffledFeatures = shuffle(geoDataSplitArray);
+  // console.log(geoData); 
 
-      // Secondary condition: if tax_family is "No information available", set it to "unknown"
-      if (taxFamily === "No information available") {
-        taxFamily = "unknown";
-      }
+  // shuffledFeatures.features.forEach((feature) => {
 
-      return {
-        Nudi_id: feature.properties.Nudi_id,
-        swatch: palettes.swatch, // RGB color values
-        tax_family: taxFamily, // Final tax_family value after both conditions
-        key: palettes.key, // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
-        category: palettes.category // Category for the palette (e.g., 'Vibrant', 'DarkVibrant')
-      };
-    }) : []; // Return an empty array if no palettes exist
+
+  //   const swatches = feature.properties.palettes ? feature.properties.palettes.map((palettes) => {
+  //     let taxFamily = (
+  //       feature.properties.tax_family === "No information available" &&
+  //       feature.properties.title === "Dexiarchia"
+  //     ) ? feature.properties.title : feature.properties.tax_family;
+
+  //     // Secondary condition: if tax_family is "No information available", set it to "unknown"
+  //     if (taxFamily === "No information available") {
+  //       taxFamily = "unknown";
+  //     }
+
+  //     return {
+  //       Nudi_id: feature.properties.Nudi_id,
+  //       swatch: palettes.swatch, // RGB color values
+  //       tax_family: taxFamily, // Final tax_family value after both conditions
+  //       key: palettes.key, // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
+  //       category: palettes.category // Category for the palette (e.g., 'Vibrant', 'DarkVibrant')
+  //     };
+  //   }) : []; // Return an empty array if no palettes exist
+
+    // const shuffledSwatches = shuffle(swatches); 
+    // console.log(swatches, shuffledSwatches);
+
 
     // For each swatch, create a rectangle and append it to the #NudiColors div
-    swatches.forEach((swatch) => {
-      // console.log(swatch);
+    shuffledFeatures.forEach((swatch) => {
+      // console.log(swatch.color.swatch);
       const ColorContainer = swatchBox
         .append("svg")
         .data([swatch])
@@ -944,35 +994,35 @@ async function CategorizedSwatches(NudiColors, geoData) {
         .attr("width", 50)  // Set the width of the SVG to match the rect
         .attr("height", 50) // Set the height of the SVG to match the rect
         .append("rect")
-        .attr("fill", `rgb(${swatch.swatch.join(",")})`)
+        .attr("fill", `rgb(${swatch.color.swatch.join(",")})`)   
         .style("fill-opacity", 1)
         .style("width", "50px")
         .style("height", "50px")
         .style("display", "flex")
         .style("z-index", 10)
         .on("click", function (event, d) {
-
+          
           const nudiDivs = d3.select("#NudiDivs");
           const nudiDivNode = nudiDivs.node();
           const nudiDivCurrentChild = nudiDivs.select(`div.${d.Nudi_id}`);
           const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
 
-      // Clear selected state of all rect except for the clicked one
-      d3.selectAll("rect").each(function (d) {
-        d3.select(this).attr("stroke-width", 0);
-      });
+          // Clear selected state of all rect except for the clicked one
+          d3.selectAll("rect").each(function (d) {
+            d3.select(this).attr("stroke-width", 0);
+          });
 
-      // clear selected state of all previous divs except for the clicked one
+          // clear selected state of all previous divs except for the clicked one
 
-      nudiDivs.select("div").each(function (d) {
-        d3.select(this).style("border", "20px solid black")
-          .style("background-color", "black");
-        d3.select("h4").style("color", "white");
-        d3.select(".AddDetails h5").style("color", "white");
-        d3.select("p").style("color", "white");
-        d3.select(".AddDetails").style("border-top", "15px solid black");
-        d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
-      });
+          nudiDivs.select("div").each(function (d) {
+            d3.select(this).style("border", "20px solid black")
+              .style("background-color", "black");
+            d3.select("h4").style("color", "white");
+            d3.select(".AddDetails h5").style("color", "white");
+            d3.select("p").style("color", "white");
+            d3.select(".AddDetails").style("border-top", "15px solid black");
+            d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
+          });
 
           d3.select(this)
             .attr("stroke-width", 5)
@@ -994,9 +1044,7 @@ async function CategorizedSwatches(NudiColors, geoData) {
    
         });
     });
-  });
-}
-
+  };
 
 
 // This function displays the images and their color palettes

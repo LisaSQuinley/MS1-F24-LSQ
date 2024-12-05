@@ -258,7 +258,6 @@ footer p {
   height: 100%;
   display: flex;
   flex-direction: column;
-  max-height: 100vh;
   font-family: "Kodchasan", sans-serif;
   opacity: 0; /* Initially hidden */
   transition: opacity 0.5s ease-in; /* Fade effect */

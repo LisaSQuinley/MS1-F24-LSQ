@@ -64,6 +64,7 @@ const NudiColors = d3
   .style("padding-top", "10px")
   .style("background", "black");
 
+const allSwatches = [];
 const checkboxes = NudiColors
   .append("form")
   .selectAll("div") // Wrap each checkbox in a div
@@ -79,48 +80,42 @@ const checkboxes = NudiColors
   .style("display", "inline-flex") // Make label display inline-flex
   .style("align-items", "center") // Align items vertically within label
   // Now append the md-switch within the label (checkbox comes first)
-  .append("md-checkbox") 
-  .attr("class", function(d) { return `checkbox-${d}`; })
-  .on("change", function(event, d) {
+  .append("md-checkbox")
+  .attr("class", function (d) { return `checkbox-${d}`; })
+  .on("change", function (event, d) {
     const checkbox = d3.select(this);
     const isChecked = checkbox.property("checked");
-    const nudiColorsDiv = d3.select("#swatchBox"); 
-    const nudiColorsDivNode = nudiColorsDiv.node();  
+    const nudiColorsDiv = d3.select("#swatchBox");
+    const nudiColorsDivNode = nudiColorsDiv.node();
     // console.log(nudiColorsDiv); 
 
     // If the "Red" checkbox is clicked
     if (d === "Reds") {
-      const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon"); // Select both firebrick and maroon swatches
+      const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon");
 
+      allSwatches.push(redSwatches); 
+      console.log(allSwatches);
+      //console.log(allSwatches); 
+      groupSwatchesByNudiId(allSwatches);
 
-      const selectedSwatches = groupSwatchesByNudiId(redSwatches); 
-
-      console.log(selectedSwatches); 
-
+      // const selectedSwatches = groupSwatchesByNudiId(redSwatches);
+      
       if (isChecked) {
 
-        selectedSwatches.forEach((swatch) => {  
+        allSwatches.forEach((swatch) => {
+          console.log(swatch); 
           swatch[1].forEach((s) => {
-            console.log(s); 
+            //console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
-            // conspo
             // console.log(parent); 
             parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
           })
-        }); 
+        });
 
-        // Move selected swatches to the top
-        // redSwatches.each(function() {
-        //   const swatch = d3.select(this);
-        //   const parent = swatch.node().parentNode; // Get the parent container of the swatch
-        //   parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
-        // });
       } else {
-        // If unchecked, you can either leave the swatches in place, or perform any other action
-        // Example: Reset order (this is optional and depends on your use case)
-        redSwatches.each(function() {
+        redSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -129,16 +124,27 @@ const checkboxes = NudiColors
     }
     if (d === "Purples") {
       const purpleSwatches = d3.selectAll(".indigo, .plum, .darkorchid, .mediumorchid, .purple, .lightpink");
+      console.log(purpleSwatches); 
 
+      const selectedSwatches = groupSwatchesByNudiId(purpleSwatches);
+      
+
+      //console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        purpleSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            //console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        purpleSwatches.each(function() {
+        purpleSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -148,15 +154,23 @@ const checkboxes = NudiColors
     if (d === "Blues") {
       const blueSwatches = d3.selectAll(".darkslateblue, .slategrey, .midnightblue, .steelblue, .lightsteelblue, .cadetblue, .mediumturquoise, .teal, .darkturquoise, .lightblue, .darkcyan, .slateblue, .skyblue, .cornflowerblue, .lightskyblue, .powderblue, .lightslategrey");
 
+      const selectedSwatches = groupSwatchesByNudiId(blueSwatches);
+      // console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        blueSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            //console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        blueSwatches.each(function() {
+        blueSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -166,15 +180,23 @@ const checkboxes = NudiColors
     if (d === "Greens") {
       const greenSwatches = d3.selectAll(".forestgreen, .darkolivegreen, .yellowgreen, .olive, .seagreen, .olivedrab");
 
+      const selectedSwatches = groupSwatchesByNudiId(greenSwatches);
+      // console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        greenSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            //console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        greenSwatches.each(function() {
+        greenSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -184,15 +206,23 @@ const checkboxes = NudiColors
     if (d === "Yellows") {
       const yellowSwatches = d3.selectAll(".sandybrown, .goldenrod, .gold, .darkgoldenrod, .khaki, .palegoldenrod, .burlywood, .darkkhaki");
 
+      const selectedSwatches = groupSwatchesByNudiId(yellowSwatches);
+      // console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        yellowSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            // console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        yellowSwatches.each(function() {
+        yellowSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -202,15 +232,23 @@ const checkboxes = NudiColors
     if (d === "Oranges") {
       const orangeSwatches = d3.selectAll(".darkorange, .orange, .chocolate, .peru");
 
+      const selectedSwatches = groupSwatchesByNudiId(orangeSwatches);
+      // console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        orangeSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            // console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        orangeSwatches.each(function() {
+        orangeSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -220,15 +258,23 @@ const checkboxes = NudiColors
     if (d === "Blacks") {
       const blackSwatches = d3.selectAll(".black");
 
+      const selectedSwatches = groupSwatchesByNudiId(blackSwatches);
+      // console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        blackSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            // console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        blackSwatches.each(function() {
+        blackSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -238,15 +284,23 @@ const checkboxes = NudiColors
     if (d === "Whites") {
       const whiteSwatches = d3.selectAll(".silver, .antiquewhite, .floralwhite, .lavender, .wheat, .whitesmoke, .lightgrey, .tan");
 
+      const selectedSwatches = groupSwatchesByNudiId(whiteSwatches);
+      // console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        whiteSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            // console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        whiteSwatches.each(function() {
+        whiteSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -256,15 +310,23 @@ const checkboxes = NudiColors
     if (d === "Other") {
       const otherSwatches = d3.selectAll(".darkslategrey, .grey, .darkgrey, .dimgrey");
 
+      const selectedSwatches = groupSwatchesByNudiId(otherSwatches);
+      //console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        otherSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            //console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        otherSwatches.each(function() {
+        otherSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
@@ -274,24 +336,35 @@ const checkboxes = NudiColors
     if (d === "Browns") {
       const brownSwatches = d3.selectAll(".saddlebrown, .rosybrown");
 
+      const selectedSwatches = groupSwatchesByNudiId(brownSwatches);
+      //console.log(selectedSwatches); 
       if (isChecked) {
-        // Move selected swatches to the top
-        brownSwatches.each(function() {
-          const swatch = d3.select(this);
-          const parent = swatch.node().parentNode; // Get the parent container of the swatch
-          parent.insertBefore(swatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+
+        selectedSwatches.forEach((swatch) => {
+          swatch[1].forEach((s) => {
+            // console.log(s);
+            const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+            // console.log(currentSwatch.node()); 
+            const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
+            // console.log(parent); 
+            parent.insertBefore(currentSwatch.node(), parent.firstChild); // Move the swatch to the top of its parent
+          })
         });
+
       } else {
-        brownSwatches.each(function() {
+        brownSwatches.each(function () {
           const swatch = d3.select(this);
           const parent = swatch.node().parentNode;
           parent.appendChild(swatch.node()); // Move swatch to the bottom (or wherever you prefer)
         });
       }
     }
+
+    // GROUPED BY NUDI ID, PUSH ALL SWATCHES TO TOP OF PARENT; 
+
   })
   // Append the label text after the checkbox (text on the right side)
-  .each(function(d) {
+  .each(function (d) {
     d3.select(this.parentNode) // Select the parent label
       .append("span") // Add a span for the text
       .style("margin-left", "5px")
@@ -299,18 +372,21 @@ const checkboxes = NudiColors
       .text(d); // Use the data for the text label
   });
 
-  function groupSwatchesByNudiId(swatchesArray){
-    const groupedByNudiId = d3.rollup(
-      swatchesArray.data(),  // The bound data
-      v => v,  // Extract the nudi_id from each element
-      d => d.Nudi_id  // Group by nudi_id
-    );
+function groupSwatchesByNudiId(swatchesArray) {
+  console.log(swatchesArray); 
 
-    const sortedByGroupLength = Array.from(groupedByNudiId)  // Convert Map to array
-      .sort(([, a], [, b]) => a.length - b.length); 
 
-    return sortedByGroupLength; 
-  }
+  const groupedByNudiId = d3.rollup(
+    swatchesArray[0].data(),  // The bound data
+    v => v,  // Extract the nudi_id from each element
+    d => d.Nudi_id  // Group by nudi_id
+  );
+
+  const sortedByGroupLength = Array.from(groupedByNudiId)  // Convert Map to array
+    .sort(([, a], [, b]) => a.length - b.length);
+
+  return sortedByGroupLength;
+}
 
 
 // Initial dimensions
@@ -817,11 +893,11 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
   // Once the promise resolves, call displayPalettes
   displayPalettes(groupedData, NudiDivs, geoData);
   const globalMap = d3.select("#globalMap");
-  globalMap.classed("clickable", true); 
-  globalMap.classed("not-clickable", false); 
-  const nudiColorsDiv = d3.select("#NudiColors"); 
- nudiColorsDiv.classed("clickable",false); // Add clickable class
- nudiColorsDiv.classed("not-clickable", true); 
+  globalMap.classed("clickable", true);
+  globalMap.classed("not-clickable", false);
+  const nudiColorsDiv = d3.select("#NudiColors");
+  nudiColorsDiv.classed("clickable", false); // Add clickable class
+  nudiColorsDiv.classed("not-clickable", true);
 
   // this function calls categorizeSwatches, which is not defined?
   // CategorizedSwatches(NudiColors, geoData); // Pass geoData here
@@ -839,12 +915,12 @@ function showCircles() {
 
 
   const globalMap = d3.select("#globalMap");
-  globalMap.classed("clickable", true); 
-  globalMap.classed("not-clickable", false); 
+  globalMap.classed("clickable", true);
+  globalMap.classed("not-clickable", false);
 
-  const nudiColorsDiv = d3.select("#NudiColors"); 
- nudiColorsDiv.classed("clickable",false); // Add clickable class
- nudiColorsDiv.classed("not-clickable", true); 
+  const nudiColorsDiv = d3.select("#NudiColors");
+  nudiColorsDiv.classed("clickable", false); // Add clickable class
+  nudiColorsDiv.classed("not-clickable", true);
 
   // Render the circles
   renderCircles(groupedData); // Pass the appropriate data
@@ -860,21 +936,21 @@ function showColorPalettes() {
   circlesGroup.selectAll(".count-label").remove();
   circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
 
-  const nudiColorsDiv = d3.select("#NudiColors"); 
+  const nudiColorsDiv = d3.select("#NudiColors");
   // Render the color palettes
   // CategorizedSwatches(NudiColors, geoData);
 
   // Make circles visible
   circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
-  
-  nudiColorsDiv.style("opacity", 1); // Set opacity to 1
-//   
- nudiColorsDiv.classed("clickable", true); // Add clickable class
- nudiColorsDiv.classed("not-clickable", false); 
 
- const globalMap = d3.select("#globalMap");
- globalMap.classed("clickable", false); 
- globalMap.classed("not-clickable", true); 
+  nudiColorsDiv.style("opacity", 1); // Set opacity to 1
+  //   
+  nudiColorsDiv.classed("clickable", true); // Add clickable class
+  nudiColorsDiv.classed("not-clickable", false);
+
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", false);
+  globalMap.classed("not-clickable", true);
 
   currentRendering = 'colorPalettes';
 }
@@ -933,23 +1009,23 @@ async function CategorizedSwatches(NudiColors, geoData) {
   //console.log(NudiColors);
   // Loop through each feature in the GeoJSON
 
-  const geoDataSplitArray = []; 
+  const geoDataSplitArray = [];
 
   // split up geoData into an array which should be six times the length of geoData 
- geoData.features.forEach((feature) => {
-  const featureProperties = feature.properties; 
-  if(featureProperties.palettes) {
-  featureProperties.palettes.forEach((p) => {
-    geoDataSplitArray.push({
-      Nudi_id: featureProperties.Nudi_id,
-      color: p, // RGB color values
-      tax_family: featureProperties.tax_family, // Final tax_family value after both conditions
-      key: p.key, // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
-      category: p.category // Category for the palette (e.g., 'Vibrant', 'DarkVibrant') 
-    })
-   });
-  } 
- })
+  geoData.features.forEach((feature) => {
+    const featureProperties = feature.properties;
+    if (featureProperties.palettes) {
+      featureProperties.palettes.forEach((p) => {
+        geoDataSplitArray.push({
+          Nudi_id: featureProperties.Nudi_id,
+          color: p, // RGB color values
+          tax_family: featureProperties.tax_family, // Final tax_family value after both conditions
+          key: p.key, // Key for the palette (e.g., 'Vibrant', 'DarkVibrant')
+          category: p.category // Category for the palette (e.g., 'Vibrant', 'DarkVibrant') 
+        })
+      });
+    }
+  })
 
   const swatchBox = NudiColors.append("div").attr("id", "swatchBox");
 
@@ -979,72 +1055,72 @@ async function CategorizedSwatches(NudiColors, geoData) {
   //     };
   //   }) : []; // Return an empty array if no palettes exist
 
-    // const shuffledSwatches = shuffle(swatches); 
-    // console.log(swatches, shuffledSwatches);
+  // const shuffledSwatches = shuffle(swatches); 
+  // console.log(swatches, shuffledSwatches);
 
 
-    // For each swatch, create a rectangle and append it to the #NudiColors div
-    shuffledFeatures.forEach((swatch) => {
-      // console.log(swatch.color.swatch);
-      const ColorContainer = swatchBox
-        .append("svg")
-        .data([swatch])
-        .style("margin", "10px")
-        .attr("class", `${swatch.tax_family} ${swatch.Nudi_id} ${swatch.key} ${swatch.category} svg-rect`)
-        .attr("width", 50)  // Set the width of the SVG to match the rect
-        .attr("height", 50) // Set the height of the SVG to match the rect
-        .append("rect")
-        .attr("fill", `rgb(${swatch.color.swatch.join(",")})`)   
-        .style("fill-opacity", 1)
-        .style("width", "50px")
-        .style("height", "50px")
-        .style("display", "flex")
-        .style("z-index", 10)
-        .on("click", function (event, d) {
-          
-          const nudiDivs = d3.select("#NudiDivs");
-          const nudiDivNode = nudiDivs.node();
-          const nudiDivCurrentChild = nudiDivs.select(`div.${d.Nudi_id}`);
-          const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
+  // For each swatch, create a rectangle and append it to the #NudiColors div
+  shuffledFeatures.forEach((swatch) => {
+    // console.log(swatch.color.swatch);
+    const ColorContainer = swatchBox
+      .append("svg")
+      .data([swatch])
+      .style("margin", "10px")
+      .attr("class", `${swatch.tax_family} ${swatch.Nudi_id} ${swatch.key} ${swatch.category} svg-rect`)
+      .attr("width", 50)  // Set the width of the SVG to match the rect
+      .attr("height", 50) // Set the height of the SVG to match the rect
+      .append("rect")
+      .attr("fill", `rgb(${swatch.color.swatch.join(",")})`)
+      .style("fill-opacity", 1)
+      .style("width", "50px")
+      .style("height", "50px")
+      .style("display", "flex")
+      .style("z-index", 10)
+      .on("click", function (event, d) {
 
-          // Clear selected state of all rect except for the clicked one
-          d3.selectAll("rect").each(function (d) {
-            d3.select(this).attr("stroke-width", 0);
-          });
+        const nudiDivs = d3.select("#NudiDivs");
+        const nudiDivNode = nudiDivs.node();
+        const nudiDivCurrentChild = nudiDivs.select(`div.${d.Nudi_id}`);
+        const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
 
-          // clear selected state of all previous divs except for the clicked one
+        // Clear selected state of all rect except for the clicked one
+        d3.selectAll("rect").each(function (d) {
+          d3.select(this).attr("stroke-width", 0);
+        });
 
-          nudiDivs.select("div").each(function (d) {
-            d3.select(this).style("border", "20px solid black")
-              .style("background-color", "black");
-            d3.select("h4").style("color", "white");
-            d3.select(".AddDetails h5").style("color", "white");
-            d3.select("p").style("color", "white");
-            d3.select(".AddDetails").style("border-top", "15px solid black");
-            d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
-          });
+        // clear selected state of all previous divs except for the clicked one
 
-          d3.select(this)
-            .attr("stroke-width", 5)
-            .attr("stroke", "white")
-            .attr("opacity", 1);
+        nudiDivs.select("div").each(function (d) {
+          d3.select(this).style("border", "20px solid black")
+            .style("background-color", "black");
+          d3.select("h4").style("color", "white");
+          d3.select(".AddDetails h5").style("color", "white");
+          d3.select("p").style("color", "white");
+          d3.select(".AddDetails").style("border-top", "15px solid black");
+          d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
+        });
 
-          // Update background color for associated divs of the selected swatch
-         nudiDivCurrentChild
+        d3.select(this)
+          .attr("stroke-width", 5)
+          .attr("stroke", "white")
+          .attr("opacity", 1);
+
+        // Update background color for associated divs of the selected swatch
+        nudiDivCurrentChild
           .style("border", "20px solid white")
           .style("background-color", "white")
           .selectAll("h4").style("color", "black");
-          nudiDivCurrentChild.selectAll(".AddDetails h5").style("color", "black")
+        nudiDivCurrentChild.selectAll(".AddDetails h5").style("color", "black")
           .selectAll("p").style("color", "black");
-          nudiDivCurrentChild.select(".AddDetails").style("border-top", "15px solid white");
-          nudiDivCurrentChild.select(".NudiTaxonomy").style("border-top", "15px solid white");
+        nudiDivCurrentChild.select(".AddDetails").style("border-top", "15px solid white");
+        nudiDivCurrentChild.select(".NudiTaxonomy").style("border-top", "15px solid white");
 
-          // Reorder the associated divs to the top (move them to the top in the DOM
-          nudiDivNode.insertBefore(nudiDivCurrentChildNode, nudiDivNode.firstChild); // Move div to the beginning of its parent's child list (top in the visual order)
-   
-        });
-    });
-  };
+        // Reorder the associated divs to the top (move them to the top in the DOM
+        nudiDivNode.insertBefore(nudiDivCurrentChildNode, nudiDivNode.firstChild); // Move div to the beginning of its parent's child list (top in the visual order)
+
+      });
+  });
+};
 
 
 // This function displays the images and their color palettes
@@ -1085,6 +1161,9 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
         const AddDetails = d3.select(this).select(".AddDetails");
         const isAddDVisible = AddDetails.style("display") === "block";
         AddDetails.style("display", isAddDVisible ? "none" : "block");
+        const swatchesDiv = d3.select(this).select(".swatchesDiv");
+        const isSwatchVisible = swatchesDiv.style("display") === "block";
+        swatchesDiv.style("display", isSwatchVisible ? "none" : "block");
       });
 
       NudiContainer.append("h4")
@@ -1097,7 +1176,19 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
         .attr("alt", d.properties.title)
         .style("display", "block");
 
-      const swatchesDiv = NudiContainer.append("div").style("display", "flex");
+      NudiContainer
+        .append("div")
+        .style("display", "none")
+        .attr("class", "swatchesDiv");
+
+      const paletteTitle = NudiContainer
+        .select(".swatchesDiv")
+        .append("div")
+        .append("h4")
+        .style("color", "white")
+        .style("padding", "10px 0px 5px 0px")
+        .text("Six Main Colors");
+
 
       correspondingImageSwatches.forEach((swatch) => {
         const keys = Object.keys(swatch.swatch);
@@ -1109,8 +1200,11 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
           .replace(/_/g, " ") // Replaces underscores with spaces
           .trim(); // Removes leading/trailing spaces
 
+        const swatchesDiv = NudiContainer.select(".swatchesDiv");
+
         swatchesDiv
           .append("div")
+          .style("display", "flex")
           .style(
             "background-color",
             `rgb(${rgbColor[0]}, ${rgbColor[1]}, ${rgbColor[2]})`

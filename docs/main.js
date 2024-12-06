@@ -64,7 +64,6 @@ const NudiColors = d3
   .style("padding-top", "10px")
   .style("background", "black");
 
-const allSwatches = [];
 const checkboxes = NudiColors
   .append("form")
   .selectAll("div") // Wrap each checkbox in a div
@@ -91,18 +90,13 @@ const checkboxes = NudiColors
 
     // If the "Red" checkbox is clicked
     if (d === "Reds") {
-      const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon");
+      const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon"); // Select both firebrick and maroon swatches
 
-      allSwatches.push(redSwatches); 
-      console.log("all swatches:", allSwatches);
-      groupSwatchesByNudiId(allSwatches);
-
-      // const selectedSwatches = groupSwatchesByNudiId(redSwatches);
-      
+      const selectedSwatches = groupSwatchesByNudiId(redSwatches);
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
-        allSwatches.forEach((swatch) => {
-          console.log(swatch); 
+        selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
             console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
@@ -123,17 +117,14 @@ const checkboxes = NudiColors
     }
     if (d === "Purples") {
       const purpleSwatches = d3.selectAll(".indigo, .plum, .darkorchid, .mediumorchid, .purple, .lightpink");
-      console.log("purple swatches:", purpleSwatches); 
 
       const selectedSwatches = groupSwatchesByNudiId(purpleSwatches);
-      
-
       //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            //console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -154,12 +145,12 @@ const checkboxes = NudiColors
       const blueSwatches = d3.selectAll(".darkslateblue, .slategrey, .midnightblue, .steelblue, .lightsteelblue, .cadetblue, .mediumturquoise, .teal, .darkturquoise, .lightblue, .darkcyan, .slateblue, .skyblue, .cornflowerblue, .lightskyblue, .powderblue, .lightslategrey");
 
       const selectedSwatches = groupSwatchesByNudiId(blueSwatches);
-      // console.log(selectedSwatches); 
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            //console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -180,12 +171,12 @@ const checkboxes = NudiColors
       const greenSwatches = d3.selectAll(".forestgreen, .darkolivegreen, .yellowgreen, .olive, .seagreen, .olivedrab");
 
       const selectedSwatches = groupSwatchesByNudiId(greenSwatches);
-      // console.log(selectedSwatches); 
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            //console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -206,12 +197,12 @@ const checkboxes = NudiColors
       const yellowSwatches = d3.selectAll(".sandybrown, .goldenrod, .gold, .darkgoldenrod, .khaki, .palegoldenrod, .burlywood, .darkkhaki");
 
       const selectedSwatches = groupSwatchesByNudiId(yellowSwatches);
-      // console.log(selectedSwatches); 
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            // console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -232,12 +223,12 @@ const checkboxes = NudiColors
       const orangeSwatches = d3.selectAll(".darkorange, .orange, .chocolate, .peru");
 
       const selectedSwatches = groupSwatchesByNudiId(orangeSwatches);
-      // console.log(selectedSwatches); 
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            // console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -258,12 +249,12 @@ const checkboxes = NudiColors
       const blackSwatches = d3.selectAll(".black");
 
       const selectedSwatches = groupSwatchesByNudiId(blackSwatches);
-      // console.log(selectedSwatches); 
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            // console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -284,12 +275,12 @@ const checkboxes = NudiColors
       const whiteSwatches = d3.selectAll(".silver, .antiquewhite, .floralwhite, .lavender, .wheat, .whitesmoke, .lightgrey, .tan");
 
       const selectedSwatches = groupSwatchesByNudiId(whiteSwatches);
-      // console.log(selectedSwatches); 
+      //console.log(selectedSwatches); 
       if (isChecked) {
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            // console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -315,7 +306,7 @@ const checkboxes = NudiColors
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            //console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -341,7 +332,7 @@ const checkboxes = NudiColors
 
         selectedSwatches.forEach((swatch) => {
           swatch[1].forEach((s) => {
-            // console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -358,9 +349,6 @@ const checkboxes = NudiColors
         });
       }
     }
-
-    // GROUPED BY NUDI ID, PUSH ALL SWATCHES TO TOP OF PARENT;
-
   })
   // Append the label text after the checkbox (text on the right side)
   .each(function (d) {
@@ -371,11 +359,9 @@ const checkboxes = NudiColors
       .text(d); // Use the data for the text label
   });
 
-function groupSwatchesByNudiId(allSwatches) {
-  console.log("swatchesArray:", swatchesArray); 
-
+function groupSwatchesByNudiId(swatchesArray) {
   const groupedByNudiId = d3.rollup(
-    allSwatches[0],  // The bound data
+    swatchesArray.data(),  // The bound data
     v => v,  // Extract the nudi_id from each element
     d => d.Nudi_id  // Group by nudi_id
   );

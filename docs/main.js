@@ -94,8 +94,7 @@ const checkboxes = NudiColors
       const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon");
 
       allSwatches.push(redSwatches); 
-      console.log(allSwatches);
-      //console.log(allSwatches); 
+      console.log("all swatches:", allSwatches);
       groupSwatchesByNudiId(allSwatches);
 
       // const selectedSwatches = groupSwatchesByNudiId(redSwatches);
@@ -105,7 +104,7 @@ const checkboxes = NudiColors
         allSwatches.forEach((swatch) => {
           console.log(swatch); 
           swatch[1].forEach((s) => {
-            //console.log(s);
+            console.log(s);
             const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
             // console.log(currentSwatch.node()); 
             const parent = currentSwatch.node().parentNode; // Get the parent container of the swatch
@@ -124,7 +123,7 @@ const checkboxes = NudiColors
     }
     if (d === "Purples") {
       const purpleSwatches = d3.selectAll(".indigo, .plum, .darkorchid, .mediumorchid, .purple, .lightpink");
-      console.log(purpleSwatches); 
+      console.log("purple swatches:", purpleSwatches); 
 
       const selectedSwatches = groupSwatchesByNudiId(purpleSwatches);
       
@@ -360,7 +359,7 @@ const checkboxes = NudiColors
       }
     }
 
-    // GROUPED BY NUDI ID, PUSH ALL SWATCHES TO TOP OF PARENT; 
+    // GROUPED BY NUDI ID, PUSH ALL SWATCHES TO TOP OF PARENT;
 
   })
   // Append the label text after the checkbox (text on the right side)
@@ -372,12 +371,11 @@ const checkboxes = NudiColors
       .text(d); // Use the data for the text label
   });
 
-function groupSwatchesByNudiId(swatchesArray) {
-  console.log(swatchesArray); 
-
+function groupSwatchesByNudiId(allSwatches) {
+  console.log("swatchesArray:", swatchesArray); 
 
   const groupedByNudiId = d3.rollup(
-    swatchesArray[0].data(),  // The bound data
+    allSwatches[0],  // The bound data
     v => v,  // Extract the nudi_id from each element
     d => d.Nudi_id  // Group by nudi_id
   );

@@ -388,8 +388,6 @@ h5 {
 p {
   font-weight: 300;
   font-size: 14pt;
-  color: #262262;
-
 }
 
 .mapTooltip {
@@ -421,8 +419,8 @@ p {
   z-index: 4;
 }
 
-.TaxTooltip {
-  z-index: 1000; /* Make sure it's above other elements */
+.TaxTooltip, .SwatchTooltip, .NudiSwatchTooltip {
+  z-index: 7000; /* Make sure it's above other elements */
   font-family: 'Kodchasan', sans-serif;
   color: white;
   padding-left: 10px;

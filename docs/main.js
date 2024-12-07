@@ -3,7 +3,7 @@ let groupedData = []; // Declare groupedData in a higher scope
 let groupedPalettes = []; // Declare groupedPalettes in a higher scope
 // Global variable to track which circles are currently displayed
 let currentRendering = 'circles'; // Default to renderCircles
-let activeColorSelections = new Map(); // Will store color -> grouped swatches mapping
+//let activeColorSelections = new Map(); // Will store color -> grouped swatches mapping
 
 
 // Load GeoJSON data
@@ -86,25 +86,28 @@ const NudiTaxi = d3
   .style("padding-top", "10px")
   .style("background", "black");
 
-const checkboxes = NudiColors
+  const radios = NudiColors
   .append("form")
-  .selectAll("div") // Wrap each checkbox in a div
-  .data(["Reds", "Purples", "Blues", "Greens", "Yellows", "Oranges", "Browns", "Blacks", "Whites", "Other"]) // Array of options for checkboxes
+  .selectAll("div")
+  .append("md-radio-group")
+  .data(["Reds", "Purples", "Blues", "Greens", "Yellows", "Oranges", "Browns", "Blacks", "Whites", "Other"]) 
   .enter()
   .append("div")
-  .attr("class", "checkbox")
-  .style("display", "inline-flex") // Display checkboxes side by side
-  .style("align-items", "center") // Align checkbox and label vertically
+  .attr("class", "radio")
+  .style("display", "inline-flex") 
+  .style("align-items", "center") 
   .style("padding", "5px")
-  .style("margin", "5px") // Space between checkboxes
+  .style("margin", "5px") 
   .append("label") // Append label first
   .style("display", "inline-flex") // Make label display inline-flex
   .style("align-items", "center") // Align items vertically within label
-  // Now append the md-switch within the label (checkbox comes first)
-  .append("md-checkbox")
-  .attr("class", function (d) { return `checkbox-${d}`; })
+  .append("md-radio")
+  .attr("class", function (d) { return `radio-${d}`; })
+  .attr("name", "colorGroup")  // Ensure all radio buttons have the same name
   .on("change", function (event, d) {
 
+
+/*    
     const checkbox = d3.select(this);
     const isChecked = checkbox.property("checked");
     const nudiColorsDiv = d3.select("#swatchBox");
@@ -602,16 +605,16 @@ function groupSwatchesByNudiId(swatchesArray) {
   return sortedByGroupLength;
 }
 
-/*    
+*/   
 
-// THIS WAS IN THE OLD SETUP AND IT WORKS JUST FOR HIGHLIGHTING COLORS
-    const checkbox = d3.select(this);
-    const isChecked = checkbox.property("checked");
+// THIS WAS IN THE SETUP WHERE IT WORKS JUST FOR HIGHLIGHTING COLORS
+    const radio = d3.select(this);
+    const isChecked = radio.property("checked");
     const nudiColorsDiv = d3.select("#swatchBox");
     const nudiColorsDivNode = nudiColorsDiv.node();
     // const allSwatches = [];
 
-    // If the "Red" checkbox is clicked
+  
     if (d === "Reds") {
       const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon"); // Select both firebrick and maroon swatches
 
@@ -873,7 +876,7 @@ function groupSwatchesByNudiId(swatchesArray) {
       }
     }
   })
-  // Append the label text after the checkbox (text on the right side)
+
   .each(function (d) {
     d3.select(this.parentNode) // Select the parent label
       .append("span") // Add a span for the text
@@ -895,18 +898,7 @@ function groupSwatchesByNudiId(swatchesArray) {
 
   return sortedByGroupLength;
 }
-*/
 
-/* 
-const NudiColorFamilies = NudiColors
-  .append("div")
-  .attr("id", "NudiColorFamilies")
-  .style("background", "black")
-  .append("h2")
-  .attr("id", "NudieTaxFamilies")
-  .append("h3")
-  .attr("id", "NudieTaxFamiliesText");
- */
 
 
 // Initial dimensions
@@ -984,22 +976,23 @@ const circlesGroup = svg
   .append("g")
   .attr("id", "circles-layer");
 
-// Update projection function
-function updateProjection() {
-  const mapwidth = window.innerWidth;
-  const mapheight = window.innerHeight;
-
-  Nudiprojection.scale(mapwidth / 6.25).translate([
-    mapwidth / 2,
-    mapheight / 2,
-  ]);
-
-  svg.selectAll("path.country").attr("d", Nudipath);
-  svg.selectAll("path.ocean").attr("d", Nudipath);
-
-  // Call renderCircles to update their positions and sizes
-  renderCircles(groupedData); // Make sure groupedData is accessible
-}
+  function updateProjection() {
+    const mapwidth = window.innerWidth;
+    const mapheight = window.innerHeight;
+  
+    Nudiprojection.scale(mapwidth / 6.25).translate([
+      mapwidth / 2,
+      mapheight / 2,
+    ]);
+  
+    TaxonomyChart(geoData);
+  
+    svg.selectAll("path.country").attr("d", Nudipath);
+    svg.selectAll("path.ocean").attr("d", Nudipath);
+  
+    // Call renderCircles to update their positions and sizes
+    renderCircles(groupedData); // Make sure groupedData is accessible
+  }
 
 // Add resize event listener
 window.addEventListener("resize", updateProjection);
@@ -1263,15 +1256,13 @@ const ResetButton = d3
   .select("header")
   .append("button")
   .attr("id", "resetButton")
-  .text("Clear Selections")
+  .text("Clear All")
   .on("click", clearSelections)
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
   .on("mouseover", function () {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
   .on("mouseout", function () {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
@@ -1428,11 +1419,11 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
   globalMap.classed("clickable", true);
   globalMap.classed("not-clickable", false);
   const nudiColorsDiv = d3.select("#NudiColors");
-  nudiColorsDiv.classed("clickable", false); // Add clickable class
+  nudiColorsDiv.classed("clickable", false);
   nudiColorsDiv.classed("not-clickable", true);
-
-  // this function calls categorizeSwatches, which is not defined?
-  // CategorizedSwatches(NudiColors, geoData); // Pass geoData here
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", false);
+  TaxiTree.classed("not-clickable", true);
 }
 
 
@@ -1440,49 +1431,79 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
 function showCircles() {
   if (currentRendering === 'circles') return; // No action if already rendering circles
 
-  // Clear existing circles and text
   circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll("text").remove(); // Clear any existing text
+  circlesGroup.selectAll("text").remove(); 
   d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
 
-
-  const globalMap = d3.select("#globalMap");
-  globalMap.classed("clickable", true);
-  globalMap.classed("not-clickable", false);
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", false);
+  TaxiTree.classed("not-clickable", true);
+  TaxiTree.style("opacity", 0);
 
   const nudiColorsDiv = d3.select("#NudiColors");
   nudiColorsDiv.classed("clickable", false); // Add clickable class
   nudiColorsDiv.classed("not-clickable", true);
 
-  // Render the circles
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", true);
+  globalMap.classed("not-clickable", false);
+
   renderCircles(groupedData); // Pass the appropriate data
   currentRendering = 'circles'; // Update current rendering state
+
+}
+
+
+function showTaxi() {
+  if (currentRendering === 'taxis') return; // No action if already rendering taxonomy
+
+  // Clear existing circles and text
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll("text").remove(); // Clear any existing text
+  d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
+
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", true);
+  TaxiTree.classed("not-clickable", false);
+
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", false);
+  globalMap.classed("not-clickable", true);
+
+  const nudiColorsDiv = d3.select("#NudiColors");
+  nudiColorsDiv.classed("clickable", false); // Add clickable class
+  nudiColorsDiv.classed("not-clickable", true);
+
+  circlesGroup.selectAll("circle").attr("opacity", 0);
+  nudiColorsDiv.style("opacity", 0); 
+  TaxiTree.style("opacity", 1);
+
+  TaxonomyChart(geoData); // Pass the appropriate data
+  currentRendering = 'taxis'; // Update current rendering state
 
 }
 
 function showColorPalettes() {
   if (currentRendering === 'colorPalettes') return;
 
-  // Clear existing circles and text
-  circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll(".count-label").remove();
-  circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
-
-  const nudiColorsDiv = d3.select("#NudiColors");
-  // Render the color palettes
-  // CategorizedSwatches(NudiColors, geoData);
-
-  // Make circles visible
-  circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
-
-  nudiColorsDiv.style("opacity", 1); // Set opacity to 1
-  //   
-  nudiColorsDiv.classed("clickable", true); // Add clickable class
-  nudiColorsDiv.classed("not-clickable", false);
-
   const globalMap = d3.select("#globalMap");
   globalMap.classed("clickable", false);
   globalMap.classed("not-clickable", true);
+
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll(".count-label").remove();
+  circlesGroup.selectAll(".count-label").attr("opacity", 0);
+  circlesGroup.selectAll("circle").attr("opacity", 0); 
+
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", false);
+  TaxiTree.classed("not-clickable", true);
+  TaxiTree.style("opacity", 0);
+     
+  const nudiColorsDiv = d3.select("#NudiColors");
+  nudiColorsDiv.classed("clickable", true); 
+  nudiColorsDiv.classed("not-clickable", false);
+  nudiColorsDiv.style("opacity", 1); 
 
   currentRendering = 'colorPalettes';
 }
@@ -1491,15 +1512,13 @@ const showCirclesButton = d3
   .select("header")
   .append("button")
   .attr("id", "showCirclesButton")
-  .text("Show Locations")
+  .text("Locations")
   .on("click", showCircles) // Call the showCircles function
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
   .on("mouseover", function () {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
   .on("mouseout", function () {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
@@ -1507,18 +1526,33 @@ const showColorSwatchesButton = d3
   .select("header")
   .append("button")
   .attr("id", "showColorSwatchesButton")
-  .text("Show Swatches")
+  .text("Swatches")
   .on("click", function () {
     // Trigger the CategorizedSwatches function on button click
-    showColorPalettes(geoData); // Pass geoData or relevant data, not NudiColors
+    showColorPalettes(geoData); 
   })
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
   .on("mouseover", function () {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
   .on("mouseout", function () {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
+
+
+  const showTaxonomyButton = d3
+  .select("header")
+  .append("button")
+  .attr("id", "showTaxonomyButton")
+  .text("Taxonomy")
+  .on("click", function () {
+    showTaxi(geoData);
+  })
+  .style("transition", "background-color 0.3s, transform 0.2s") 
+  .on("mouseover", function () {
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function () {
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
@@ -2077,121 +2111,149 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
 }
 
 function TaxonomyChart(geoData) {
-
   // Select the container element and get its dimensions
   const container = d3.select("#NudiTaxi");
   const containerWidth = container.node().getBoundingClientRect().width;
   const containerHeight = container.node().getBoundingClientRect().height;
 
+  container.select("svg").remove();
+
   // Create the SVG element for the tree chart with dynamic width and height
-  const TaxonomySVG = container.append("svg")
+  const TaxonomySVG = container
+    .append("svg")
     .attr("width", containerWidth)
     .attr("height", containerHeight);
 
   const taxonomyData = d3.rollup(
     geoData.features,
-    (v) => d3.rollup(
-      v,
-      (group) => group.length, 
-      (d) => d.properties.title,
-      (d) => d.properties.tax_family 
-    ),
+    (v) =>
+      d3.rollup(
+        v,
+        (group) => group.length,
+        (d) => d.properties.title,
+        (d) => d.properties.tax_family
+      ),
     (d) => d.properties.tax_kingdom,
     (d) => d.properties.tax_phylum,
     (d) => d.properties.tax_class,
     (d) => d.properties.tax_subclass,
-    (d) => d.properties.tax_order,
+    (d) => d.properties.tax_order
   );
 
   console.log("Flattened Taxonomy Data:", taxonomyData);
 
- // Convert the taxonomy data to hierarchical format starting from tax_kingdom
-const hierarchyData = Array.from(taxonomyData.entries()).map(([tax_kingdom, phylumMap]) => ({
-  name: tax_kingdom,
-  children: Array.from(phylumMap.entries()).map(([tax_phylum, classMap]) => ({
-    name: tax_phylum,
-    children: Array.from(classMap.entries()).map(([tax_class, subclassMap]) => ({
-      name: tax_class,
-      children: Array.from(subclassMap.entries()).map(([tax_subclass, orderMap]) => ({
-        name: tax_subclass,
-        children: Array.from(orderMap.entries()).map(([tax_order, familyMap]) => ({
-          name: tax_order,
-          children: Array.from(familyMap.entries()).map(([tax_family, titleMap]) => {
-            // Initialize a family node map to accumulate titles under the same family
-            let familyNode = {
-              name: tax_family,
-              children: [],
-              value: 0  // This will sum the species count for each family
-            };
+  // Convert the taxonomy data to hierarchical format starting from tax_kingdom
+  const hierarchyData = Array.from(taxonomyData.entries()).map(
+    ([tax_kingdom, phylumMap]) => ({
+      name: tax_kingdom,
+      children: Array.from(phylumMap.entries()).map(
+        ([tax_phylum, classMap]) => ({
+          name: tax_phylum,
+          children: Array.from(classMap.entries()).map(
+            ([tax_class, subclassMap]) => ({
+              name: tax_class,
+              children: Array.from(subclassMap.entries()).map(
+                ([tax_subclass, orderMap]) => ({
+                  name: tax_subclass,
+                  children: Array.from(orderMap.entries()).map(
+                    ([tax_order, familyMap]) => ({
+                      name: tax_order,
+                      children: Array.from(familyMap.entries()).map(
+                        ([tax_family, titleMap]) => {
+                          // Initialize a family node map to accumulate titles under the same family
+                          let familyNode = {
+                            name: tax_family,
+                            children: [],
+                            value: 0, // This will sum the species count for each family
+                          };
 
-            // We want to group titles and accumulate their counts
-            Array.from(titleMap.entries()).forEach(([title, count]) => {
-              familyNode.children.push({
-                name: title,
-                value: count
-              });
-              familyNode.value += count; // Add the title's count to the family's value
-            });
+                          // We want to group titles and accumulate their counts
+                          Array.from(titleMap.entries()).forEach(
+                            ([title, count]) => {
+                              familyNode.children.push({
+                                name: title,
+                                value: count,
+                              });
+                              familyNode.value += count; // Add the title's count to the family's value
+                            }
+                          );
 
-            // Return the family node after it has been populated
-            return familyNode;
-          })
-        }))
-      }))
-    }))
-  }))
-}));
+                          // Return the family node after it has been populated
+                          return familyNode;
+                        }
+                      ),
+                    })
+                  ),
+                })
+              ),
+            })
+          ),
+        })
+      ),
+    })
+  );
 
-// The hierarchyData is already structured to start with `tax_kingdom` as the root-level nodes
-console.log("Hierarchy Data:", hierarchyData);
+  // The hierarchyData is already structured to start with `tax_kingdom` as the root-level nodes
+  console.log("Hierarchy Data:", hierarchyData);
 
-// 2. Create a D3 hierarchy directly from the tax_kingdom data (without a synthetic root)
-const rootData = d3.hierarchy({
-  children: hierarchyData  // No "name": "Root", just set the kingdom data directly as children
-})
-  .sum(d => d.value || 0)  // Calculate the sum of values for node sizes (if applicable)
-  .sort((a, b) => b.value - a.value);  // Sort nodes based on the value for better positioning
+  // 2. Create a D3 hierarchy directly from the tax_kingdom data (without a synthetic root)
+  const rootData = d3
+    .hierarchy({
+      children: hierarchyData, // No "name": "Root", just set the kingdom data directly as children
+    })
+    .sum((d) => d.value || 0) // Calculate the sum of values for node sizes (if applicable)
+    .sort((a, b) => b.value - a.value); // Sort nodes based on the value for better positioning
 
-// Create a horizontal tree layout (swap x and y axes)
-const treeLayout = d3.tree()
-  .size([containerHeight - 75, containerWidth - 75])  // Size adjusted for horizontal layout
-  .separation((a, b) => 1); // Define the separation between nodes (adjust as needed)
+  // Create a horizontal tree layout (swap x and y axes)
+  const treeLayout = d3
+    .tree()
+    .size([containerHeight - 75, containerWidth - 75]) // Size adjusted for horizontal layout
+    .separation((a, b) => 1); // Define the separation between nodes (adjust as needed)
 
-// Apply the tree layout to the hierarchical data
-const treeData = treeLayout(rootData);
+  // Apply the tree layout to the hierarchical data
+  const treeData = treeLayout(rootData);
 
-// 3. Render the horizontal tree chart
-// Add links (lines between parent and child nodes)
-TaxonomySVG.selectAll(".link")
-  .data(treeData.links())
-  .enter().append("line")
-  .attr("class", "link")
-  .attr("x1", d => d.source.y)  // Swap x and y for horizontal
-  .attr("y1", d => d.source.x)
-  .attr("x2", d => d.target.y)  // Swap x and y for horizontal
-  .attr("y2", d => d.target.x)
-  .attr("stroke", "#ccc")
-  .attr("stroke-width", 1);
+  const treeGroup = TaxonomySVG.append("g").attr(
+    "transform",
+    "translate(10, 10)"
+  );
 
-// Add nodes (circles) instead of text
-const nodes = TaxonomySVG.selectAll(".node")
-  .data(treeData.descendants())
-  .enter().append("g")
-  .attr("class", "node")
-  .attr("transform", d => `translate(${d.y}, ${d.x})`);  // Swap x and y for horizontal
+  // 3. Render the horizontal tree chart
+  // Add links (lines between parent and child nodes)
+  treeGroup
+    .selectAll(".link")
+    .data(treeData.links())
+    .enter()
+    .append("line")
+    .attr("class", "link")
+    .attr("x1", (d) => d.source.y) // Swap x and y for horizontal
+    .attr("y1", (d) => d.source.x)
+    .attr("x2", (d) => d.target.y) // Swap x and y for horizontal
+    .attr("y2", (d) => d.target.x)
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 1);
 
-// Add circles for each node
-nodes.append("circle")
-  .attr("r", 5)  // Fixed radius for the circle
-  .attr("fill", d => {
-    if (d.depth === 0) return "darkgoldenrod";  // Root node
-    return "palegoldenrod";  // Other nodes
-  })
-  .attr("stroke", "black")
-  .style("stroke-width", 1);
+  // Add nodes (circles) instead of text
+  const nodes = treeGroup
+    .selectAll(".node")
+    .data(treeData.descendants())
+    .enter()
+    .append("g")
+    .attr("class", "node")
+    .attr("transform", (d) => `translate(${d.y}, ${d.x})`); // Swap x and y for horizontal
 
-  
+  // Add circles for each node
+  nodes
+    .append("circle")
+    .attr("r", 5) // Fixed radius for the circle
+    .attr("fill", (d) => {
+      if (d.depth === 0) return "darkgoldenrod"; // Root node
+      return "palegoldenrod"; // Other nodes
+    })
+    .attr("stroke", "black")
+    .style("stroke-width", 1);
 }
+
 
 
 

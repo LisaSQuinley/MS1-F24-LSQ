@@ -38,7 +38,7 @@ header {
   z-index: 20;
 }
 
-#resetButton, #showCirclesButton, #showColorSwatchesButton {
+#resetButton, #showCirclesButton, #showColorSwatchesButton, #showTaxonomyButton {
   font-family: "Kodchasan", sans-serif;
   font-weight: 500;
   font-size: 10pt;
@@ -58,12 +58,17 @@ header {
 
 #showCirclesButton {
   top: 15px;
-  right: 180px;
+  right: 125px;
 }
 
 #showColorSwatchesButton {
   top: 15px;
-  right: 340px;
+  right: 245px;
+}
+
+#showTaxonomyButton {
+  top: 15px;
+  right: 365px;
 }
 
 #title h1, h2 {
@@ -122,7 +127,7 @@ footer p {
   overflow-y: auto; 
   max-height: 97vh;
   opacity: 0; /* Initially hidden */
-  transition: opacity 3.5s ease-in; /* Fade effect */
+  transition: opacity 3s ease-in; /* Fade effect */
   box-sizing: border-box;
   padding-bottom: 20px;
 }
@@ -136,7 +141,7 @@ footer p {
   overflow-y: auto; 
   max-height: 97vh;
   opacity: 0;
-  transition: opacity 3.5s ease-in;
+  transition: opacity 3s ease-in;
   box-sizing: border-box;
   padding-bottom: 15px;
 }
@@ -149,8 +154,8 @@ footer p {
   width: 50%;
   height: 100%;
   max-height: 97vh;
-/*   opacity: 0;
-  transition: opacity 3.5s ease-in; */
+  opacity: 0;
+  transition: opacity 3s ease-in;
   box-sizing: border-box;
   padding-bottom: 15px;
 }
@@ -165,106 +170,81 @@ footer p {
   cursor: default; 
 }
 
-.checkbox {
+.radio {
   font-family: "Nunito Sans", sans-serif;
   font-weight: 400;
 }
 
-
-.checkbox-Reds {
-  --md-checkbox-selected-container-color: red;
-  --md-checkbox-selected-hover-container-color: orangered;
-  --md-checkbox-selected-focus-container-color: red;
-  --md-checkbox-selected-pressed-container-color: orangered;
-  --md-checkbox-selected-pressed-icon-color: white;
-  background-color: red;
+.radio-Reds {
+  --md-sys-color-primary: red;
+  --md-radio-hover-icon-color: orangered;
+  --md-radio-hover-state-layer-color: red;
+  --md-radio-icon-color: orangered;
+  --md-radio-pressed-icon-color: red;
 }
-.checkbox-Purples {
-  --md-checkbox-selected-container-color: purple;
-  --md-checkbox-selected-hover-container-color: mediumorchid;
-  --md-checkbox-selected-focus-container-color: purple;
-  --md-checkbox-selected-pressed-container-color: mediumorchid;
-  --md-checkbox-selected-pressed-icon-color: white;
-    background-color: purple;
+.radio-Purples {
+  --md-sys-color-primary: purple;
+  --md-radio-hover-icon-color: mediumorchid;
+  --md-radio-hover-state-layer-color: purple;
+  --md-radio-icon-color: mediumorchid;
+  --md-radio-pressed-icon-color: purple;
 }
-.checkbox-Blues {
-  --md-checkbox-selected-container-color: blue;
-  --md-checkbox-selected-hover-container-color: dodgerblue;
-  --md-checkbox-selected-focus-container-color: blue;
-  --md-checkbox-selected-pressed-container-color: dodgerblue;
-  --md-checkbox-selected-pressed-icon-color: white;
-  background-color: blue;
+.radio-Blues {
+  --md-sys-color-primary: blue;
+  --md-radio-hover-icon-color: dodgerblue;
+  --md-radio-hover-state-layer-color: blue;
+  --md-radio-icon-color: dodgerblue;
+  --md-radio-pressed-icon-color: blue;
 }
-.checkbox-Greens {
-  --md-checkbox-selected-container-color: green;
-  --md-checkbox-selected-hover-container-color: lightgreen;
-  --md-checkbox-selected-focus-container-color: green;
-  --md-checkbox-selected-pressed-container-color: lightgreen;
-  --md-checkbox-selected-pressed-icon-color: white;
-  background-color: green;
+.radio-Greens {
+  --md-sys-color-primary: green;
+  --md-radio-hover-icon-color: lightgreen;
+  --md-radio-hover-state-layer-color: green;
+  --md-radio-icon-color: lightgreen;
+  --md-radio-pressed-icon-color: green;
 }
-.checkbox-Blacks {
-  --md-checkbox-selected-container-color: black;
-  --md-checkbox-selected-hover-container-color: dimgray;
-  --md-checkbox-selected-focus-container-color: black;
-  --md-checkbox-selected-pressed-container-color: dimgray;
-  --md-checkbox-selected-pressed-icon-color: white;
-  background-color: black;
+.radio-Blacks {
+  --md-sys-color-primary: black;
+  --md-radio-hover-icon-color: dimgray;
+  --md-radio-hover-state-layer-color: black;
+  --md-radio-icon-color: dimgray;
+  --md-radio-pressed-icon-color: black;
 }
-.checkbox-Browns {
-  --md-checkbox-selected-container-color: brown;
-  --md-checkbox-selected-hover-container-color: chocolate;
-  --md-checkbox-selected-focus-container-color: brown;
-  --md-checkbox-selected-pressed-container-color: chocolate;
-  --md-checkbox-selected-pressed-icon-color: white;
-  background-color: brown;
+.radio-Browns {
+  --md-sys-color-primary: brown;
+  --md-radio-hover-icon-color: chocolate;
+  --md-radio-hover-state-layer-color: brown;
+  --md-radio-icon-color: chocolate;
+  --md-radio-pressed-icon-color: brown;
 }
-.checkbox-Other {
-  --md-checkbox-selected-container-color: gray;
-  --md-checkbox-selected-hover-container-color: darkgray;
-  --md-checkbox-selected-focus-container-color: gray;
-  --md-checkbox-selected-pressed-container-color: darkgray;
-  --md-checkbox-selected-pressed-icon-color: white;
-  background-color: gray;
+.radio-Other {
+  --md-sys-color-primary: gray;
+  --md-radio-hover-icon-color: darkgray;
+  --md-radio-hover-state-layer-color: gray;
+  --md-radio-icon-color: darkgray;
+  --md-radio-pressed-icon-color: gray;
 }
-.checkbox-Yellows {
-  --md-checkbox-selected-container-color: yellow;
-  --md-checkbox-selected-hover-container-color: lightgoldenrodyellow;
-  --md-checkbox-selected-focus-container-color: yellow;
-  --md-checkbox-selected-icon-color: black;
-  --md-checkbox-selected-pressed-container-color: lightgoldenrodyellow;
-  --md-checkbox-selected-pressed-icon-color: black;
-  --md-checkbox-selected-focus-icon-color: black;
-  background-color: yellow;
+.radio-Yellows {
+  --md-sys-color-primary: yellow;
+  --md-radio-hover-icon-color: lightgoldenrodyellow;
+  --md-radio-hover-state-layer-color: yellow;
+  --md-radio-icon-color: lightgoldenrodyellow;
+  --md-radio-pressed-icon-color: yellow;
 }
-.checkbox-Oranges {
-  --md-checkbox-selected-container-color: orange;
-  --md-checkbox-selected-hover-container-color: gold;
-  --md-checkbox-selected-focus-container-color: orange;
-  --md-checkbox-selected-icon-color: black;
-  --md-checkbox-selected-pressed-container-color: gold;
-  --md-checkbox-selected-pressed-icon-color: black;
-  --md-checkbox-selected-focus-icon-color: black;
-  background-color: orange;
+.radio-Oranges {
+  --md-sys-color-primary: orange;
+  --md-radio-hover-icon-color: gold;
+  --md-radio-hover-state-layer-color: orange;
+  --md-radio-icon-color: gold;
+  --md-radio-pressed-icon-color: orange;
 }
-.checkbox-Whites {
-  --md-checkbox-selected-container-color: white;
-  --md-checkbox-selected-hover-container-color: whitesmoke;
-  --md-checkbox-selected-focus-container-color: white;
-  --md-checkbox-selected-icon-color: black;
-  --md-checkbox-selected-pressed-container-color: whitesmoke;
-  --md-checkbox-selected-pressed-icon-color: black;
-  --md-checkbox-selected-focus-icon-color: black;
-    background-color: white;
+.radio-Whites {
+  --md-sys-color-primary: white;
+  --md-radio-hover-icon-color: whitesmoke;
+  --md-radio-hover-state-layer-color: white;
+  --md-radio-icon-color: whitesmoke;
+  --md-radio-pressed-icon-color: white;
 }
-
-
-/* :root {
-  --md-checkbox-selected-container-color: yellow;
-  --md-checkbox-selected-icon-color: black;
-  --md-checkbox-selected-hover-container-color: hotpink;
-  --md-checkbox-selected-focus-container-color: green;
-} */
 
 #NudiContainers {
   background: black;
@@ -466,7 +446,7 @@ p {
     overflow-y: auto; 
     max-height: 100vh;
     opacity: 0; /* Initially hidden */
-    transition: opacity 3.5s ease-in; /* Fade effect */
+    transition: opacity 3s ease-in; /* Fade effect */
   }
 
   #resetButton {
@@ -488,7 +468,7 @@ p {
     width: 150px;
   }
   
-  #showCirclesButton, #showColorSwatchesButton {
+  #showCirclesButton, #showColorSwatchesButton, #showTaxonomyButton {
     display: none;
   }
 

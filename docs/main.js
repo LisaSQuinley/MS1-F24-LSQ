@@ -2131,83 +2131,57 @@ function TaxonomyChart(geoData) {
         v,
         (group) => group.length,
         (d) => d.properties.title,
-        (d) => d.properties.tax_family
+        (d) => d.properties.tax_family,
+        (d) => d.properties.Nudi_id
       ),
-    (d) => d.properties.tax_kingdom,
-    (d) => d.properties.tax_phylum,
-    (d) => d.properties.tax_class,
-    (d) => d.properties.tax_subclass,
-    (d) => d.properties.tax_order
+    (d) => d.properties.tax_order,
   );
 
-  console.log("Flattened Taxonomy Data:", taxonomyData);
+  //console.log("Flattened Taxonomy Data:", taxonomyData);
 
-  // Convert the taxonomy data to hierarchical format starting from tax_kingdom
+  // Convert the taxonomy data to hierarchical format starting from tax_order
   const hierarchyData = Array.from(taxonomyData.entries()).map(
-    ([tax_kingdom, phylumMap]) => ({
-      name: tax_kingdom,
-      children: Array.from(phylumMap.entries()).map(
-        ([tax_phylum, classMap]) => ({
-          name: tax_phylum,
-          children: Array.from(classMap.entries()).map(
-            ([tax_class, subclassMap]) => ({
-              name: tax_class,
-              children: Array.from(subclassMap.entries()).map(
-                ([tax_subclass, orderMap]) => ({
-                  name: tax_subclass,
-                  children: Array.from(orderMap.entries()).map(
-                    ([tax_order, familyMap]) => ({
-                      name: tax_order,
-                      children: Array.from(familyMap.entries()).map(
-                        ([tax_family, titleMap]) => {
-                          // Initialize a family node map to accumulate titles under the same family
-                          let familyNode = {
-                            name: tax_family,
-                            children: [],
-                            value: 0, // This will sum the species count for each family
-                          };
+    ([tax_order, familyMap]) => ({
+      name: tax_order,
+      children: Array.from(familyMap.entries()).map(
+        ([tax_family, titleMap]) => {
+          let familyNode = {
+            name: tax_family,
+            children: [],
+            value: 0, // Sum of species count for each family
+          };
 
-                          // We want to group titles and accumulate their counts
-                          Array.from(titleMap.entries()).forEach(
-                            ([title, count]) => {
-                              familyNode.children.push({
-                                name: title,
-                                value: count,
-                              });
-                              familyNode.value += count; // Add the title's count to the family's value
-                            }
-                          );
+          // Group titles and accumulate their counts
+          Array.from(titleMap.entries()).forEach(
+            ([title, count]) => {
+              familyNode.children.push({
+                name: title,
+                value: count,
+              });
+              familyNode.value += count; // Add the title's count to the family's value
+            }
+          );
 
-                          // Return the family node after it has been populated
-                          return familyNode;
-                        }
-                      ),
-                    })
-                  ),
-                })
-              ),
-            })
-          ),
-        })
+          return familyNode;
+        }
       ),
     })
   );
 
-  // The hierarchyData is already structured to start with `tax_kingdom` as the root-level nodes
-  console.log("Hierarchy Data:", hierarchyData);
+  //console.log("Hierarchy Data:", hierarchyData);
 
-  // 2. Create a D3 hierarchy directly from the tax_kingdom data (without a synthetic root)
+  // The hierarchyData is now starting from tax_order, no need for root-level taxonomic groups
   const rootData = d3
     .hierarchy({
-      children: hierarchyData, // No "name": "Root", just set the kingdom data directly as children
+      children: hierarchyData, // No "name": "Root", just use the tax_order data directly as children
     })
-    .sum((d) => d.value || 0) // Calculate the sum of values for node sizes (if applicable)
+    .sum((d) => d.value || 0) // Sum the values for node sizes
     .sort((a, b) => b.value - a.value); // Sort nodes based on the value for better positioning
 
   // Create a horizontal tree layout (swap x and y axes)
   const treeLayout = d3
     .tree()
-    .size([containerHeight - 75, containerWidth - 75]) // Size adjusted for horizontal layout
+    .size([containerHeight - 75, containerWidth - 25]) // Size adjusted for horizontal layout
     .separation((a, b) => 1); // Define the separation between nodes (adjust as needed)
 
   // Apply the tree layout to the hierarchical data
@@ -2215,10 +2189,10 @@ function TaxonomyChart(geoData) {
 
   const treeGroup = TaxonomySVG.append("g").attr(
     "transform",
-    "translate(10, 10)"
+    "translate(0, 10)"
   );
 
-  // 3. Render the horizontal tree chart
+  // Render the horizontal tree chart
   // Add links (lines between parent and child nodes)
   treeGroup
     .selectAll(".link")
@@ -2230,13 +2204,20 @@ function TaxonomyChart(geoData) {
     .attr("y1", (d) => d.source.x)
     .attr("x2", (d) => d.target.y) // Swap x and y for horizontal
     .attr("y2", (d) => d.target.x)
-    .attr("stroke", "#ccc")
+    .attr("stroke", (d) => {
+      // Color based on depth of the source node
+      switch (d.source.depth) {
+        case 1: return "#555658"; // Color for level 1
+        case 2: return "#474749"; // Color for level 2
+        case 3: return "#373537"; // Color for level 3
+        default: return "#000000";  // Default color for other levels
+      }
+    })
     .attr("stroke-width", 1);
-
   // Add nodes (circles) instead of text
   const nodes = treeGroup
     .selectAll(".node")
-    .data(treeData.descendants())
+    .data(treeData.descendants().slice(1)) // Skip the root node by slicing off the first element
     .enter()
     .append("g")
     .attr("class", "node")
@@ -2244,19 +2225,18 @@ function TaxonomyChart(geoData) {
 
   // Add circles for each node
   nodes
-    .append("circle")
-    .attr("r", 5) // Fixed radius for the circle
-    .attr("fill", (d) => {
-      if (d.depth === 0) return "darkgoldenrod"; // Root node
-      return "palegoldenrod"; // Other nodes
-    })
-    .attr("stroke", "black")
-    .style("stroke-width", 1);
+  .append("circle")
+  .attr("r", 5) // Fixed radius for the circle
+  .attr("fill", (d) => {
+    // Color based on the depth of the node
+    switch (d.depth) {
+      case 1: return "#555658"; // Color for level 1
+      case 2: return "#474749"; // Color for level 2
+      case 3: return "#373537"; // Color for level 3
+      default: return "#000000";  // Default color for other levels
+    }
+  })
+  .attr("stroke", "black")
+  .style("stroke-width", 1);
 }
-
-
-
-
-
-
 

@@ -2282,10 +2282,10 @@ function TaxonomyChart(geoData) {
     .append("g")
     .attr("class", (d) => {
       const value = d.data.value;
-    
+
       // Base class for every node
       let classString = "node";
-    
+
       // If the value is a Map, create a class string based on the map keys
       if (value instanceof Map) {
         value.forEach((mapValue, mapKey) => {
@@ -2312,7 +2312,7 @@ function TaxonomyChart(geoData) {
       }
 
       return classString.trim(); // Return the concatenated class string
-    })    
+    })
     .attr("transform", (d) => `translate(${d.y}, ${d.x})`); // Swap x and y for horizontal
 
   // Add circles for each node
@@ -2347,62 +2347,68 @@ function TaxonomyChart(geoData) {
           }
         })
         .attr("r", 5); // Reset the radius
+    })
+    .on("click", function (event, d) {
+
+      // Example of changing attributes (fill color and radius)
+      d3.select(this)
+        .attr("fill", "red") // Change color to red on click
+        .attr("r", 10) // Change radius
+        .attr("stroke-width", 5)
+        .attr("stroke", "white")
+        .attr("opacity", 1);
+
+      const nudiDivs = d3.select("#NudiDivs");
+      const nudiDivNode = nudiDivs.node();
+      const nudiDivCurrentChild = nudiDivs.select(`div.${d.key}`);
+
+
+
+      // SOUMYA I NARROWED DOWN HOW TO GET TO THE SAME LEVEL OF DATA FOR BOTH PARENT AND CHILD NODES
+      // BUT I THINK I NEED AN IF/ELSE STATEMENT TO CHECK WHICH NODE IS CLICKED AND THEREFORE WHICH DATA TO ACCESS
+
+      console.log(d.data.value); // child node, but this is internmap, how do I access key
+
+      d.data.children.forEach(child => {
+        console.log(child.value);
+      }); // parent node, but this is internmap, how do I access key
+
+
+
+      const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
+
+      // Clear selected state of all rect except for the clicked one
+      d3.selectAll("rect").each(function (d) {
+        d3.select(this).attr("stroke-width", 0);
+      });
+
+      // clear selected state of all previous divs except for the clicked one
+
+      nudiDivs.select("div").each(function (d) {
+        d3.select(this).style("border", "20px solid black")
+          .style("background-color", "black");
+        d3.select("h4").style("color", "white");
+        d3.select(".AddDetails h5").style("color", "white");
+        d3.select("p").style("color", "white");
+        d3.select(".AddDetails").style("border-top", "15px solid black");
+        d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
+      });
+
+      // Update background color for associated divs of the selected swatch
+      nudiDivCurrentChild
+        .style("border", "20px solid white")
+        .style("background-color", "white")
+        .selectAll("h4").style("color", "black");
+      nudiDivCurrentChild.selectAll(".AddDetails h5").style("color", "black")
+        .selectAll("p").style("color", "black");
+      nudiDivCurrentChild.select(".AddDetails").style("border-top", "15px solid white");
+      nudiDivCurrentChild.select(".NudiTaxonomy").style("border-top", "15px solid white");
+
+      // Reorder the associated divs to the top (move them to the top in the DOM
+      nudiDivNode.insertBefore(nudiDivCurrentChildNode, nudiDivNode.firstChild);
+
     });
-
-  nodes    
-  .on("click", function (event, d) {
-
-    console.log(d.data);
-
-    const nudiDivs = d3.select("#NudiDivs");
-    const nudiDivNode = nudiDivs.node();
-    const nudiDivCurrentChild = nudiDivs.select(`div.${d.key}`);
-    const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
-
-    // Clear selected state of all rect except for the clicked one
-    d3.selectAll("rect").each(function (d) {
-      d3.select(this).attr("stroke-width", 0);
-    });
-
-    // clear selected state of all previous divs except for the clicked one
-
-    nudiDivs.select("div").each(function (d) {
-      d3.select(this).style("border", "20px solid black")
-        .style("background-color", "black");
-      d3.select("h4").style("color", "white");
-      d3.select(".AddDetails h5").style("color", "white");
-      d3.select("p").style("color", "white");
-      d3.select(".AddDetails").style("border-top", "15px solid black");
-      d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
-    });
-
-    d3.select(this)
-      .attr("stroke-width", 5)
-      .attr("stroke", "white")
-      .attr("opacity", 1);
-
-    // Update background color for associated divs of the selected swatch
-    nudiDivCurrentChild
-      .style("border", "20px solid white")
-      .style("background-color", "white")
-      .selectAll("h4").style("color", "black");
-    nudiDivCurrentChild.selectAll(".AddDetails h5").style("color", "black")
-      .selectAll("p").style("color", "black");
-    nudiDivCurrentChild.select(".AddDetails").style("border-top", "15px solid white");
-    nudiDivCurrentChild.select(".NudiTaxonomy").style("border-top", "15px solid white");
-
-    // Reorder the associated divs to the top (move them to the top in the DOM
-    nudiDivNode.insertBefore(nudiDivCurrentChildNode, nudiDivNode.firstChild); 
-
-  
-    // Example of changing attributes (fill color and radius)
-    d3.select(this)
-      .attr("fill", "red") // Change color to red on click
-      .attr("r", 10); // Change radius
-
-    });
-
-
-  };
+  ;
+};
 
 

@@ -3,7 +3,7 @@ let groupedData = []; // Declare groupedData in a higher scope
 let groupedPalettes = []; // Declare groupedPalettes in a higher scope
 // Global variable to track which circles are currently displayed
 let currentRendering = 'circles'; // Default to renderCircles
-let activeColorSelections = new Map(); // Will store color -> grouped swatches mapping
+//let activeColorSelections = new Map(); // Will store color -> grouped swatches mapping
 
 
 // Load GeoJSON data
@@ -27,19 +27,33 @@ d3.json("data.geojson").then((data) => {
 
   // Call the initialize function somewhere in your code
   initializeVisualization(NudiDivs, NudiColors, geoData);
+
+  TaxonomyChart(geoData);
+
 });
 
 const ProjectTitle = d3.select("header").append("div");
 
 const SwatchTooltip = d3
-.select("body")
-.append("div")
-.attr("class", "SwatchTooltip")
-.style("position", "absolute")
-.style("background", "rgba(0, 0, 0, 0.8)")
-.style("visibility", "hidden")
-.style("opacity", 0)
-.style("pointer-events", "none");
+  .select("body")
+  .append("div")
+  .attr("class", "SwatchTooltip")
+  .style("position", "absolute")
+  .style("background", "rgba(0, 0, 0, 0.8)")
+  .style("visibility", "hidden")
+  .style("opacity", 0)
+  .style("pointer-events", "none");
+
+
+const TaxonomyTooltip = d3
+  .select("body")
+  .append("div")
+  .attr("class", "TaxonomyTooltip")
+  .style("position", "absolute") // Ensure it's positioned absolutely
+  .style("background", "rgba(200, 200, 200, 0.8)")
+  .style("visibility", "hidden")
+  .style("opacity", 0)
+  .style("pointer-events", "none");
 
 
 ProjectTitle.attr("id", "title")
@@ -72,12 +86,18 @@ const NudiColors = d3
   .append("div")
   .attr("id", "NudiColors")
   .attr("align", "center")
-  .style("z-index", "100")
   .style("padding-top", "10px")
   .style("background", "black");
 
+const NudiTaxi = d3
+  .select("body")
+  .append("div")
+  .attr("id", "NudiTaxi")
+  .attr("align", "center")
+  .style("padding-top", "10px")
+  .style("background", "black");
 
-  const radios = NudiColors
+const radios = NudiColors
   .append("form")
   .selectAll("div")
   .append("md-radio-group")
@@ -97,6 +117,508 @@ const NudiColors = d3
   .attr("name", "colorGroup")  // Ensure all radio buttons have the same name
   .on("change", function (event, d) {
 
+
+    /*    
+        const checkbox = d3.select(this);
+        const isChecked = checkbox.property("checked");
+        const nudiColorsDiv = d3.select("#swatchBox");
+        const nudiColorsDivNode = nudiColorsDiv.node();
+    
+        // Handle all color cases
+        if (d === "Reds") {
+          const redSwatches = d3.selectAll(".firebrick, .maroon, .crimson, .orangered, .hotpink, .indianred, .lightcoral, .brown, .darkred, .sienna, .lightsalmon, .darksalmon");
+    
+          if (isChecked) {
+            const groupedRedSwatches = groupSwatchesByNudiId(redSwatches);
+            activeColorSelections.set('Reds', groupedRedSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedRedSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Reds');
+            redSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Purples") {
+          const purpleSwatches = d3.selectAll(".indigo, .plum, .darkorchid, .mediumorchid, .purple, .lightpink");
+    
+          if (isChecked) {
+            const groupedPurpleSwatches = groupSwatchesByNudiId(purpleSwatches);
+            activeColorSelections.set('Purples', groupedPurpleSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedPurpleSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Purples');
+            purpleSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+    
+        }
+        else if (d === "Blues") {
+          const blueSwatches = d3.selectAll(".darkslateblue, .slategrey, .midnightblue, .steelblue, .lightsteelblue, .cadetblue, .mediumturquoise, .teal, .darkturquoise, .lightblue, .darkcyan, .slateblue, .skyblue, .cornflowerblue, .lightskyblue, .powderblue, .lightslategrey");
+    
+          if (isChecked) {
+            const groupedBlueSwatches = groupSwatchesByNudiId(blueSwatches);
+            activeColorSelections.set('Blues', groupedBlueSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedBlueSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Blues');
+            blueSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Greens") {
+          const greenSwatches = d3.selectAll(".forestgreen, .darkolivegreen, .yellowgreen, .olive, .seagreen, .olivedrab");
+    
+          if (isChecked) {
+            const groupedGreenSwatches = groupSwatchesByNudiId(greenSwatches);
+            activeColorSelections.set('Greens', groupedGreenSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedGreenSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Greens');
+            greenSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        }
+        else if (d === "Yellows") {
+          const yellowSwatches = d3.selectAll(".sandybrown, .goldenrod, .gold, .darkgoldenrod, .khaki, .palegoldenrod, .burlywood, .darkkhaki");
+    
+          if (isChecked) {
+            const groupedYellowSwatches = groupSwatchesByNudiId(yellowSwatches);
+            activeColorSelections.set('Yellows', groupedYellowSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedYellowSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Yellows');
+            yellowSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Oranges") {
+          const orangeSwatches = d3.selectAll(".darkorange, .orange, .chocolate, .peru");
+    
+          if (isChecked) {
+            const groupedOrangeSwatches = groupSwatchesByNudiId(orangeSwatches);
+            activeColorSelections.set('Oranges', groupedOrangeSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedOrangeSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Oranges');
+            orangeSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Blacks") {
+          const blackSwatches = d3.selectAll(".black");
+    
+          if (isChecked) {
+            const groupedBlackSwatches = groupSwatchesByNudiId(blackSwatches);
+            activeColorSelections.set('Blacks', groupedBlackSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedBlackSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Blacks');
+            blackSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Whites") {
+          const whiteSwatches = d3.selectAll(".silver, .antiquewhite, .floralwhite, .lavender, .wheat, .whitesmoke, .lightgrey, .tan");
+    
+          if (isChecked) {
+            const groupedWhiteSwatches = groupSwatchesByNudiId(whiteSwatches);
+            activeColorSelections.set('Whites', groupedWhiteSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedWhiteSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Whites');
+            whiteSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Other") {
+          const otherSwatches = d3.selectAll(".darkslategrey, .grey, .darkgrey, .dimgrey");
+    
+          if (isChecked) {
+            const groupedOtherSwatches = groupSwatchesByNudiId(otherSwatches);
+            activeColorSelections.set('Other', groupedOtherSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedOtherSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Other');
+            otherSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        } else if (d === "Browns") {
+          const brownSwatches = d3.selectAll(".saddlebrown, .rosybrown");
+    
+          if (isChecked) {
+            const groupedBrownSwatches = groupSwatchesByNudiId(brownSwatches);
+            activeColorSelections.set('Browns', groupedBrownSwatches);
+    
+            if (activeColorSelections.size > 1) {
+              const intersectingNudis = findIntersectingNudis(activeColorSelections);
+              intersectingNudis.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            } else {
+              groupedBrownSwatches.forEach((swatch) => {
+                swatch[1].forEach((s) => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          } else {
+            activeColorSelections.delete('Browns');
+            brownSwatches.each(function () {
+              const swatch = d3.select(this);
+              const parent = swatch.node().parentNode;
+              parent.appendChild(swatch.node());
+            });
+    
+            if (activeColorSelections.size > 0) {
+              const remainingIntersections = findIntersectingNudis(activeColorSelections);
+              remainingIntersections.forEach(nudiGroup => {
+                nudiGroup[1].forEach(s => {
+                  const currentSwatch = nudiColorsDiv.select(`.${s.Nudi_id}.${s.color.key}`);
+                  const parent = currentSwatch.node().parentNode;
+                  parent.insertBefore(currentSwatch.node(), parent.firstChild);
+                });
+              });
+            }
+          }
+        }
+    
+    
+    
+      })
+      .each(function (d) {
+        d3.select(this.parentNode)
+          .append("span")
+          .style("margin-left", "5px")
+          .style("color", "white")
+          .text(d);
+      });
+    
+    function findIntersectingNudis(activeSelections) {
+      const allGroups = Array.from(activeSelections.values());
+    
+      // If only one color is selected, return its groups
+      if (allGroups.length === 1) return allGroups[0];
+    
+      // Get all Nudi IDs from first color group
+      const firstGroupNudiIds = new Set(allGroups[0].map(group => group[0]));
+    
+      // Find Nudi IDs that appear in all other color groups
+      const commonNudiIds = new Set(
+        Array.from(firstGroupNudiIds).filter(nudiId =>
+          allGroups.every(colorGroup =>
+            colorGroup.some(group => group[0] === nudiId)
+          )
+        )
+      );
+    
+      // Return the full grouped data for common Nudi IDs
+      return allGroups[0].filter(group => commonNudiIds.has(group[0]));
+    }
+    
+    function groupSwatchesByNudiId(swatchesArray) {
+      const groupedByNudiId = d3.rollup(
+        swatchesArray.data(),  // The bound data
+        v => v,  // Extract the nudi_id from each element
+        d => d.Nudi_id  // Group by nudi_id
+      );
+    
+      const sortedByGroupLength = Array.from(groupedByNudiId)  // Convert Map to array
+        .sort(([, a], [, b]) => a.length - b.length);
+    
+      return sortedByGroupLength;
+    }
+    
+    */
+
+    // THIS WAS IN THE SETUP WHERE IT WORKS JUST FOR HIGHLIGHTING COLORS
     const radio = d3.select(this);
     const isChecked = radio.property("checked");
     const nudiColorsDiv = d3.select("#swatchBox");
@@ -388,6 +910,8 @@ function groupSwatchesByNudiId(swatchesArray) {
   return sortedByGroupLength;
 }
 
+
+
 // Initial dimensions
 let mapwidth = window.innerWidth; // Width of the viewport
 let mapheight = window.innerHeight; // Height of the viewport
@@ -463,7 +987,6 @@ const circlesGroup = svg
   .append("g")
   .attr("id", "circles-layer");
 
-// Update projection function
 function updateProjection() {
   const mapwidth = window.innerWidth;
   const mapheight = window.innerHeight;
@@ -472,6 +995,8 @@ function updateProjection() {
     mapwidth / 2,
     mapheight / 2,
   ]);
+
+  TaxonomyChart(geoData);
 
   svg.selectAll("path.country").attr("d", Nudipath);
   svg.selectAll("path.ocean").attr("d", Nudipath);
@@ -742,15 +1267,13 @@ const ResetButton = d3
   .select("header")
   .append("button")
   .attr("id", "resetButton")
-  .text("Clear Selections")
+  .text("Clear All")
   .on("click", clearSelections)
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
   .on("mouseover", function () {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
   .on("mouseout", function () {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
@@ -778,7 +1301,16 @@ function clearSelections() {
       .attr("opacity", 0.7);
   });
 
+  d3.selectAll("circle").each(function (d) {
+    d3.select(this)
+      .attr("r", 5) // Change radius
+      .attr("stroke-width", 1)
+      .attr("stroke", "black")
+      .attr("opacity", 1);
+  });
+
   d3.selectAll("rect").attr("stroke-width", 0);
+  d3.selectAll("line").attr("stroke", "#373537");
 
   // Reset stroke and opacity for all circles with the class "single-circle"
   d3.selectAll('circle.single-circle')
@@ -883,7 +1415,7 @@ const NudiTooltip = d3
   .style("font-family", '"Kodchasan", sans-serif')
   .style("font-weight", "600");
 
-  const NudiSwatchTooltip = d3
+const NudiSwatchTooltip = d3
   .select("body")
   .append("div")
   .attr("class", "NudiSwatchTooltip")
@@ -907,11 +1439,11 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
   globalMap.classed("clickable", true);
   globalMap.classed("not-clickable", false);
   const nudiColorsDiv = d3.select("#NudiColors");
-  nudiColorsDiv.classed("clickable", false); // Add clickable class
+  nudiColorsDiv.classed("clickable", false);
   nudiColorsDiv.classed("not-clickable", true);
-
-  // this function calls categorizeSwatches, which is not defined?
-  // CategorizedSwatches(NudiColors, geoData); // Pass geoData here
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", false);
+  TaxiTree.classed("not-clickable", true);
 }
 
 
@@ -919,49 +1451,79 @@ async function initializeVisualization(NudiDivs, NudiColors, geoData) {
 function showCircles() {
   if (currentRendering === 'circles') return; // No action if already rendering circles
 
-  // Clear existing circles and text
   circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll("text").remove(); // Clear any existing text
+  circlesGroup.selectAll("text").remove();
   d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
 
-
-  const globalMap = d3.select("#globalMap");
-  globalMap.classed("clickable", true);
-  globalMap.classed("not-clickable", false);
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", false);
+  TaxiTree.classed("not-clickable", true);
+  TaxiTree.style("opacity", 0);
 
   const nudiColorsDiv = d3.select("#NudiColors");
   nudiColorsDiv.classed("clickable", false); // Add clickable class
   nudiColorsDiv.classed("not-clickable", true);
 
-  // Render the circles
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", true);
+  globalMap.classed("not-clickable", false);
+
   renderCircles(groupedData); // Pass the appropriate data
   currentRendering = 'circles'; // Update current rendering state
+
+}
+
+
+function showTaxi() {
+  if (currentRendering === 'taxis') return; // No action if already rendering taxonomy
+
+  // Clear existing circles and text
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll("text").remove(); // Clear any existing text
+  d3.select('#NudiColors').style("opacity", 0); // Set opacity to 0
+
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", true);
+  TaxiTree.classed("not-clickable", false);
+
+  const globalMap = d3.select("#globalMap");
+  globalMap.classed("clickable", false);
+  globalMap.classed("not-clickable", true);
+
+  const nudiColorsDiv = d3.select("#NudiColors");
+  nudiColorsDiv.classed("clickable", false); // Add clickable class
+  nudiColorsDiv.classed("not-clickable", true);
+
+  circlesGroup.selectAll("circle").attr("opacity", 0);
+  nudiColorsDiv.style("opacity", 0);
+  TaxiTree.style("opacity", 1);
+
+  TaxonomyChart(geoData); // Pass the appropriate data
+  currentRendering = 'taxis'; // Update current rendering state
 
 }
 
 function showColorPalettes() {
   if (currentRendering === 'colorPalettes') return;
 
-  // Clear existing circles and text
-  circlesGroup.selectAll("circle").remove();
-  circlesGroup.selectAll(".count-label").remove();
-  circlesGroup.selectAll(".count-label").attr("opacity", 0); // Set opacity to 0
-
-  const nudiColorsDiv = d3.select("#NudiColors");
-  // Render the color palettes
-  // CategorizedSwatches(NudiColors, geoData);
-
-  // Make circles visible
-  circlesGroup.selectAll("circle").attr("opacity", 0); // Set opacity to 1
-
-  nudiColorsDiv.style("opacity", 1); // Set opacity to 1
-  //   
-  nudiColorsDiv.classed("clickable", true); // Add clickable class
-  nudiColorsDiv.classed("not-clickable", false);
-
   const globalMap = d3.select("#globalMap");
   globalMap.classed("clickable", false);
   globalMap.classed("not-clickable", true);
+
+  circlesGroup.selectAll("circle").remove();
+  circlesGroup.selectAll(".count-label").remove();
+  circlesGroup.selectAll(".count-label").attr("opacity", 0);
+  circlesGroup.selectAll("circle").attr("opacity", 0);
+
+  const TaxiTree = d3.select("#NudiTaxi");
+  TaxiTree.classed("clickable", false);
+  TaxiTree.classed("not-clickable", true);
+  TaxiTree.style("opacity", 0);
+
+  const nudiColorsDiv = d3.select("#NudiColors");
+  nudiColorsDiv.classed("clickable", true);
+  nudiColorsDiv.classed("not-clickable", false);
+  nudiColorsDiv.style("opacity", 1);
 
   currentRendering = 'colorPalettes';
 }
@@ -970,15 +1532,13 @@ const showCirclesButton = d3
   .select("header")
   .append("button")
   .attr("id", "showCirclesButton")
-  .text("Show Locations")
+  .text("Locations")
   .on("click", showCircles) // Call the showCircles function
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
   .on("mouseover", function () {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
   .on("mouseout", function () {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
@@ -986,18 +1546,33 @@ const showColorSwatchesButton = d3
   .select("header")
   .append("button")
   .attr("id", "showColorSwatchesButton")
-  .text("Show Swatches")
+  .text("Swatches")
   .on("click", function () {
     // Trigger the CategorizedSwatches function on button click
-    showColorPalettes(geoData); // Pass geoData or relevant data, not NudiColors
+    showColorPalettes(geoData);
   })
   .style("transition", "background-color 0.3s, transform 0.2s") // Transition for hover effect
   .on("mouseover", function () {
-    d3.select(this).style("background-color", "#ffcc00"); // Darker shade on hover
     d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
   })
   .on("mouseout", function () {
-    d3.select(this).style("background-color", "#FFC000"); // Original color
+    d3.select(this).style("transform", "scale(1)"); // Reset scale
+  });
+
+
+const showTaxonomyButton = d3
+  .select("header")
+  .append("button")
+  .attr("id", "showTaxonomyButton")
+  .text("Taxonomy")
+  .on("click", function () {
+    showTaxi(geoData);
+  })
+  .style("transition", "background-color 0.3s, transform 0.2s")
+  .on("mouseover", function () {
+    d3.select(this).style("transform", "scale(1.05)"); // Slight scale on hover
+  })
+  .on("mouseout", function () {
     d3.select(this).style("transform", "scale(1)"); // Reset scale
   });
 
@@ -1217,15 +1792,15 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
           .on("mouseover", function (event) {
             SwatchTooltip.html(
               `Color: rgb (${Math.round(rgbColor[0])}, ${Math.round(rgbColor[1])}, ${Math.round(rgbColor[2])})`
-            )            
-              .style("left", event.pageX + 5 + "px") 
+            )
+              .style("left", event.pageX + 5 + "px")
               .style("top", event.pageY + 5 + "px")
               .style("visibility", "visible")
               .style("opacity", 1);
           }
           )
           .on("mousemove", function (event) {
-            SwatchTooltip.style("left", event.pageX + 5 + "px") 
+            SwatchTooltip.style("left", event.pageX + 5 + "px")
               .style("top", event.pageY + 5 + "px");
           }
           )
@@ -1554,4 +2129,321 @@ function displayPalettes(groupedPalettes, NudiDivs, geoData) {
     }
   });
 }
+
+function TaxonomyChart(geoData) {
+  // Select the container element and get its dimensions
+  const container = d3.select("#NudiTaxi");
+  const containerWidth = container.node().getBoundingClientRect().width;
+  const containerHeight = container.node().getBoundingClientRect().height;
+
+  container.select("svg").remove();
+
+  // Create the SVG element for the tree chart with dynamic width and height
+  const TaxonomySVG = container
+    .append("svg")
+    .attr("width", containerWidth)
+    .attr("height", containerHeight);
+
+  const taxonomyData = d3.rollup(
+    geoData.features,
+    (v) =>
+      d3.rollup(
+        v,
+        (group) => group.length,
+        (d) => d.properties.title,
+        (d) => d.properties.tax_family,
+        (d) => d.properties.Nudi_id
+      ),
+    (d) => d.properties.tax_order,
+  );
+
+  //console.log("Flattened Taxonomy Data:", taxonomyData);
+
+  // Convert the taxonomy data to hierarchical format starting from tax_order
+  const hierarchyData = Array.from(taxonomyData.entries()).map(
+    ([tax_order, familyMap]) => ({
+      name: tax_order,
+      children: Array.from(familyMap.entries()).map(
+        ([tax_family, titleMap]) => {
+          let familyNode = {
+            name: tax_family,
+            children: [],
+            value: 0, // Sum of species count for each family
+          };
+
+          // Group titles and accumulate their counts
+          Array.from(titleMap.entries()).forEach(
+            ([title, count]) => {
+              familyNode.children.push({
+                name: title,
+                value: count,
+              });
+              familyNode.value += count; // Add the title's count to the family's value
+            }
+          );
+
+          return familyNode;
+        }
+      ),
+    })
+  );
+
+  console.log("Hierarchy Data:", hierarchyData);
+
+  // The hierarchyData is now starting from tax_order, no need for root-level taxonomic groups
+  const rootData = d3
+    .hierarchy({
+      children: hierarchyData, // No "name": "Root", just use the tax_order data directly as children
+    })
+    .sum((d) => d.value || 0) // Sum the values for node sizes
+    .sort((a, b) => b.value - a.value); // Sort nodes based on the value for better positioning
+
+  // Create a horizontal tree layout (swap x and y axes)
+  const treeLayout = d3
+    .tree()
+    .size([containerHeight - 75, containerWidth + 65]) // Size adjusted for horizontal layout
+    .separation((a, b) => 1); // Define the separation between nodes (adjust as needed)
+
+  // Apply the tree layout to the hierarchical data
+  const treeData = treeLayout(rootData);
+
+  const treeGroup = TaxonomySVG.append("g").attr(
+    "transform",
+    `translate(-${containerWidth / 4}, 10)`
+  );
+
+  // Add links (edges) between nodes
+  treeGroup
+    .selectAll(".link")
+    .data(treeData.links())
+    .enter()
+    .append("line")
+    .attr("class", (d) => {
+      // Get the value of the target node, which could be an object containing a Map
+      const targetValue = d.target.data.value;
+
+      // Log targetValue to understand its structure
+      //console.log("Target Value:", targetValue);
+
+      // Assuming targetValue is an object that contains a Map
+      const getClassFromMap = (value) => {
+        if (value instanceof Map) {
+          // If it's a Map, get the keys from it
+          const keys = Array.from(value.keys());
+          return keys.join(" "); // Return the keys as a space-separated string
+        } else if (value && value.data instanceof Map) {
+          // If value has a "data" property that is a Map
+          const map = value.data;
+          const keys = Array.from(map.keys());
+          return keys.join(" "); // Return the keys as a space-separated string
+        } else {
+          // If it's not a Map, return the value as a string
+          return value ? value.toString() : '';
+        }
+      };
+
+      // Get the class from the target value (which may be a Map or an object containing a Map)
+      const targetClass = getClassFromMap(targetValue);
+
+      // Return the class for the link (this will be used to apply the CSS class)
+      return targetClass;
+    })
+    .attr("x1", (d) => d.source.y) // Swap x and y for horizontal
+    .attr("y1", (d) => d.source.x)
+    .attr("x2", (d) => d.target.y) // Swap x and y for horizontal
+    .attr("y2", (d) => d.target.x)
+    .attr("stroke", "#373537")
+    .attr("stroke-width", 1)
+    // Add hover effects for links
+    .on("mouseover", function (event, d) {
+      d3.select(this) // Select the hovered link
+        .attr("stroke", "white") // Change the link color on hover
+        .attr("stroke-width", 2); // Optionally, increase the stroke width on hover
+    })
+    .on("mouseout", function (event, d) {
+      // Reset the link color on mouse out
+      d3.select(this)
+      .attr("stroke", "#373537")
+        .attr("stroke-width", 1); // Reset stroke width
+    });
+
+
+  // Add nodes (circles) for each node in the tree
+  const nodes = treeGroup
+    .selectAll(".node")
+    .data(treeData.descendants().slice(1)) // Skip the root node
+    .enter()
+    .append("g")
+    .attr("class", (d) => {
+      const value = d.data.value;
+
+      // Base class for every node
+      let classString = "node";
+
+      // If the value is a Map, create a class string based on the map keys
+      if (value instanceof Map) {
+        value.forEach((mapValue, mapKey) => {
+          // Only add the map key to the class string
+          classString += ` ${mapKey}`;
+        });
+      } else {
+        // If it's not a Map, add the key from the parent data (if available)
+        classString += ` ${d.data.key || ''}`;
+      }
+
+      // Also check for child node classes and append them to the class string
+      if (d.children) {
+        d.children.forEach(child => {
+          const value = child.data.value;
+          if (value instanceof Map) {
+            value.forEach((mapValue, mapKey) => {
+              classString += ` ${mapKey}`;
+            });
+          } else {
+            classString += ` ${child.data.key || ''}`;
+          }
+        });
+      }
+
+      return classString.trim(); // Return the concatenated class string
+    })
+    .attr("transform", (d) => `translate(${d.y}, ${d.x})`); // Swap x and y for horizontal
+
+  // Add circles for each node
+  nodes
+    .append("circle")
+    .attr("r", 5) // Fixed radius for the circle
+    .attr("fill", (d) => {
+      // Color based on the depth of the node
+      switch (d.depth) {
+        case 1: return "#555658"; // Color for level 1
+        case 2: return "#474749"; // Color for level 2
+        case 3: return "#373537"; // Color for level 3
+        default: return "#000000";  // Default color for other levels
+      }
+    })
+    .attr("stroke", "black")
+    .style("stroke-width", 1)
+    .on("mouseover", function (event, d) {
+      d3.select(this) // Select the hovered node
+        .attr("fill", "white") // Change the node color on hover
+        .attr("r", 8); // Optionally, increase the radius on hover
+    })
+    .on("mouseout", function (event, d) {
+      // Reset the node color and size on mouse out
+      d3.select(this)
+        .attr("fill", (d) => {
+          switch (d.depth) {
+            case 1: return "#555658";
+            case 2: return "#474749";
+            case 3: return "#373537";
+            default: return "#000000";
+          }
+        })
+        .attr("r", 5); // Reset the radius
+    })
+    .on("click", function (event, d) {
+
+      d3.selectAll("circle").each(function (d) {
+        d3.select(this)
+          .attr("r", 5) // Change radius
+          .attr("stroke-width", 1)
+          .attr("stroke", "black")
+          .attr("opacity", 1);
+      }
+      );
+
+      d3.selectAll("line").each(function (d) {
+        d3.select(this)
+          .attr("stroke-width", 1)
+          .attr("stroke", "#373537")
+      }
+      );
+
+      d3.select(this)
+        .attr("r", 10) // Change radius
+        .attr("stroke-width", 5)
+        .attr("stroke", "white")
+        .attr("opacity", 1);
+
+
+      const keysChild = [...d.data.value.keys()];
+      console.log(keysChild);
+
+      // const keysParent = [...d.data.children.values()];
+      // console.log(keysParent);
+
+      const nudiDivs = d3.select("#NudiDivs");
+      const nudiDivNode = nudiDivs.node();
+      const nudiDivCurrentChild = nudiDivs.select(`div.${keysChild}`);
+      const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
+
+      d3.select(`line.${keysChild}`).attr("stroke-width", 1.5);
+      d3.select(`line.${keysChild}`).attr("stroke", "white");
+      
+      /*       
+      // Iterate over d.data.value (e.g., Map or similar structure)
+      for (let [key, value] of d.data.value) {
+        // Only process keys with length >= 5
+        if (key.length >= 5) {
+          console.log(key);
+          // Access the key here for this case
+        }
+      }
+      
+      // Iterate over d.data.children (assuming child.value is a Map or Object)
+      d.data.children.forEach(child => {
+        const keys = Array.from(child.value.keys());
+      
+        // Check each key's length in the child.value (assuming child.value is a Map)
+        keys.forEach(key => {
+          if (key.length >= 5) {
+            console.log(key);
+            // Access the key here for this case
+          }
+        });
+      });
+       */
+
+      // const keysChild = Object.keys(d.data.children);
+      // console.log(keysChild);
+
+      // const keysParent = [...d.data.children.values()];
+      // console.log(keysParent);
+
+
+      // Clear selected state of all rect except for the clicked one
+      d3.selectAll("rect").each(function (d) {
+        d3.select(this).attr("stroke-width", 0);
+      });
+
+      // clear selected state of all previous divs except for the clicked one
+
+      nudiDivs.select("div").each(function (d) {
+        d3.select(this).style("border", "20px solid black")
+          .style("background-color", "black");
+        d3.select("h4").style("color", "white");
+        d3.select(".AddDetails h5").style("color", "white");
+        d3.select("p").style("color", "white");
+        d3.select(".AddDetails").style("border-top", "15px solid black");
+        d3.select(".NudiTaxonomy").style("border-top", "15px solid black");
+      });
+
+      // Update background color for associated divs of the selected swatch
+      nudiDivCurrentChild
+        .style("border", "20px solid white")
+        .style("background-color", "white")
+        .selectAll("h4").style("color", "black");
+      nudiDivCurrentChild.selectAll(".AddDetails h5").style("color", "black")
+        .selectAll("p").style("color", "black");
+      nudiDivCurrentChild.select(".AddDetails").style("border-top", "15px solid white");
+      nudiDivCurrentChild.select(".NudiTaxonomy").style("border-top", "15px solid white");
+
+      // Reorder the associated divs to the top (move them to the top in the DOM
+      nudiDivNode.insertBefore(nudiDivCurrentChildNode, nudiDivNode.firstChild);
+
+    });
+  ;
+};
+
 

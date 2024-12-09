@@ -1301,13 +1301,11 @@ function clearSelections() {
       .attr("opacity", 0.7);
   });
 
-  d3.selectAll("circle").each(function (d) {
-    d3.select(this)
+  d3.selectAll("circle.node")
       .attr("r", 5) // Change radius
       .attr("stroke-width", 1)
       .attr("stroke", "black")
       .attr("opacity", 1);
-  });
 
   d3.selectAll("rect").attr("stroke-width", 0);
   d3.selectAll("line").attr("stroke", "#373537");

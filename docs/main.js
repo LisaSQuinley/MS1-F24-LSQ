@@ -2352,7 +2352,6 @@ function TaxonomyChart(geoData) {
 
       // Example of changing attributes (fill color and radius)
       d3.select(this)
-        .attr("fill", "red") // Change color to red on click
         .attr("r", 10) // Change radius
         .attr("stroke-width", 5)
         .attr("stroke", "white")
@@ -2360,20 +2359,52 @@ function TaxonomyChart(geoData) {
 
       const nudiDivs = d3.select("#NudiDivs");
       const nudiDivNode = nudiDivs.node();
+
+      const nudiDivCurrentChild = nudiDivs.select(`div.${d.key}`);
+
+// Iterate over d.data.value (e.g., Map or similar structure)
+for (let [key, value] of d.data.value) {
+  // Only process keys with length >= 5
+  if (key.length >= 5) {
+    console.log(key);
+    // Access the key here for this case
+  }
+}
+
+// Iterate over d.data.children (assuming child.value is a Map or Object)
+d.data.children.forEach(child => {
+  const keys = Array.from(child.value.keys());
+
+  // Check each key's length in the child.value (assuming child.value is a Map)
+  keys.forEach(key => {
+    if (key.length >= 5) {
+      console.log(key);
+      // Access the key here for this case
+    }
+  });
+});
+
+
+/*      
       const nudiDivCurrentChild = nudiDivs.select(`div.${d.key}`);
 
 
+      for (let [key, value] of d.data.value) {
+        console.log(`Key: ${key}`);
+      }
+      //console.log(d.data.value); // child node, but this is internmap, how do I access key
 
-      // SOUMYA I NARROWED DOWN HOW TO GET TO THE SAME LEVEL OF DATA FOR BOTH PARENT AND CHILD NODES
-      // BUT I THINK I NEED AN IF/ELSE STATEMENT TO CHECK WHICH NODE IS CLICKED AND THEREFORE WHICH DATA TO ACCESS
-
-      console.log(d.data.value); // child node, but this is internmap, how do I access key
+      
 
       d.data.children.forEach(child => {
+        const keys = Array.from(child.value.keys());
+        console.log(keys);
+      });
+/*       d.data.children.forEach(child => {
         console.log(child.value);
-      }); // parent node, but this is internmap, how do I access key
-
-
+      }); */ 
+      // parent node, but this is internmap, how do I access key
+      
 
       const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
 

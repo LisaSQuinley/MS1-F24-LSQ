@@ -1301,7 +1301,16 @@ function clearSelections() {
       .attr("opacity", 0.7);
   });
 
+  d3.selectAll("circle").each(function (d) {
+    d3.select(this)
+      .attr("r", 5) // Change radius
+      .attr("stroke-width", 1)
+      .attr("stroke", "black")
+      .attr("opacity", 1);
+  });
+
   d3.selectAll("rect").attr("stroke-width", 0);
+  d3.selectAll("line").attr("stroke", "#373537");
 
   // Reset stroke and opacity for all circles with the class "single-circle"
   d3.selectAll('circle.single-circle')
@@ -2243,15 +2252,7 @@ function TaxonomyChart(geoData) {
     .attr("y1", (d) => d.source.x)
     .attr("x2", (d) => d.target.y) // Swap x and y for horizontal
     .attr("y2", (d) => d.target.x)
-    .attr("stroke", (d) => {
-      // Color based on depth of the source node
-      switch (d.source.depth) {
-        case 1: return "#555658"; // Color for level 1
-        case 2: return "#474749"; // Color for level 2
-        case 3: return "#373537"; // Color for level 3
-        default: return "#000000";  // Default color for other levels
-      }
-    })
+    .attr("stroke", "#373537")
     .attr("stroke-width", 1)
     // Add hover effects for links
     .on("mouseover", function (event, d) {
@@ -2262,14 +2263,7 @@ function TaxonomyChart(geoData) {
     .on("mouseout", function (event, d) {
       // Reset the link color on mouse out
       d3.select(this)
-        .attr("stroke", (d) => {
-          switch (d.source.depth) {
-            case 1: return "#555658";
-            case 2: return "#474749";
-            case 3: return "#373537";
-            default: return "#000000";
-          }
-        })
+      .attr("stroke", "#373537")
         .attr("stroke-width", 1); // Reset stroke width
     });
 
@@ -2350,63 +2344,73 @@ function TaxonomyChart(geoData) {
     })
     .on("click", function (event, d) {
 
-      // Example of changing attributes (fill color and radius)
+      d3.selectAll("circle").each(function (d) {
+        d3.select(this)
+          .attr("r", 5) // Change radius
+          .attr("stroke-width", 1)
+          .attr("stroke", "black")
+          .attr("opacity", 1);
+      }
+      );
+
+      d3.selectAll("line").each(function (d) {
+        d3.select(this)
+          .attr("stroke-width", 1)
+          .attr("stroke", "#373537")
+      }
+      );
+
       d3.select(this)
         .attr("r", 10) // Change radius
         .attr("stroke-width", 5)
         .attr("stroke", "white")
         .attr("opacity", 1);
 
+
+      const keysChild = [...d.data.value.keys()];
+      console.log(keysChild);
+
+      // const keysParent = [...d.data.children.values()];
+      // console.log(keysParent);
+
       const nudiDivs = d3.select("#NudiDivs");
       const nudiDivNode = nudiDivs.node();
+      const nudiDivCurrentChild = nudiDivs.select(`div.${keysChild}`);
+      const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
 
-      const nudiDivCurrentChild = nudiDivs.select(`div.${d.key}`);
-
-// Iterate over d.data.value (e.g., Map or similar structure)
-for (let [key, value] of d.data.value) {
-  // Only process keys with length >= 5
-  if (key.length >= 5) {
-    console.log(key);
-    // Access the key here for this case
-  }
-}
-
-// Iterate over d.data.children (assuming child.value is a Map or Object)
-d.data.children.forEach(child => {
-  const keys = Array.from(child.value.keys());
-
-  // Check each key's length in the child.value (assuming child.value is a Map)
-  keys.forEach(key => {
-    if (key.length >= 5) {
-      console.log(key);
-      // Access the key here for this case
-    }
-  });
-});
-
-
-/*      
-      const nudiDivCurrentChild = nudiDivs.select(`div.${d.key}`);
-
-
-      for (let [key, value] of d.data.value) {
-        console.log(`Key: ${key}`);
-      }
-      //console.log(d.data.value); // child node, but this is internmap, how do I access key
-
+      d3.select(`line.${keysChild}`).attr("stroke-width", 1.5);
+      d3.select(`line.${keysChild}`).attr("stroke", "white");
       
-
+      /*       
+      // Iterate over d.data.value (e.g., Map or similar structure)
+      for (let [key, value] of d.data.value) {
+        // Only process keys with length >= 5
+        if (key.length >= 5) {
+          console.log(key);
+          // Access the key here for this case
+        }
+      }
+      
+      // Iterate over d.data.children (assuming child.value is a Map or Object)
       d.data.children.forEach(child => {
         const keys = Array.from(child.value.keys());
-        console.log(keys);
-      });
-/*       d.data.children.forEach(child => {
-        console.log(child.value);
-      }); */ 
-      // parent node, but this is internmap, how do I access key
       
+        // Check each key's length in the child.value (assuming child.value is a Map)
+        keys.forEach(key => {
+          if (key.length >= 5) {
+            console.log(key);
+            // Access the key here for this case
+          }
+        });
+      });
+       */
 
-      const nudiDivCurrentChildNode = nudiDivCurrentChild.node();
+      // const keysChild = Object.keys(d.data.children);
+      // console.log(keysChild);
+
+      // const keysParent = [...d.data.children.values()];
+      // console.log(keysParent);
+
 
       // Clear selected state of all rect except for the clicked one
       d3.selectAll("rect").each(function (d) {
